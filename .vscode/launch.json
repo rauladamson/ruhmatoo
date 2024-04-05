@@ -16,7 +16,7 @@
             "request": "launch",
             "mainClass": "com.ut.PDFReader",
             "projectName": "demo",
-            "classPaths": ["${workspaceFolder}/target/classes com.ut.PDFReader"]
+            "classPaths": ["${workspaceFolder}/target/classes"]
         }
     ]
 }
