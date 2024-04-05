@@ -3,6 +3,7 @@
 
 
 ## Liikmed:
+- Marielin Kepp
 - Martin Jaani
 - Raul Adamson
 
