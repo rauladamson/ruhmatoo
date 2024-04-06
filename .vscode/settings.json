@@ -1,6 +1,3 @@
 {
-    "java.configuration.updateBuildConfiguration": "interactive",
-    "terminal.integrated.env.osx": {
-        "PATH": "/Users/marielinkepp/Downloads/apache-maven-3.9.6/bin:${env:PATH}"
-    }
+    "java.project.explorer.showNonJavaResources": false
 }
