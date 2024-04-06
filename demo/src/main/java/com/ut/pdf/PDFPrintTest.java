@@ -5,8 +5,12 @@ public class PDFPrintTest {
         PDFPrint pdfPrint = new PDFPrint();
         String startKeyword = "Maht";
         String endKeyword = "Õpikeskkond";
-        pdfPrint.printLinesFromKeywordToKeyword("/pdfs/ois1.pdf", startKeyword, endKeyword);
-        pdfPrint.printLinesFromKeywordToKeyword("/pdfs/ois2.pdf", startKeyword, endKeyword);
-        pdfPrint.printLinesFromKeywordToKeyword("/pdfs/ois3.pdf", startKeyword, endKeyword);
+
+        System.out.println(System.getProperty("user.dir")); // kontrolli kausta, kus oled
+
+        // demo/src/main/resources/pdfs/ois1.pdf
+        pdfPrint.printLinesFromKeywordToKeyword("/demo/src/main/resources/pdfs/ois1.pdf", startKeyword, endKeyword);
+        pdfPrint.printLinesFromKeywordToKeyword("/demo/src/main/resources/pdfs/ois2.pdf", startKeyword, endKeyword);
+        pdfPrint.printLinesFromKeywordToKeyword("/demo/src/main/resources/pdfs/ois3.pdf", startKeyword, endKeyword);
     }
 }
