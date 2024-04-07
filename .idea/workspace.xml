@@ -5,10 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="395d9b5a-abe8-41e7-b874-b7c23045fce4" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/pdfsave/FirstScript.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/pdfsave/chromedriver.exe" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/pdfsave/Testing.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/pdfsave/HTMLextract.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pdfsave/HTMLextract.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/pdfsave/SeleniumTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pdfsave/SeleniumTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,10 +51,13 @@
   "keyToString": {
     "Application.ExtractHTML.executor": "Run",
     "Application.ExtractPDFText.executor": "Run",
+    "Application.FetchData.executor": "Run",
     "Application.FirstScript.executor": "Run",
     "Application.HTMLextract.executor": "Run",
     "Application.PDFPrintTest.executor": "Run",
     "Application.SeleniumTest.executor": "Run",
+    "Application.Tester.executor": "Run",
+    "Application.Testing.executor": "Run",
     "Application.WebScraper.executor": "Run",
     "Application.Webscraper.executor": "Run",
     "Application.Wikipedia.executor": "Run",
@@ -79,7 +83,7 @@
     </key>
   </component>
   <component name="SeleniumInternalSettingsState">
-    <option name="lastUrl" value="https://ois2.ut.ee/#/courses/LTAT.03.007/version/fde0bca8-705f-74c9-456e-e68104c23b53/details" />
+    <option name="lastUrl" value="https://ois2.ut.ee/api/courses/LTAT.03.007/versions/fde0bca8-705f-74c9-456e-e68104c23b53" />
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -99,7 +103,7 @@
       <updated>1712467787258</updated>
       <workItem from="1712467789221" duration="593000" />
       <workItem from="1712468395727" duration="9667000" />
-      <workItem from="1712478179425" duration="2037000" />
+      <workItem from="1712478179425" duration="7074000" />
     </task>
     <servers />
   </component>

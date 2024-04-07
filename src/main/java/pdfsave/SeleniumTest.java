@@ -23,10 +23,10 @@ public class SeleniumTest {
 
 
 
-            WebElement element = driver.findElement(By.cssSelector("ois2-courses-version-grading-info-panel"));
-            WebElement element1 = driver.findElement(By.cssSelector("ois2-courses-version-study-hours-info-panel"));
+            WebElement hindamine_inf = driver.findElement(By.cssSelector("ois2-courses-version-grading-info-panel"));
+            WebElement maht_inf = driver.findElement(By.cssSelector("ois2-courses-version-study-hours-info-panel"));
 
-            String content = element.getText() + element1.getText();
+            String content = hindamine_inf.getText() + maht_inf.getText();
 
 
             System.out.println("Content: " + content);

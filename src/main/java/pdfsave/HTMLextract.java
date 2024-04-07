@@ -9,12 +9,11 @@ import java.io.IOException;
 
 public class HTMLextract {
     public static void main(String[] args) throws IOException {
-        Document doc = Jsoup.connect("http://en.wikipedia.org/").get();
-        log(doc.title());
+        Document doc = Jsoup.connect("https://ois2.ut.ee/api/courses/LTAT.03.007/versions/fde0bca8-705f-74c9-456e-e68104c23b53").get();
+        Elements elements = doc.body().select("*");
 
-        Elements newsHeadlines = doc.select("#mp-itn b a");
-        for (Element headline : newsHeadlines) {
-            log("%s\n\t%s", headline.attr("title"), headline.absUrl("href"));
+        for (Element element : elements) {
+            System.out.println(element.ownText());
         }
     }
 
