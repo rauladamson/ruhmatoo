@@ -22,7 +22,9 @@
                 <button onclick="deleteAllUserInput()">Kustuta kõik</button>
             </div>
 
-            <form action="#" th:action="@{/userInput}" th:object="${userInput}" method="post" id="course-input-form">
+            <form action="./java/com.ut.servlet.inputServlet" method="post" id="course-input-form">
+                <!--<form action="#" th:action="@{/userInput}" th:object="${userInput}" method="post" id="course-input-form">-->
+
                 <div id="course-input-form-contaner">
                 </div>
                 <div>

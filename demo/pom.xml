@@ -24,11 +24,14 @@
       <artifactId>pdfbox</artifactId>
       <version>3.0.2</version>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/javax.servlet/servlet-api -->
     <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
-      <version>3.2.4</version>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <version>3.0-alpha-1</version>
+      <scope>provided</scope>
     </dependency>
+
   </dependencies>
   <build>
     <finalName>ruhmatoo</finalName>
