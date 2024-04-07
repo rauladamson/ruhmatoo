@@ -1,4 +1,4 @@
-<html>
+<html xmlns:th="https://www.thymeleaf.org">
     <head>
         <title>OOP projekt</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -22,12 +22,6 @@
                 <button onclick="deleteAllUserInput()">Kustuta kõik</button>
             </div>
 
-            <form action="#" th:action="@{/greeting}" th:object="${greeting}" method="post">
-                <p>Id: <input type="text" th:field="*{id}" /></p>
-                <p>Message: <input type="text" th:field="*{content}" /></p>
-                <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
-            </form>
-
             <form action="#" th:action="@{/userInput}" th:object="${userInput}" method="post" id="course-input-form">
                 <div id="course-input-form-contaner">
                 </div>
@@ -35,6 +29,10 @@
                     <input type="submit" value="VAATA" />
                 </div>
             </form>
+
+            <h1>Result</h1>
+            <p th:text="'content: ' + ${userInput.content}" />
+            <a href="/userInput">Submit another message</a>
 
         </div>
 
