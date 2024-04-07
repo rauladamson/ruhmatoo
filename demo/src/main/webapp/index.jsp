@@ -1,4 +1,4 @@
-<html xmlns:th="https://www.thymeleaf.org">
+<html>
     <head>
         <title>OOP projekt</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -22,7 +22,7 @@
                 <button onclick="deleteAllUserInput()">Kustuta kõik</button>
             </div>
 
-            <form action="./java/com.ut.servlet.inputServlet" method="post" id="course-input-form">
+            <form action="inputServlet" method="post" id="course-input-form">
                 <!--<form action="#" th:action="@{/userInput}" th:object="${userInput}" method="post" id="course-input-form">-->
 
                 <div id="course-input-form-contaner">
@@ -35,6 +35,20 @@
             <h1>Result</h1>
             <p th:text="'content: ' + ${userInput.content}" />
             <a href="/userInput">Submit another message</a>
+
+            <% 
+            String gender = (String)session.getAttribute("gender"); 
+            String genderTitle = null; 
+        
+            if (gender != null && gender.equalsIgnoreCase("female")) { 
+                genderTitle = "Ms/Mrs."; 
+            } else { 
+                genderTitle = "Mr."; 
+            } 
+            %> 
+        Welcome <%= genderTitle %> <%=session.getAttribute("emailId") %> 
+        <br> 
+        Your Resume has been added under <%= session.getAttribute("favoriteLanguage")  %> POOL 
 
         </div>
 
