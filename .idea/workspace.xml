@@ -5,13 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="26481401-9acd-4a73-95c1-416b6c45dfbb" name="Changes" comment="fixed the file loading logic, replaced getResourceAsStream with FileInputStream">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/src/main/java/com/ut/pdf/PDFPrint.java" beforeDir="false" afterPath="$PROJECT_DIR$/demo/src/main/java/com/ut/pdf/PDFPrint.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/src/main/java/com/ut/pdf/PDFPrintTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/demo/src/main/java/com/ut/pdf/PDFPrintTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/src/main/webapp 2/WEB-INF/web.xml" beforeDir="false" afterPath="$PROJECT_DIR$/demo/src/main/webapp/WEB-INF/web.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/src/main/webapp 2/index.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/demo/src/main/webapp/index.jsp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/demo/pom.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -122,7 +117,7 @@
       <updated>1712322224828</updated>
       <workItem from="1712322226660" duration="620000" />
       <workItem from="1712378307438" duration="744000" />
-      <workItem from="1712426702619" duration="3814000" />
+      <workItem from="1712426702619" duration="4809000" />
     </task>
     <task id="LOCAL-00001" summary="changed content">
       <option name="closed" value="true" />
@@ -140,7 +135,15 @@
       <option name="project" value="LOCAL" />
       <updated>1712429418638</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="fixed the file loading logic, replaced getResourceAsStream with FileInputStream">
+      <option name="closed" value="true" />
+      <created>1712466160143</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1712466160143</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
