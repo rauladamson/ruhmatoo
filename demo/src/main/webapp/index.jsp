@@ -1,5 +1,7 @@
 <html>
     <head>
+        <title>OOP projekt</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <link rel="stylesheet" type="text/css" href="./css/styles.css">
     </head>
 <body>
@@ -20,7 +22,13 @@
                 <button onclick="deleteAllUserInput()">Kustuta kõik</button>
             </div>
 
-            <form action="" method="get" id="course-input-form">
+            <form action="#" th:action="@{/greeting}" th:object="${greeting}" method="post">
+                <p>Id: <input type="text" th:field="*{id}" /></p>
+                <p>Message: <input type="text" th:field="*{content}" /></p>
+                <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
+            </form>
+
+            <form action="#" th:action="@{/userInput}" th:object="${userInput}" method="post" id="course-input-form">
                 <div id="course-input-form-contaner">
                 </div>
                 <div>
