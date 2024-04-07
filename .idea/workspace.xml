@@ -4,15 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="26481401-9acd-4a73-95c1-416b6c45dfbb" name="Changes" comment="fixed the file loading logic, replaced getResourceAsStream with FileInputStream">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/src/main/java/com/ut/pdf/PDFPrint.java" beforeDir="false" afterPath="$PROJECT_DIR$/demo/src/main/java/com/ut/pdf/PDFPrint.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/src/main/java/com/ut/pdf/PDFPrintTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/demo/src/main/java/com/ut/pdf/PDFPrintTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/src/main/webapp 2/WEB-INF/web.xml" beforeDir="false" afterPath="$PROJECT_DIR$/demo/src/main/webapp/WEB-INF/web.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/src/main/webapp 2/index.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/demo/src/main/webapp/index.jsp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" />
-    </list>
+    <list default="true" id="26481401-9acd-4a73-95c1-416b6c45dfbb" name="Changes" comment="fixed the file loading logic, replaced getResourceAsStream with FileInputStream" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -27,14 +19,12 @@
     &quot;assignee&quot;: &quot;marielinkepp&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">
-    <option name="selectedUrlAndAccountId">
-      <UrlAndAccount>
-        <option name="accountId" value="d71ae652-3777-486e-87b9-6f78b5318d6d" />
-        <option name="url" value="https://github.com/rauladamson/ruhmatoo.git" />
-      </UrlAndAccount>
-    </option>
-  </component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/rauladamson/ruhmatoo.git",
+    "accountId": "6e021338-b0c3-4734-9d23-028f42c106df"
+  }
+}]]></component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
@@ -53,7 +43,7 @@
     "JUnit.com.ut.pdf in ruhmatoo.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "master",
     "jdk.selected.JAVA_MODULE": "21",
     "kotlin-language-version-configured": "true",
     "node.js.detected.package.eslint": "true",
@@ -69,7 +59,7 @@
       <recent name="$PROJECT_DIR$/demo" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.PDFPrintTest">
+  <component name="RunManager">
     <configuration name="PDFPrintTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.ut.pdf.PDFPrintTest" />
       <module name="ruhmatoo" />
@@ -140,11 +130,30 @@
       <option name="project" value="LOCAL" />
       <updated>1712429418638</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="fixed the file loading logic, replaced getResourceAsStream with FileInputStream">
+      <option name="closed" value="true" />
+      <created>1712491154943</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1712491154943</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="changed content" />

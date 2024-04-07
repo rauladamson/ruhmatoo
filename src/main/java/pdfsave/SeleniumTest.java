@@ -1,17 +1,20 @@
-package pdfsave;
 
+
+package pdfsave;
+/*
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-
+*/
 public class SeleniumTest {
     /**
      * Retired. Seleniumiga õisist cssrequestide tegemine kursuse andmete saamiseks
      * @param args
      */
     public static void main(String[] args) {
+        /*
         System.setProperty("webdriver.chrome.driver", "src/main/java/pdfsave/chromedriver32.exe");
 
         ChromeOptions options = new ChromeOptions();
@@ -38,7 +41,7 @@ public class SeleniumTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
-            driver.quit();
+            driver.quit();*/
         }
-    }
 }
+
