@@ -7,6 +7,7 @@ import org.apache.pdfbox.io.RandomAccessRead;
 import org.apache.pdfbox.io.RandomAccessReadBuffer;
 import org.apache.pdfbox.text.TextPosition;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -19,8 +20,11 @@ public class PDFPrint {
      * @param endKeyword Sõne millega lõppeb väljastamine (see jääb välja)
      */
     public void printLinesFromKeywordToKeyword(String pdfPath, String startKeyword, String endKeyword) {
-        //
-        try (InputStream pdfStream = getClass().getResourceAsStream(pdfPath)) {
+        //System.out.println(pdfPath);
+        //System.out.println(System.getProperty("java.class.path"));
+
+        //try (InputStream pdfStream = getClass().getResourceAsStream(pdfPath)) {
+        try (InputStream pdfStream = new FileInputStream(pdfPath)) {
             if (pdfStream == null) {
                 throw new IOException("PDF file not found at path: " + pdfPath);
             }
