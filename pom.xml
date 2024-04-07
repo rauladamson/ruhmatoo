@@ -26,7 +26,6 @@
       <version>3.0.2</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/javax.servlet/servlet-api -->
-<<<<<<< HEAD
       <!-- other dependencies -->
       <dependency>
         <groupId>javax.servlet</groupId>
@@ -47,30 +46,6 @@
       <artifactId>json</artifactId>
       <version>20230618</version>
     </dependency>
-
-=======
-    <!-- other dependencies -->
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-      <version>4.0.1</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-servlet-api</artifactId>
-      <version>9.0.53</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <version>2.5</version>
-      <scope>provided</scope>
-    </dependency>
-    <!-- https://mvnrepository.com/artifact/jakarta.json/jakarta.json-api -->
->>>>>>> 5b285eb (Add untracked files)
-
 
   </dependencies>
   <build>
@@ -128,13 +103,6 @@
       <testResource>
         <directory>src/test/resources</directory>
       </testResource>
-<<<<<<< HEAD
   </testResources>
   </build>
 </project>
-=======
-    </testResources>
-
-  </build>
-</project>
->>>>>>> 5b285eb (Add untracked files)
