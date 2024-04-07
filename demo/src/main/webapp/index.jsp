@@ -22,8 +22,7 @@
                 <button onclick="deleteAllUserInput()">Kustuta kõik</button>
             </div>
 
-            <form action="inputServlet" method="post" id="course-input-form">
-                <!--<form action="#" th:action="@{/userInput}" th:object="${userInput}" method="post" id="course-input-form">-->
+            <form action="inputServlet" method="post" id="course-input-form" onsubmit="submitForm(event)">
 
                 <div id="course-input-form-contaner">
                 </div>
@@ -32,23 +31,9 @@
                 </div>
             </form>
 
-            <h1>Result</h1>
-            <p th:text="'content: ' + ${userInput.content}" />
-            <a href="/userInput">Submit another message</a>
+            <div id="result">
 
-            <% 
-            String gender = (String)session.getAttribute("gender"); 
-            String genderTitle = null; 
-        
-            if (gender != null && gender.equalsIgnoreCase("female")) { 
-                genderTitle = "Ms/Mrs."; 
-            } else { 
-                genderTitle = "Mr."; 
-            } 
-            %> 
-        Welcome <%= genderTitle %> <%=session.getAttribute("emailId") %> 
-        <br> 
-        Your Resume has been added under <%= session.getAttribute("favoriteLanguage")  %> POOL 
+            </div>
 
         </div>
 

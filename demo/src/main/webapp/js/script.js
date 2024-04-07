@@ -65,3 +65,23 @@ function createNewFormChildDiv(HTMLText, name, inputType, placeholderText) {
       directParentEl.parentNode.removeChild(directParentEl);
     } 
   }
+
+  function submitForm(event) {
+    event.preventDefault(); // Prevent the form from being submitted normally
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'inputServlet', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+    xhr.onload = function() {
+        if (this.status == 200) {
+            // Append the response text to the page
+            var resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = this.responseText;
+        }
+    };
+
+    var formData = new FormData(event.target);
+    xhr.send(new URLSearchParams(formData).toString());
+  
+  }

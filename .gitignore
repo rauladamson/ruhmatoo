@@ -1,4 +1,6 @@
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 # Compiled class file
 *.class
 
@@ -24,6 +26,7 @@
 hs_err_pid*
 replay_pid*
 =======
+>>>>>>> 4544ea084f4dd140ca48439587e250c1760fac99
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
@@ -61,6 +64,9 @@ build/
 .vscode/
 
 ### Mac OS ###
+<<<<<<< HEAD
+.DS_Store
+=======
 .DS_Store
 >>>>>>> pdfprint
 
@@ -73,3 +79,4 @@ build/
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
+>>>>>>> 4544ea084f4dd140ca48439587e250c1760fac99

@@ -1,5 +1,7 @@
 package com.ut.servlet;
 
+import java.util.Map;
+import java.util.Arrays;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -21,29 +23,22 @@ public class InputServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // We can able to get the form data by means of the below ways.
-        // Form arguments should be matched and then only they are recognised
-        String userName = request.getParameter("userName");
-        String yourEmailID = request.getParameter("yourEmailID");
-        String yourPassword = request.getParameter("yourPassword");
-        String gender = request.getParameter("gender");
-        String favoriteLanguage = request.getParameter("favoriteLanguage");
-        System.out.println("gender.." + gender);
-        System.out.println("favoriteLanguage.." + favoriteLanguage);
+        Map<String, String[]> inputsMap = request.getParameterMap();
 
-        // Here the business validations goes. As a sample,
-        // we can check against a hardcoded value or pass the
-        // values into a database which can be available in local/remote  db
-        // For easier way, let us check against a hardcoded value
-        if (userName != null && yourEmailID != null &&  yourPassword != null ) {
-            // We can redirect the page to a welcome page
-            // Need to pass the values in session in order
-            // to carry forward that one to next pages
+        
+
+        if (inputsMap.size() != 0) {
+            for (String paramName : inputsMap.keySet()) {
+                String[] paramValues = inputsMap.get(paramName);
+                System.out.println("Parameter name: " + paramName);
+                System.out.println("Parameter values: " + Arrays.toString(paramValues));
+            }
+
             HttpSession httpSession = request.getSession();
-            httpSession.setAttribute("emailId", yourEmailID);
-            httpSession.setAttribute("gender", gender);
-            httpSession.setAttribute("favoriteLanguage", favoriteLanguage);
-            request.getRequestDispatcher("welcome.jsp").forward(request, response);
-        }
+            httpSession.setAttribute("inputsMap", inputsMap);
+            request.getRequestDispatcher("index.jsp").forward(request, response);
+
+        } 
+
     }
 }

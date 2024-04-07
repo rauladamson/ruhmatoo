@@ -31,6 +31,7 @@
         <version>9.0.53</version>
         <scope>provided</scope>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/jakarta.json/jakarta.json-api -->
 
   </dependencies>
   <build>
