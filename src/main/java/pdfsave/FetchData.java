@@ -26,7 +26,7 @@ public class FetchData {
     public static String fetchAPIData(String urlString) {
         StringBuilder result = new StringBuilder();
         try {
-            URL url = new URL(urlString);
+            URL url = new URL(generateAPILink(urlString));
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
             urlConnection.setRequestProperty("Accept", "application/json");
@@ -49,4 +49,19 @@ public class FetchData {
         return result.toString();
     }
 
+    /**
+     * Giga hakk, api lingi genereerimiseks :)
+     */
+    public static String generateAPILink(String courseUrl) {
+        if (courseUrl.contains("details") || courseUrl.contains("#")) {
+            String newlink = courseUrl.replace("#", "api");
+            newlink = newlink.replace("/details", "");
+            if (newlink.contains("versions")) {
+                return newlink;
+            }
+            newlink = newlink.replace("version", "versions");
+            return newlink;
+        }
+        return courseUrl;
+    }
 }

@@ -5,10 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="395d9b5a-abe8-41e7-b874-b7c23045fce4" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/main/java/pdfsave/ExtractPDFText.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pdfsave/ExtractPDFText.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/pdfsave/FetchData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pdfsave/FetchData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pdfsave/HTMLextract.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pdfsave/SeleniumTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pdfsave/SeleniumTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/pdfsave/Testing.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pdfsave/Testing.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -103,7 +101,7 @@
       <updated>1712467787258</updated>
       <workItem from="1712467789221" duration="593000" />
       <workItem from="1712468395727" duration="9667000" />
-      <workItem from="1712478179425" duration="7834000" />
+      <workItem from="1712478179425" duration="8650000" />
     </task>
     <servers />
   </component>
