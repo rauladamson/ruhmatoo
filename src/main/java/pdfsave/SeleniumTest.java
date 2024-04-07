@@ -16,14 +16,14 @@ public class SeleniumTest {
 
         ChromeOptions options = new ChromeOptions();
 
-        options.addArguments("--disable-web-security", "--disable-site-isolation-trials", "--remote-allow-origins=*"); // Giga hack?
+        options.addArguments("--disable-web-security", "--disable-site-isolation-trials", "--remote-allow-origins=*"); // Giga hack, et seleniumi tööle saada. Ei kasutaks
         WebDriver driver = new ChromeDriver(options);
 
 
 
         try {
             driver.get("https://ois2.ut.ee/#/courses/LTAT.03.007/version/fde0bca8-705f-74c9-456e-e68104c23b53/details");
-            Thread.sleep(5000); //hack for now :///
+            Thread.sleep(5000); //hack for now
 
 
 

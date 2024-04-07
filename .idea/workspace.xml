@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="395d9b5a-abe8-41e7-b874-b7c23045fce4" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pdfsave/FetchData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pdfsave/FetchData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pdfsave/Testing.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pdfsave/Testing.java" afterDir="false" />
-    </list>
+    <list default="true" id="395d9b5a-abe8-41e7-b874-b7c23045fce4" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -101,7 +97,7 @@
       <updated>1712467787258</updated>
       <workItem from="1712467789221" duration="593000" />
       <workItem from="1712468395727" duration="9667000" />
-      <workItem from="1712478179425" duration="8650000" />
+      <workItem from="1712478179425" duration="8978000" />
     </task>
     <servers />
   </component>
