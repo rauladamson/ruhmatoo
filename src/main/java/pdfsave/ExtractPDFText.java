@@ -11,6 +11,13 @@ import java.io.OutputStream;
 
 public class ExtractPDFText {
     public static void main(String[] args) {
+        /* Plaan, kuidas extractida mitu faili korraga ja kursuste koodide järgi?
+        for (String pdfFilePath : args) {
+            File pdfFile = new File(pdfFilePath);
+            String courseCode = extractCourseCode(pdfFile);
+            File outputFile = new File("src/main/resources/pdfsaves/" + courseCode + ".bin");
+        }
+         */
         File pdfFile = new File("src/main/resources/pdfs/ois1.pdf");
         File outputFile = new File("src/main/resources/pdfsaves/output1.bin");
 
@@ -25,5 +32,8 @@ public class ExtractPDFText {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    private static String extractCourseCode(File pdfFile) throws IOException {
+        return "xxxx.xx.xxx";
     }
 }

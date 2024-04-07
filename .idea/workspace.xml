@@ -5,8 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="395d9b5a-abe8-41e7-b874-b7c23045fce4" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/pdfsave/ExtractPDFText.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pdfsave/ExtractPDFText.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -77,7 +77,7 @@
       <option name="presentableId" value="Default" />
       <updated>1712467787258</updated>
       <workItem from="1712467789221" duration="593000" />
-      <workItem from="1712468395727" duration="655000" />
+      <workItem from="1712468395727" duration="1195000" />
     </task>
     <servers />
   </component>
