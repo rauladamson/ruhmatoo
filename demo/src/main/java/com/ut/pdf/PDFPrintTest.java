@@ -41,7 +41,6 @@ public class PDFPrintTest {
         String startKeyword = "Maht";
         String endKeyword = "Õpikeskkond";
 
-
         File[] files =  new File(System.getProperty("user.dir") + "/demo/src/main/resources/pdfs").listFiles();
         if (files != null) {
             for (File file : files) {
