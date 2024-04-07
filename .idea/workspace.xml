@@ -5,8 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="395d9b5a-abe8-41e7-b874-b7c23045fce4" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/pdfsave/FirstScript.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/pdfsave/chromedriver.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pdfsave/ExtractPDFText.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pdfsave/ExtractPDFText.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,11 +48,19 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Application.ExtractHTML.executor": "Run",
     "Application.ExtractPDFText.executor": "Run",
+    "Application.FirstScript.executor": "Run",
+    "Application.HTMLextract.executor": "Run",
     "Application.PDFPrintTest.executor": "Run",
+    "Application.SeleniumTest.executor": "Run",
+    "Application.WebScraper.executor": "Run",
+    "Application.Webscraper.executor": "Run",
+    "Application.Wikipedia.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "git-widget-placeholder": "pdfsave",
+    "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -60,6 +70,17 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\imred\OneDrive\Coding\ruhmatoo\src\main\java\pdfsave" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="pdfsave" />
+    </key>
+  </component>
+  <component name="SeleniumInternalSettingsState">
+    <option name="lastUrl" value="https://ois2.ut.ee/#/courses/LTAT.03.007/version/fde0bca8-705f-74c9-456e-e68104c23b53/details" />
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -77,7 +98,8 @@
       <option name="presentableId" value="Default" />
       <updated>1712467787258</updated>
       <workItem from="1712467789221" duration="593000" />
-      <workItem from="1712468395727" duration="1195000" />
+      <workItem from="1712468395727" duration="9667000" />
+      <workItem from="1712478179425" duration="2037000" />
     </task>
     <servers />
   </component>
