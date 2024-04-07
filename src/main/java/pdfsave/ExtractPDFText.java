@@ -10,6 +10,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 public class ExtractPDFText {
+    /**
+     * Nüüdseks retired. Algselt oli plaan kõik kursused PDF failid convertida .bin failideks, Marielini soovil.
+     * @param args
+     */
     public static void main(String[] args) {
         /* Plaan, kuidas extractida mitu faili korraga ja kursuste koodide järgi?
         for (String pdfFilePath : args) {

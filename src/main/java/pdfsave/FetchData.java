@@ -17,6 +17,12 @@ public class FetchData {
         }
         return result.toString();
     }
+
+    /**
+     * Funktsioon Httpst JSON textiks tegemiseks, et seda hiljem töödelda.
+     * @param urlString "link OIS API leheküljele"
+     * @return String kõik leheküljel olevaga.
+     */
     public static String fetchAPIData(String urlString) {
         StringBuilder result = new StringBuilder();
         try {

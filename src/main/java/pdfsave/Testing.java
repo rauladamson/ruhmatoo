@@ -7,6 +7,6 @@ public class Testing {
         // Kiire häkk: ,et teha Urlist API urli, # -> api, version -> versions, õppeaine versioonist -/details.
         FetchData a = new FetchData();
         String[] urls = {url1, url2};
-        FetchData.main(urls);
+        String vastus = a.main(urls);
     }
 }

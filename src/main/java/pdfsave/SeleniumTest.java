@@ -7,6 +7,10 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
 public class SeleniumTest {
+    /**
+     * Retired. Seleniumiga õisist cssrequestide tegemine kursuse andmete saamiseks
+     * @param args
+     */
     public static void main(String[] args) {
         System.setProperty("webdriver.chrome.driver", "src/main/java/pdfsave/chromedriver32.exe");
 
