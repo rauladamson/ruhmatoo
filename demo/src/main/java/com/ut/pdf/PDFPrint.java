@@ -20,14 +20,9 @@ public class PDFPrint {
      * @param endKeyword Sõne millega lõppeb väljastamine (see jääb välja)
      */
     public void printLinesFromKeywordToKeyword(String pdfPath, String startKeyword, String endKeyword) {
-        //System.out.println(pdfPath);
-        //System.out.println(System.getProperty("java.class.path"));
 
-        //try (InputStream pdfStream = getClass().getResourceAsStream(pdfPath)) {
         try (InputStream pdfStream = new FileInputStream(pdfPath)) {
-            if (pdfStream == null) {
-                throw new IOException("PDF file not found at path: " + pdfPath);
-            }
+        
             System.out.println("-".repeat(5));
             RandomAccessRead randomAccessRead = RandomAccessReadBuffer.createBufferFromStream(pdfStream);
 
@@ -35,21 +30,26 @@ public class PDFPrint {
                 PDFTextStripper pdfStripper = new PDFTextStripper() {
                     private boolean printing = false;
 
+
                     @Override
                     protected void writeString(String text, List<TextPosition> textPositions) {
+
                         if (text.contains(startKeyword)) {
                             printing = true;
                         }
 
                         if (printing && !text.contains(endKeyword)) {
                             System.out.println(text);
+                            
                         }
 
                         if (text.contains(endKeyword)) {
                             printing = false;
                         }
+                    
                     }
                 };
+
                 pdfStripper.setSortByPosition(false);
                 pdfStripper.getText(document);
             }
@@ -81,4 +81,5 @@ public class PDFPrint {
             e.printStackTrace();
         }
     }
+    
 }
