@@ -3,7 +3,7 @@
 
 
 ## Liikmed:
-- Mattas Moor
+- Mattias Moor
 - Marielin Kepp
 - Martin Jaani
 - Raul Adamson
