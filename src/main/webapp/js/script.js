@@ -282,7 +282,7 @@ class Calendar {
     // nädalapäaevad
     addWeekdays() {
         Object.keys(this.days).forEach((i) => {
-            createNewChidldEl(this.dayList, i, "li", "a", (), text=this.days[i]);
+            createNewChidldEl(this.dayList, i, "li", "a", (""), text=this.days[i]);
         });
     }
 
