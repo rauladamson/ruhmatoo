@@ -1,5 +1,7 @@
 package servlet;
 
+import java.io.Serial;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Arrays;
 //import java.util.HashMap;
@@ -14,9 +16,11 @@ import javax.servlet.http.HttpServletResponse;
 
 //import pdf.PDFPrintTest;
 import pdfsave.FetchData;
+import oppeaine.Oppeaine;
 
 @WebServlet("/inputServlet")
 public class InputServlet extends HttpServlet {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     public InputServlet() {
@@ -28,23 +32,25 @@ public class InputServlet extends HttpServlet {
             throws ServletException, IOException {
 
         Map<String, String[]> inputsMap = request.getParameterMap();
+
+        ArrayList<Oppeaine> oppeained = new ArrayList<>();
         //HashMap<String, String[]> inputsMap = new PDFPrintTest(null).getInputsMap();
         StringBuilder builder = new StringBuilder();
 
-        if (inputsMap.size() != 0) {
+        if (!inputsMap.isEmpty()) {
+
             for (String paramName : inputsMap.keySet()) {
                 String[] paramValues = inputsMap.get(paramName);
                 //System.out.println("Parameter name: " + paramName);
                 //System.out.println("Parameter values: " + Arrays.toString(paramValues));
                 builder.append("Parameter name: ").append(paramName);
-                builder.append("Parameter name: ").append(FetchData.fetchAPIData(paramValues[0]));
-                //System.out.println(FetchData.main(paramValues));
 
-                //System.out.println(System.getProperty("user.dir"));
-
-                //builder.append(", Parameter values: ").append(Arrays.toString(paramValues)).append("\n");
-                //builder.append(", Parameter values: ").append(Arrays.toString(paramValues)).append("\n");
+                Oppeaine oa = FetchData.fetchAPIData(paramValues[0]); // luuaks euus Õppeaine objekt
+                builder.append("Parameter name: ").append(oa);
+                oppeained.add(oa);
             }
+
+
 
             //HttpSession httpSession = request.getSession();
             String text = builder.toString();
@@ -52,11 +58,12 @@ public class InputServlet extends HttpServlet {
             response.setContentType("text/plain");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().write(text);
+
             
             /*httpSession.setAttribute("inputsMap", inputsMap);
             request.getRequestDispatcher("index.jsp").forward(request, response);*/
 
-        } 
+        }
 
     }
 }

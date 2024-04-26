@@ -10,6 +10,7 @@ public class Oppeaine {
     public String text;
     public Integer ECTs;
     public String name;
+    public String uuid;
 
     public HashMap<String, ?> data;
 
@@ -47,16 +48,24 @@ public class Oppeaine {
 
     public void getDataFromJSON(String json) {
 
+        //System.out.println(" json jõuab");
+        //System.out.println(json);
         JSONObject jo = new JSONObject(json);
 
-        System.out.println(jo.get("uuid"));
+        //System.out.println("jo jõuab");
+        //System.out.println(jo.get("uuid"));
+
+        this.setUuid(jo.get("uuid")); // EAPd
         this.setECTs(jo.getInt("credits")); // EAPd
         this.setData(jo.getJSONObject("additional_info").getJSONObject("hours").toMap());
         this.setName(jo.getJSONObject("title").get("et").toString());
-        
-        
+
     }
-    
+
+    private void setUuid(Object uuid) {
+        this.uuid = uuid.toString();
+    }
+
     @Override
     public String toString() {
         // TODO Auto-generated method stub
