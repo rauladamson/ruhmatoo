@@ -15,16 +15,15 @@ function createNewFormChildDiv(HTMLText, name, inputType, placeholderText) {
               input.placeholder = placeholderText;
     
     var delButton = document.createElement('button');
-      delButton.textContent = 'X';
-      delButton.classList.add("delete-btn"); // lisatakse klass
-      delButton.onclick = function() {
-      deleteEl(formChildDiv);
-  };
+              delButton.textContent = 'X';
+              delButton.classList.add("delete-btn"); // lisatakse klass
+              delButton.type = "button";
+              delButton.onclick = function() { deleteEl(formChildDiv); };
     
-    if (inputType == "url") {
-              input.pattern="https://.*";
+    if (inputType === "url") {
+        input.pattern="https://.*";
     }
-    
+
     var div = document.getElementById("course-input-form-contaner");
               formChildDiv.appendChild(label);
               formChildDiv.appendChild(input);
@@ -33,7 +32,6 @@ function createNewFormChildDiv(HTMLText, name, inputType, placeholderText) {
   }
   
   function addTextInput() {
-    
     var form = document.getElementById("course-input-form");
     
     createNewFormChildDiv("Lisa ainekood:", // sisendvälja silt
@@ -74,16 +72,16 @@ function createNewFormChildDiv(HTMLText, name, inputType, placeholderText) {
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
     xhr.onload = function() {
-        if (this.status == 200) {
+        if (this.status === 200) {
             // Append the response text to the page
             var resultDiv = document.getElementById('result');
+            console.log(this.responseText);
             resultDiv.innerHTML = this.responseText;
         }
     };
 
     var formData = new FormData(event.target);
     xhr.send(new URLSearchParams(formData).toString());
-
   }
 
 // kalendri kood
