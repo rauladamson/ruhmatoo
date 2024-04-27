@@ -21,7 +21,7 @@ function createNewFormChildDiv(HTMLText, name, inputType, placeholderText) {
       deleteEl(formChildDiv);
   };
     
-    if (inputType == "url") {
+    if (inputType === "url") {
               input.pattern="https://.*";
     }
     
@@ -74,7 +74,7 @@ function createNewFormChildDiv(HTMLText, name, inputType, placeholderText) {
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
     xhr.onload = function() {
-        if (this.status == 200) {
+        if (this.status === 200) {
             // Append the response text to the page
             var resultDiv = document.getElementById('result');
             resultDiv.innerHTML = this.responseText;
@@ -246,7 +246,7 @@ class Calendar {
             yearNr.textContent = i;
             yearNr.dataset.value = i;
 
-            if (i != this.currentYear) { yearNr.classList.add("hidden"); }
+            if (i !== this.currentYear) { yearNr.classList.add("hidden"); }
             else { yearNr.classList.add("selected"); }
 
             yearNr.classList.add("yearNr");
@@ -259,7 +259,7 @@ class Calendar {
     addMonths() {
         // kuud lisatakse dünaamiliselt
         Object.keys(this.months).forEach((i) => {
-            createNewChidldEl(this.monthList, i, "li", "a", ("monthA"), text=this.months[i]);
+            createNewChidldEl(this.monthList, i, "li", "a", ("monthA"), this.months[i]);
         });
     }
 
@@ -267,11 +267,12 @@ class Calendar {
         let outerEl = document.createElement(outerTag);
         let innerEl = document.createElement(innerTag);
 
-        if (innerTag == "a") {innerEl.href = "#";}
+        if (innerTag === "a") {innerEl.href = "#";}
 
         innerEl.title = i;
         innerEl.dataset.value = i;
         innerEl.textContent = i;
+        if (text) {innerEl.textContent = text;}
 
         innerEl.classList.add(classListItems);
 
@@ -282,7 +283,7 @@ class Calendar {
     // nädalapäaevad
     addWeekdays() {
         Object.keys(this.days).forEach((i) => {
-            createNewChidldEl(this.dayList, i, "li", "a", (""), text=this.days[i]);
+            createNewChidldEl(this.dayList, i, "li", "a", (""), this.days[i]);
         });
     }
 
@@ -309,10 +310,10 @@ class Calendar {
         testP.textContent += " " + weekdayOfLast;
 
         // eelmise kuu päevade lisamine, kui kuu ei alga esmaspäevaga
-        if (weekdayOfFirst != 0) {
+        if (weekdayOfFirst !== 0) {
 
             let daysInPrevMonth = new Date(this.selectedYear, this.selectedMonthNr - 1, 0).getDate();
-            if (this.selectedMonthNr == 1) {
+            if (this.selectedMonthNr === 1) {
                 daysInPrevMonth = new Date(this.selectedYear - 1, this.selectedMonthNr - 1, 0).getDate();
             }
 
@@ -329,7 +330,7 @@ class Calendar {
         }
 
         // järgmise kuu päevade lisamine, kui kuu ei lõpe pühapäevaga
-        if (weekdayOfLast != 6) {
+        if (weekdayOfLast !== 6) {
 
             for (let i = 1; i <= 35 - totalElCount; i++) {
                 createNewChidldEl(this.daysList, i, "li", "a", ("dayA", "half-hidden"));
