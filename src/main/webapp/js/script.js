@@ -17,9 +17,8 @@ function createNewFormChildDiv(HTMLText, name, inputType, placeholderText) {
     var delButton = document.createElement('button');
       delButton.textContent = 'X';
       delButton.classList.add("delete-btn"); // lisatakse klass
-      delButton.onclick = function() {
-      deleteEl(formChildDiv);
-  };
+      delButton.type = "button"
+      delButton.onclick = function() { deleteEl(formChildDiv); };
     
     if (inputType === "url") {
               input.pattern="https://.*";
