@@ -1,5 +1,6 @@
 package servlet;
 
+import java.io.FileWriter;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Map;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 //import javax.servlet.http.HttpSession;
 
 //import pdf.PDFPrintTest;
+import org.json.JSONObject;
 import pdfsave.FetchData;
 import oppeaine.Oppeaine;
 
@@ -47,7 +49,23 @@ public class InputServlet extends HttpServlet {
                 Oppeaine oa = FetchData.fetchAPIData(paramValues[0]); // luuakse uus Õppeaine objekt
                 // TODO kontrolli paramValues pikkust - kas on alati ainult üks el?
                 builder.append("Parameter name: ").append(oa); // vastuse sisule lisatakse Õppeaine objekt
+
+                // Õppeaine object to Json file
+                JSONObject jo = new JSONObject(oa);
+                jo.put("uuid", oa.getUuid()); // Uuid
+                jo.put("data", oa.getData()); // Data
+                String joString = jo.toString();
+
+                String filename = paramName + ".json";
+                try (FileWriter file = new FileWriter(filename)) {
+                    file.write(joString);
+                    file.flush();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
                 oppeained.add(oa); // Õppeaine objekt lisatakse Õppeaine objektide listi
+
             }
 
             //HttpSession httpSession = request.getSession();
