@@ -1,69 +1,102 @@
-function createNewFormChildDiv(HTMLText, name, inputType, placeholderText) {
-    var formChildDiv = document.createElement("div"); // luuakse uus div container
-        formChildDiv.classList.add("form-item"); // lisatakse klass
-    
-    var label = document.createElement("label"); // luuakse sisendvälja silt
-              label.innerHTML = HTMLText;
-              label.htmlFor = name;
-    
-    var input = document.createElement("input"); // luuakse sisendväli
-              input.type = inputType;
-              input.name = name;
-              input.required = true;
-              input.minlength = "4";
-              input.size = "30";
-              input.placeholder = placeholderText;
-    
-    var delButton = document.createElement('button');
-      delButton.textContent = 'X';
-      delButton.classList.add("delete-btn"); // lisatakse klass
-      delButton.type = "button"
-      delButton.onclick = function() { deleteEl(formChildDiv); };
-    
+/* MIAN PAGE */
+
+function createNewFormChildDiv(HTMLText, name, inputType, placeholderText, className) {
+    let formChildDiv = document.createElement("div"); // luuakse uus div container
+    formChildDiv.classList.add("form-item"); // lisatakse klass
+    formChildDiv.classList.add(className); // lisatakse klass
+
+    let label = document.createElement("label"); // luuakse sisendvälja silt
+    label.innerHTML = HTMLText;
+    label.htmlFor = name;
+
+    let input = document.createElement("input"); // luuakse sisendväli
+    input.type = inputType;
+    input.name = name;
+    input.required = true;
+    input.minlength = "4";
+    input.size = "30";
+    input.placeholder = placeholderText;
+
+    let delButton = document.createElement('button');
+    delButton.textContent = 'X';
+    delButton.classList.add("delete-btn"); // lisatakse klass
+    delButton.type = "button"
+    delButton.onclick = function() { deleteEl(formChildDiv); };
+
     if (inputType === "url") {
-              input.pattern="https://.*";
+        input.pattern="https://.*";
     }
-    
-    var div = document.getElementById("course-input-form-contaner");
-              formChildDiv.appendChild(label);
-              formChildDiv.appendChild(input);
-              formChildDiv.appendChild(delButton);
-              div.appendChild(formChildDiv);
-  }
-  
-  function addTextInput() {
-    
-    var form = document.getElementById("course-input-form");
-    
-    createNewFormChildDiv("Lisa ainekood:", // sisendvälja silt
-                          `input-${form.getElementsByTagName('input').length + 1}`, // sisendvälja nimi
-                          "text", // sisendvälja tüübi määramine
-                          "VALDKOND.00.0000"
-                         ); 
-  }
-  
-  function addUrlInput() {
-    
+
+    let div = document.getElementById("course-input-form-contaner");
+    formChildDiv.appendChild(label);
+    formChildDiv.appendChild(input);
+    formChildDiv.appendChild(delButton);
+    div.appendChild(formChildDiv);
+}
+
+function addTextInput() {
+    let form = document.getElementById("course-input-form");
+    createNewFormChildDiv("Lisa ainekood:",
+        `text-input-${form.getElementsByClassName('textInput').length + 1}`,
+        "text",
+        "VALDKOND.00.0000",
+        "textInput"
+
+    );
+}
+
+function addUrlInput() {
+    let form = document.getElementById("course-input-form-contaner");
+    createNewFormChildDiv("Lisa url:",
+        `url-input-${form.getElementsByClassName('urlInput').length + 1}`,
+        "url",
+        "https://ois2.ut.ee/#/courses/...",
+        "urlInput");
+}
+
+function addCalInput() {
+    let form = document.getElementById("course-input-form-contaner");
+    createNewFormChildDiv("Lisa iCal link:",
+        `cal-input-${form.getElementsByClassName('iCalInput').length + 1}`,
+        "url",
+        "...",
+        "iCalInput");
+}
+
+function deleteAllUserInput() {
+
     var form = document.getElementById("course-input-form-contaner");
-    
-    createNewFormChildDiv("Lisa url:", // sisendvälja silt
-                          `input-${form.getElementsByTagName('input').length + 1}`, // sisendvälja nimi
-                          "url",// sisendvälja tüübi määramine
-                          "https://ois2.ut.ee/#/courses/..."); 
-  }
-  
-  function deleteAllUserInput() {
-  
-    var form = document.getElementById("course-input-form-contaner");
-          form.innerHTML = "";
-  }
-  
-  function deleteEl(directParentEl) {
-    
+    form.innerHTML = "";
+}
+
+function deleteEl(directParentEl) {
+
     if (directParentEl) {
-      directParentEl.parentNode.removeChild(directParentEl);
-    } 
-  }
+        directParentEl.parentNode.removeChild(directParentEl);
+    }
+}
+
+function revealResult(){
+    var el = document.getElementById("course-overview");
+    el.classList.remove("hidden");
+
+}
+
+function showHiddenEl(elId) {
+    let targetEl = document.getElementById(elId);
+
+    let userInputGridEl = document.getElementById("userInput");
+
+    userInputGridEl.classList.toggle("initial");
+    // peidab/näitab elementi
+    targetEl.classList.toggle("hidden");
+
+}
+
+  
+
+  
+
 
   function submitForm(event) {
     event.preventDefault(); // Prevent the form from being submitted normally
@@ -74,9 +107,19 @@ function createNewFormChildDiv(HTMLText, name, inputType, placeholderText) {
 
     xhr.onload = function() {
         if (this.status === 200) {
-            // Append the response text to the page
-            var resultDiv = document.getElementById('result');
-            resultDiv.innerHTML = this.responseText;
+
+            var responseObj = JSON.parse(this.responseText); // JSON stringist objektiks
+
+            let courseOverview = document.getElementById('course-overview');
+            let childDiv1 = document.createElement("div"); // luuakse uus div container
+            childDiv1.innerHTML = responseObj['url-input'];
+            courseOverview.appendChild(childDiv1);
+
+            let calendarGrid = document.getElementById('calendar-grid');
+            let childDiv2 = document.createElement("div"); // luuakse uus div container
+            childDiv2.innerHTML = responseObj['cal-input'];
+            calendarGrid.appendChild(childDiv2);
+
         }
     };
 
@@ -85,6 +128,7 @@ function createNewFormChildDiv(HTMLText, name, inputType, placeholderText) {
 
   }
 
+  /* KALENDER */
 Date.prototype.getAdjustedDay = function() {
     var day = this.getDay();
     return day === 0 ? 6 : day - 1;
@@ -93,8 +137,11 @@ Date.prototype.getAdjustedDay = function() {
 // kalendri kood
 class Calendar {
     constructor() {
-        this.selectedMonthNr = 0; // algväärtuseks Jaanuar
+
+        this.selectedDayNr = new Date().getDate(); // algväärtuseks käesolev kuupäev
+        this.selectedMonthNr = new Date().getMonth(); // algväärtuseks käesolev kuu
         this.selectedYear = 2024; // algväärtuseks 2024
+
         this.currentYear = new Date().getFullYear(); // praegune aasta
         this.days = {0: "E", 1: "T", 2: "K", 3: "N", 4: "R", 5: "L", 6: "P"};
         this.months = {0: 'Jan', 1: 'Feb', 2: 'Mar', 3: 'Apr', 4: 'May', 5: 'Jun', 6: 'Jul', 7: 'Aug', 8: 'Sep', 9: 'Oct', 10: 'Nov', 11: 'Dec'};
@@ -104,12 +151,6 @@ class Calendar {
         this.daysList.className = "days";
         this.monthList = document.getElementById("monthList");
         this.monthList.addEventListener('change', () => this.updateMonth());
-
-        //this.SelectedDayEl = null;
-        // this.SelectedMonthEl = null;
-        //  this.SelectedYearhEl = null;
-
-
 
         // Add event listener to the parent element
         this.yearSelect.addEventListener('click', (event) => {
@@ -139,13 +180,20 @@ class Calendar {
         this.addMonths(); // kuude lisamine (Jan - Dec)
         this.addMonthDays(); // kuu päevade lisamine (1 - 28/29/30/31)
 
-        //this.selectMonth(this.selectedMonthEl);
-        //this.selectYear(this.selectedYearEl);
+        this.selectedDayEl = document.getElementsByClassName('.day.selected');
+        this.selectedMonthEl = document.getElementsByClassName('.monthA.selected');
+        this.selectedYearEl = document.getElementsByClassName('.yearNr.selected');
+
+        this.selectDay(this.selectedDayEl);
+        this.selectMonth(this.selectedMonthEl);
+        this.selectYear(this.selectedYearEl);
+
+
     }
 
     /* FUNKTSIOONID */
 
-    createNewChidldEl(parent, i, outerTag, innerTag, outerClassListItems, innerClassListItems, text = null, returnBool = false) {
+    createNewChidldEl(parent, i, outerTag, innerTag, outerClassListItems, innerClassListItems, text = null, nrToCheck = null, elToAddChildTo = null) {
 
         let outerEl = document.createElement(outerTag);
         let innerEl = null;
@@ -168,8 +216,14 @@ class Calendar {
             outerEl.appendChild(innerEl);
         }
 
+        if ((nrToCheck !== null) &&(i === nrToCheck)) {
+            outerEl.classList.remove("hidden");
+            outerEl.classList.remove("half-hidden");
+            elToAddChildTo = outerEl;
+        }
+
         parent.appendChild(outerEl);
-        if (returnBool && innerTag !== null) { return innerEl; }
+        //if (returnBool && innerTag !== null) { return innerEl; }
     }
 
     updateMonth() { // vasakpoolses ribas kuu väärtuse muutmine
@@ -179,10 +233,13 @@ class Calendar {
 
     // muuda valitud kuud
     selectMonth(el) {
-        const allMonths = document.getElementsByClassName("monthA");
+        /*const allMonths = document.getElementsByClassName("monthA");
         Array.from(allMonths).forEach((i) => {
             i.classList.remove("selected");
-        });
+        });*/
+
+        this.selectedMonthEl.classList.remove("selected");
+        this.selectedMonthEl = el;
 
         var dateMonth = document.getElementById("dateMonth");
         dateMonth.innerText = el.innerText;
@@ -198,13 +255,16 @@ class Calendar {
     }
 
     selectDay(el) { // funktsioon muudab valitud päeva
-        const allDays = document.getElementsByClassName("dayA");
+        //const allDays = document.getElementsByClassName("dayA");
 
-        Array.from(allDays).forEach((i) => {
+        this.selectedDayEl.classList.remove("selected");
+        this.selectedDayEl = el;
+
+        /*Array.from(allDays).forEach((i) => {
 
             if (i.dataset.value !== el.dataset.value)
                 i.classList.remove("selected");
-        });
+        });*/
 
         var dateDay = document.getElementById("dateDay");
         dateDay.innerText = el.title;
@@ -223,7 +283,7 @@ class Calendar {
             i.classList.remove("half-hidden");
             i.classList.remove("selected");
 
-            if ((elYearNr == selectedYearNr - 1) || (elYearNr == selectedYearNr + 1)) {
+            if ((elYearNr === selectedYearNr - 1) || (elYearNr === selectedYearNr + 1)) {
                 i.classList.remove("hidden");
                 i.classList.add("half-hidden");
             }
@@ -254,11 +314,7 @@ class Calendar {
 
         for (let i = this.currentYear - 5; i < this.currentYear + 5; i++) {
 
-            if (i !== this.currentYear) {this.createNewChidldEl(fragment, i, "h2", null, ["hidden", "yearNr"], null);}
-            else {
-                let el = this.createNewChidldEl(fragment, i, "h2", null, ["selected", "yearNr"], null, "", true);
-                this.selectedYearEl = el;
-            }
+            this.createNewChidldEl(fragment, i, "h2", null, ["hidden", "yearNr"], null, "", this.currentYear, this.selectedYearEl);
         }
         this.yearSelect.appendChild(fragment);
 
@@ -271,11 +327,12 @@ class Calendar {
 
         // kuud lisatakse dünaamiliselt
         Object.keys(this.months).forEach((i) => {
-            this.createNewChidldEl(fragment, i, "li", null, ["monthA"], null, this.months[i]);
+
+            this.createNewChidldEl(fragment, i, "li", null, ["monthA"], null, this.months[i], this.selectedMonthNr, this.selectedMonthEl);
+
+
         });
-        /*Object.keys(this.months).forEach((i) => {
-              this.createNewChidldEl(fragment, i, "li", "a", ["month"], ["monthA"], this.months[i]);
-          });*/
+
 
         this.monthList.appendChild(fragment);
     }
@@ -287,7 +344,9 @@ class Calendar {
 
         let fragment = document.createDocumentFragment();
         Object.keys(this.days).forEach((i) => {
-            this.createNewChidldEl(fragment, i, "li", null, ["weekday"], null,  this.days[i]);
+
+            this.createNewChidldEl(fragment, i, "li", null, ["weekday"], null, this.days[i], null, null);
+
         });
 
         this.dayList.appendChild(fragment);
@@ -319,6 +378,7 @@ class Calendar {
 
             for (let i = daysInPrevMonth - weekdayOfFirst; i < daysInPrevMonth; i++) {
                 this.createNewChidldEl(fragment, i, "div", "a", ["day", "half-hidden"], ["dayA"]);
+
                 totalElCount += 1;
             }
         }
@@ -326,12 +386,9 @@ class Calendar {
         // kuu päevade lisamine
         for (let i = 1; i <= daysInMonth; i++) {
 
+            this.createNewChidldEl(fragment, i, "div", "a", ["day", "half-hidden"], ["dayA"], "", this.selectedDayNr, this.selectedDayEl);
 
-            if (i == new Date().getDate()) {
-                this.createNewChidldEl(fragment, i, "div", "a", ["day"], ["dayA", "selected"]);
-            } else {
-                this.createNewChidldEl(fragment, i, "div", "a", ["day"], ["dayA"]);
-            }
+
             totalElCount += 1;
         }
 
@@ -348,89 +405,3 @@ class Calendar {
 }
 
 const calendar = new Calendar(); // uue Calendar klassi objekti loomine
-
-/* MIAN PAGE */
-
-function createNewFormChildDiv(HTMLText, name, inputType, placeholderText) {
-    var formChildDiv = document.createElement("div"); // luuakse uus div container
-    formChildDiv.classList.add("form-item"); // lisatakse klass
-
-    var label = document.createElement("label"); // luuakse sisendvälja silt
-    label.innerHTML = HTMLText;
-    label.htmlFor = name;
-
-    var input = document.createElement("input"); // luuakse sisendväli
-    input.type = inputType;
-    input.name = name;
-    input.required = true;
-    input.minlength = "4";
-    input.size = "30";
-    input.placeholder = placeholderText;
-
-    var delButton = document.createElement('button');
-    delButton.textContent = 'X';
-    delButton.classList.add("delete-btn"); // lisatakse klass
-    delButton.onclick = function() {
-        deleteEl(formChildDiv);
-    };
-
-    if (inputType == "url") {
-        input.pattern="https://.*";
-    }
-
-    var div = document.getElementById("course-input-form-contaner");
-    formChildDiv.appendChild(label);
-    formChildDiv.appendChild(input);
-    formChildDiv.appendChild(delButton);
-    div.appendChild(formChildDiv);
-}
-
-function addTextInput() {
-
-    var form = document.getElementById("course-input-form");
-
-    createNewFormChildDiv("Lisa ainekood:", // sisendvälja silt
-        `input-${form.getElementsByTagName('input').length + 1}`, // sisendvälja nimi
-        "text", // sisendvälja tüübi määramine
-        "VALDKOND.00.0000"
-    );
-}
-
-function addUrlInput() {
-
-    var form = document.getElementById("course-input-form-contaner");
-
-    createNewFormChildDiv("Lisa url:", // sisendvälja silt
-        `input-${form.getElementsByTagName('input').length + 1}`, // sisendvälja nimi
-        "url",// sisendvälja tüübi määramine
-        "https://ois2.ut.ee/#/courses/...");
-}
-
-function deleteAllUserInput() {
-
-    var form = document.getElementById("course-input-form-contaner");
-    form.innerHTML = "";
-}
-
-function deleteEl(directParentEl) {
-
-    if (directParentEl) {
-        directParentEl.parentNode.removeChild(directParentEl);
-    }
-}
-
-function revealResult(){
-    var el = document.getElementById("course-overview");
-    el.classList.remove("hidden");
-
-}
-
-function showHiddenEl(elId) {
-    let targetEl = document.getElementById(elId);
-
-    let userInputGridEl = document.getElementById("userInput");
-
-    userInputGridEl.classList.toggle("initial");
-    // peidab/näitab elementi
-    targetEl.classList.toggle("hidden");
-}
