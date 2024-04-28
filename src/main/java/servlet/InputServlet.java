@@ -1,12 +1,9 @@
 package servlet;
 
-import java.io.FileWriter;
-import java.io.Serial;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Arrays;
+import java.io.*;
+import java.text.ParseException;
+import java.util.*;
 //import java.util.HashMap;
-import java.io.IOException;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -17,9 +14,13 @@ import javax.servlet.http.HttpServletResponse;
 //import javax.servlet.http.HttpSession;
 
 //import pdf.PDFPrintTest;
+import org.json.JSONArray;
 import org.json.JSONObject;
+import org.json.JSONTokener;
+
 import pdfsave.FetchData;
 import oppeaine.Oppeaine;
+import pdfsave.JsonFileReader;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
