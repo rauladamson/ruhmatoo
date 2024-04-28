@@ -86,16 +86,14 @@ function createNewFormChildDiv(HTMLText, name, inputType, placeholderText) {
 
   }
 
-// kalendri kood
-
 Date.prototype.getAdjustedDay = function() {
     var day = this.getDay();
     return day === 0 ? 6 : day - 1;
 };
 
+// kalendri kood
 class Calendar {
     constructor() {
-        this.selectedDayNr = 1; // algväärtuseks 1
         this.selectedMonthNr = 0; // algväärtuseks Jaanuar
         this.selectedYear = 2024; // algväärtuseks 2024
         this.currentYear = new Date().getFullYear(); // praegune aasta
@@ -108,9 +106,11 @@ class Calendar {
         this.monthList = document.getElementById("monthList");
         this.monthList.addEventListener('change', () => this.updateMonth());
 
-        this.SelectedDayEl = null;
-        this.SelectedMonthEl = null;
-        this.SelectedYearhEl = null;
+        //this.SelectedDayEl = null;
+        // this.SelectedMonthEl = null;
+        //  this.SelectedYearhEl = null;
+
+
 
         // Add event listener to the parent element
         this.yearSelect.addEventListener('click', (event) => {
@@ -140,13 +140,38 @@ class Calendar {
         this.addMonths(); // kuude lisamine (Jan - Dec)
         this.addMonthDays(); // kuu päevade lisamine (1 - 28/29/30/31)
 
-        //if (i == 1) {this.selectDay(a);}
-        //if (i == 8 || i == 10 || i == 27) {this.addEvent(a);}
-       // if (i == 0) {this.selectMonth(a); } // jaanuar valitakse vaikimisi
-
+        //this.selectMonth(this.selectedMonthEl);
+        //this.selectYear(this.selectedYearEl);
     }
 
     /* FUNKTSIOONID */
+
+    createNewChidldEl(parent, i, outerTag, innerTag, outerClassListItems, innerClassListItems, text = null, returnBool = false) {
+
+        let outerEl = document.createElement(outerTag);
+        let innerEl = null;
+
+        outerEl.title = i;
+        outerEl.dataset.value = i;
+        outerEl.textContent = i;
+        if (text) {outerEl.textContent = text;}
+
+        outerClassListItems.forEach(item => outerEl.classList.add(item));
+
+        if (innerTag !== null ) {
+            innerEl = document.createElement(innerTag);
+            if (innerTag === "a") {innerEl.href = "#";}
+
+            innerClassListItems.forEach(item => innerEl.classList.add(item));
+            outerEl.textContent = "";
+            innerEl.textContent = i;
+
+            outerEl.appendChild(innerEl);
+        }
+
+        parent.appendChild(outerEl);
+        if (returnBool && innerTag !== null) { return innerEl; }
+    }
 
     updateMonth() { // vasakpoolses ribas kuu väärtuse muutmine
         var dateElement = document.querySelector('.date');
@@ -155,58 +180,45 @@ class Calendar {
 
     // muuda valitud kuud
     selectMonth(el) {
+        const allMonths = document.getElementsByClassName("monthA");
+        Array.from(allMonths).forEach((i) => {
+            i.classList.remove("selected");
+        });
 
-        // eelmiselt valitud elemendilt eemaldatakse "selected" klass
-        if (this.selectedMonthEl) {this.selectedMonthEl.classList.remove("selected");}
-        
-        this.selectedMonthEl = el;
-        el.classList.add("selected");
-        this.selectedMonthNr = el.dataset.value;
-        
         var dateMonth = document.getElementById("dateMonth");
-        dateMonth.textContent = el.title;
-        
+        dateMonth.innerText = el.innerText;
+        el.classList.add("selected");
+
+        /*var testP = document.getElementById('test');
+
+        testP.innerText = "";
+        testP.innerText += el;*/
+
+        this.selectedMonthNr = el.dataset.value;
         this.addMonthDays();
     }
 
     selectDay(el) { // funktsioon muudab valitud päeva
-        // eelmiselt valitud elemendilt eemaldatakse "selected" klass
-        if (this.selectedDayEl) {this.selectedDayEl.classList.remove("selected");}
+        const allDays = document.getElementsByClassName("dayA");
 
-        this.selectedDayEl = el;
-        el.classList.add("selected");
-        this.selectedMonthNr = el.dataset.value;
-        
+        Array.from(allDays).forEach((i) => {
+
+            if (i.dataset.value !== el.dataset.value)
+                i.classList.remove("selected");
+        });
+
         var dateDay = document.getElementById("dateDay");
-        dateDay.textContent = el.title;
+        dateDay.innerText = el.title;
+        el.classList.add("selected");
     }
 
 
     selectYear(el) { // funktsioon muudab valitud aastat
-
-        // eelmiselt valitud elemendilt eemaldatakse "selected" klass
-        if (this.selectedYearEl) {
-            this.selectedYearEl.classList.add("hidden");
-            this.selectedYearEl.classList.remove("selected");
-        }
-
+        const allYears = document.getElementsByClassName("yearNr");
+        var selectedYearNr = Number(el.dataset.value);
         this.selectedYearEl = el;
-        el.classList.add("selected");
-        this.selectedYear = el.dataset.value;
-
-        // eelmise ja järgmise elemendi läbipaistvuseks on 50%
-        let prevElement = element.previousElementSibling;
-        let nextElement = element.nextElementSibling;
-
-        prevElement.classList.add("half-hidden");
-        nextElement.classList.add("half-hidden");
-        prevElement.classList.remove("hidden");
-        nextElement.classList.remove("hidden");
-        /*const allYears = document.getElementsByClassName("yearNr");
-        let selectedYearNr = Number(el.dataset.value);
-
         Array.from(allYears).forEach((i) => {
-            let elYearNr = Number(i.dataset.value);
+            var elYearNr = Number(i.dataset.value);
 
             i.classList.add("hidden");
             i.classList.remove("half-hidden");
@@ -216,17 +228,19 @@ class Calendar {
                 i.classList.remove("hidden");
                 i.classList.add("half-hidden");
             }
-        });*/
+        });
 
         el.classList.remove("hidden");
         el.classList.add("selected");
 
+        //displayMonthData(selectedYearNr);
         this.addMonthDays();
     }
-    
 
     // sündmuse kalendrisse lisamine
-    addEvent(el) {el.classList.add("event");}
+    addEvent(el) {
+        el.classList.add("event");
+    }
 
     // kõigi alamelementide kustutamine
     removeAllChildNodes(parent) {
@@ -235,79 +249,66 @@ class Calendar {
         }
     }
 
-     addYears() {
+    addYears() {
+
+        let fragment = document.createDocumentFragment();
+
         for (let i = this.currentYear - 5; i < this.currentYear + 5; i++) {
 
-//            createNewChidldEl(this.monthList, i, "li", "a", ("monthA"), text=this.months[i]);
-
-            let year = document.createElement("li"); // create a new li
-            let yearNr = document.createElement("h2"); // create a new a
-
-            yearNr.textContent = i;
-            yearNr.dataset.value = i;
-
-            if (i !== this.currentYear) { yearNr.classList.add("hidden"); }
-            else { yearNr.classList.add("selected"); }
-
-            yearNr.classList.add("yearNr");
-            year.appendChild(yearNr);
-            this.yearSelect.appendChild(year);
+            if (i !== this.currentYear) {this.createNewChidldEl(fragment, i, "h2", null, ["hidden", "yearNr"], null);}
+            else {
+                let el = this.createNewChidldEl(fragment, i, "h2", null, ["selected", "yearNr"], null, "", true);
+                this.selectedYearEl = el;
+            }
         }
+        this.yearSelect.appendChild(fragment);
+
     }
 
 
     addMonths() {
+
+        let fragment = document.createDocumentFragment();
+
         // kuud lisatakse dünaamiliselt
         Object.keys(this.months).forEach((i) => {
-            createNewChidldEl(this.monthList, i, "li", "a", ("monthA"), this.months[i]);
+            this.createNewChidldEl(fragment, i, "li", null, ["monthA"], null, this.months[i]);
         });
+        /*Object.keys(this.months).forEach((i) => {
+              this.createNewChidldEl(fragment, i, "li", "a", ["month"], ["monthA"], this.months[i]);
+          });*/
+
+        this.monthList.appendChild(fragment);
     }
 
-    createNewChidldEl(parent, i, outerTag, innerTag, classListItems, text = null, dataDict = null) {
-        let outerEl = document.createElement(outerTag);
-        let innerEl = document.createElement(innerTag);
 
-        if (innerTag === "a") {innerEl.href = "#";}
+// nädalapäaevad
 
-        innerEl.title = i;
-        innerEl.dataset.value = i;
-        innerEl.textContent = i;
-        if (text) {innerEl.textContent = text;}
-
-        innerEl.classList.add(classListItems);
-
-        outerEl.appendChild(innerEl);
-        parent.appendChild(outerEl);
-    }
-
-    // nädalapäaevad
     addWeekdays() {
+
+        let fragment = document.createDocumentFragment();
         Object.keys(this.days).forEach((i) => {
-            createNewChidldEl(this.dayList, i, "li", "a", (""), this.days[i]);
+            this.createNewChidldEl(fragment, i, "li", null, ["weekday"], null,  this.days[i]);
         });
+
+        this.dayList.appendChild(fragment);
+
     }
 
 
-    // kuu päeavde lisamine
+// kuu päeavde lisamine
     addMonthDays() {
 
         this.removeAllChildNodes(this.daysList); // olemasolevad elemendid kustutatakse
 
-        let totalElCount = 0;
+        var totalElCount = 0;
 
         // päevade arv kuus
-        let daysInMonth = new Date(this.selectedYear, this.selectedMonthNr + 1);
-        let weekdayOfFirst = new Date(this.selectedYear, this.selectedMonthNr).getAdjustedDay();
-        let weekdayOfLast =  new Date(this.selectedYear, this.selectedMonthNr, daysInMonth).getAdjustedDay();
+        var daysInMonth = new Date(this.selectedYear, this.selectedMonthNr + 1, 0).getDate();
+        var weekdayOfFirst = new Date(this.selectedYear, this.selectedMonthNr).getAdjustedDay();
+        var weekdayOfLast =  new Date(this.selectedYear, this.selectedMonthNr, daysInMonth).getAdjustedDay();
 
-        let testP = document.getElementById('test');
-
-        testP.textContent = "";
-        testP.textContent = daysInMonth;
-        testP.textContent += " " + weekdayOfFirst;
-        testP.textContent += " " + this.selectedYear;
-        testP.textContent += " " + this.selectedMonthNr;
-        testP.textContent += " " + weekdayOfLast;
+        let fragment = document.createDocumentFragment();
 
         // eelmise kuu päevade lisamine, kui kuu ei alga esmaspäevaga
         if (weekdayOfFirst !== 0) {
@@ -318,14 +319,20 @@ class Calendar {
             }
 
             for (let i = daysInPrevMonth - weekdayOfFirst; i < daysInPrevMonth; i++) {
-                createNewChidldEl(this.daysList, i, "li", "a", ("dayA", "half-hidden"));
+                this.createNewChidldEl(fragment, i, "div", "a", ["day", "half-hidden"], ["dayA"]);
                 totalElCount += 1;
             }
         }
 
         // kuu päevade lisamine
         for (let i = 1; i <= daysInMonth; i++) {
-            createNewChidldEl(this.daysList, i, "li", "a", ("dayA", "half-hidden"));
+
+
+            if (i == new Date().getDate()) {
+                this.createNewChidldEl(fragment, i, "div", "a", ["day"], ["dayA", "selected"]);
+            } else {
+                this.createNewChidldEl(fragment, i, "div", "a", ["day"], ["dayA"]);
+            }
             totalElCount += 1;
         }
 
@@ -333,12 +340,98 @@ class Calendar {
         if (weekdayOfLast !== 6) {
 
             for (let i = 1; i <= 35 - totalElCount; i++) {
-                createNewChidldEl(this.daysList, i, "li", "a", ("dayA", "half-hidden"));
+                this.createNewChidldEl(fragment, i, "div", "a", ["day", "half-hidden"], ["dayA"]);
             }
         }
+
+        this.daysList.appendChild(fragment);
     }
 }
+
 const calendar = new Calendar(); // uue Calendar klassi objekti loomine
 
+/* MIAN PAGE */
 
+function createNewFormChildDiv(HTMLText, name, inputType, placeholderText) {
+    var formChildDiv = document.createElement("div"); // luuakse uus div container
+    formChildDiv.classList.add("form-item"); // lisatakse klass
 
+    var label = document.createElement("label"); // luuakse sisendvälja silt
+    label.innerHTML = HTMLText;
+    label.htmlFor = name;
+
+    var input = document.createElement("input"); // luuakse sisendväli
+    input.type = inputType;
+    input.name = name;
+    input.required = true;
+    input.minlength = "4";
+    input.size = "30";
+    input.placeholder = placeholderText;
+
+    var delButton = document.createElement('button');
+    delButton.textContent = 'X';
+    delButton.classList.add("delete-btn"); // lisatakse klass
+    delButton.onclick = function() {
+        deleteEl(formChildDiv);
+    };
+
+    if (inputType == "url") {
+        input.pattern="https://.*";
+    }
+
+    var div = document.getElementById("course-input-form-contaner");
+    formChildDiv.appendChild(label);
+    formChildDiv.appendChild(input);
+    formChildDiv.appendChild(delButton);
+    div.appendChild(formChildDiv);
+}
+
+function addTextInput() {
+
+    var form = document.getElementById("course-input-form");
+
+    createNewFormChildDiv("Lisa ainekood:", // sisendvälja silt
+        `input-${form.getElementsByTagName('input').length + 1}`, // sisendvälja nimi
+        "text", // sisendvälja tüübi määramine
+        "VALDKOND.00.0000"
+    );
+}
+
+function addUrlInput() {
+
+    var form = document.getElementById("course-input-form-contaner");
+
+    createNewFormChildDiv("Lisa url:", // sisendvälja silt
+        `input-${form.getElementsByTagName('input').length + 1}`, // sisendvälja nimi
+        "url",// sisendvälja tüübi määramine
+        "https://ois2.ut.ee/#/courses/...");
+}
+
+function deleteAllUserInput() {
+
+    var form = document.getElementById("course-input-form-contaner");
+    form.innerHTML = "";
+}
+
+function deleteEl(directParentEl) {
+
+    if (directParentEl) {
+        directParentEl.parentNode.removeChild(directParentEl);
+    }
+}
+
+function revealResult(){
+    var el = document.getElementById("course-overview");
+    el.classList.remove("hidden");
+
+}
+
+function showHiddenEl(elId) {
+    let targetEl = document.getElementById(elId);
+
+    let userInputGridEl = document.getElementById("userInput");
+
+    userInputGridEl.classList.toggle("initial");
+    // peidab/näitab elementi
+    targetEl.classList.toggle("hidden");
+}
