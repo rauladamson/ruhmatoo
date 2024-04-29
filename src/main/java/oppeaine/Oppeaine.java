@@ -1,87 +1,86 @@
 package oppeaine;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.NoSuchElementException;
+
 public class Oppeaine {
+    private final JSONObject internalJsonData;
 
-    private Integer ECTs;
-    private String text, name, uuid;
-    private HashMap<String, ?> data;
-
-    public Oppeaine(String text) {
-        this.text = text;
-        this.data = new HashMap<String, Integer>();
-        this.getDataFromJSON(text);
+    /**
+     * Konstruktor olemasoleva JSON-i põhjal õppeaine loomiseks.
+     * @param jsonText JSON andmed, String formaadis.
+     * @throws JSONException Kui JSON-i objekti ei saa luua (ilmselt string ei ole õiges vormingus), visatakse edasi JSONException.
+     */
+    public Oppeaine(String jsonText) throws JSONException {
+        try {
+            this.internalJsonData = new JSONObject(jsonText);
+        } catch (JSONException e) {
+            throw e;
+        }
     }
 
-    public String getText() {
-        return text;
+    public JSONObject convertToJson() {
+        return new JSONObject(this.internalJsonData.toMap()); // Deep copy JSON objektist
     }
 
-    public void setText(String text) {
-        this.text = text;
+    /**
+     * Konstruktor olemasoleva JSON-i põhjal õppeaine loomiseks.
+     * NB! On eeldatud, et sellele konstruktorile antakse korrektne JSONObject (ei throwi).
+     * @param inputJson Sisendobjekt.
+     */
+    public Oppeaine(JSONObject inputJson) {
+        this.internalJsonData = new JSONObject(inputJson.toMap());
     }
 
-    public String getUuid() {
-        return uuid;
+    /**
+     * Sisemiste parameetrite muutmiseks. Ei luba lisada uusi parameetreid.
+     * NB! Mitte kasutadda, kui just absoluutselt pole vaja. Õppeainete haldamisega peaks tegelema AineCache.
+     * @param key Võti.
+     * @param newValue Uus väärtus.
+     * @throws NoSuchElementException Viskab, kui võtmega antud parameetrit pole juba olemas.
+     */
+    public void modifyInternalData(String key, String newValue) throws NoSuchElementException {
+        if (internalJsonData.opt(key) != null) {
+            internalJsonData.put(key, newValue);
+        } else {
+            throw new NoSuchElementException("Väärtust '" + key + "' ei ole õppeaines olemas.");
+        }
     }
 
-    public void setData(HashMap<String, ?> data) {
-        this.data = data;
-    }
-
-    public void setECTs(Integer eCTs) {
-        this.ECTs = eCTs;
-    }
-
-    public void setData(Map<String, ?> map) {
-        this.data = new HashMap<>(map);
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public HashMap<String, ?> getData() {
-        return data;
-    }
-
-    public Integer getECTs() {
-        return ECTs;
+    /**
+     * Tagastab õppeaine mingi omaduse väärtuse Stringina.
+     * @param key Väärtuse võti, nt "ect" või "uuid".
+     * @return Omaduse väärtus. Tagastab null, kui vasavat väärtust olemas ei ole.
+     */
+    public String getProperty(String key) {
+        return internalJsonData.opt(key).toString();
     }
 
     public String getName() {
-        return name;
+        return internalJsonData.getJSONObject("title").getString("et");
     }
 
-    public void getDataFromJSON(String json) {
-
-        JSONObject jo = new JSONObject(json);  // luuakse uus JSON objekt (sõne json-iks)
-
-        this.setUuid(jo.get("uuid")); // EAPd
-        this.setECTs(jo.getInt("credits")); // EAPd
-        this.setData(jo.getJSONObject("additional_info").getJSONObject("hours").toMap());
-        this.setName(jo.getJSONObject("title").get("et").toString());
+    public Integer getECTs() {
+        return internalJsonData.getInt("credits");
     }
 
-    private void setUuid(Object uuid) {
-        this.uuid = uuid.toString();
+    public String getCode() {
+        if (internalJsonData.has("parent_code")) {
+            return internalJsonData.getString("parent_code");
+        } else {
+            return internalJsonData.getString("code");
+        }
     }
 
-    private void returnObjAsJSON(Oppeaine oa) { //TODO
-    }
-
-    private Oppeaine readObjFromJSON(String json) { //TODO
-        return null;
-    }
-
+    /**
+     * toString meetod.
+     * @return Tagastab inimloetavas vormis aine info. JSON-i saaamiseks kasutada Oppeaine.ConvertToJson().
+     */
     @Override
     public String toString() {
-        // TODO Auto-generated method stub
-        return this.getName() + " " + this.getECTs() + " " + this.getData();
+        return this.getCode() + " " + this.getName() + " (" + this.getECTs() + " EAP) [" + this.getProperty("uuid") + "]";
     }
 
 
