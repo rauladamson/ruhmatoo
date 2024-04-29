@@ -41,26 +41,6 @@ public class CoursesApi {
         return result.toString();
     }
 
-    private static String callApiDirectlyGETHTTPS(URL url) throws IOException {
-        StringBuilder result = new StringBuilder();
-        HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
-        urlConnection.setRequestMethod("GET");
-        urlConnection.setRequestProperty("Accept", "application/json");
-
-        if (urlConnection.getResponseCode() != 200) {
-            throw new RuntimeException("Failed : HTTP error code : " + urlConnection.getResponseCode());
-        }
-        BufferedReader br = new BufferedReader(new InputStreamReader((urlConnection.getInputStream())));
-
-        String output;
-        while ((output = br.readLine()) != null) {
-            result.append(output);
-        }
-        urlConnection.disconnect();
-
-        return result.toString();
-    }
-
     // TODO: panna kõik get* meetodit kokku ühte getAine() meetodisse (?)
     /**
      * Funktsioon Httpst JSON textiks tegemiseks, et seda hiljem töödelda.
