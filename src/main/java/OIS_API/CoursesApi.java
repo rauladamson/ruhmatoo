@@ -1,6 +1,7 @@
 package OIS_API;
 
 import oppeaine.Oppeaine;
+import org.json.JSONObject;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
@@ -10,6 +11,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class CoursesApi {
+    //TODO: Teha valmis meetod ainete muutuste saamiseks - hetkel kasutavad kõik meetodit ,,heavy" api kutset.
     private static final String baseUrl = "https://ois2.ut.ee/api/";
 
     /**
@@ -26,8 +28,7 @@ public class CoursesApi {
         // 302 välitmsieks
         urlConnection.setInstanceFollowRedirects(true);
 
-        System.out.println("URL: " + url.toString());
-        if (urlConnection.getResponseCode() != 200 && urlConnection.getResponseCode() != 302) {
+        if (urlConnection.getResponseCode() != 200) {
             throw new RuntimeException("Failed : HTTP error code : " + urlConnection.getResponseCode());
         }
         BufferedReader br = new BufferedReader(new InputStreamReader((urlConnection.getInputStream())));
@@ -43,7 +44,8 @@ public class CoursesApi {
 
     // TODO: panna kõik get* meetodit kokku ühte getAine() meetodisse (?)
     /**
-     * Funktsioon Httpst JSON textiks tegemiseks, et seda hiljem töödelda.
+     * Funktsioon kasutaja poolt antud Httpst JSON textiks tegemiseks, et seda hiljem töödelda.
+     * DEPRECATED: kasutada AineCache-i sellle asemel, koodi leidmiseks vt InputServlet-i regex-i loogikat
      * @param urlString "link OIS API leheküljele"
      * @return String kõik leheküljel olevaga.
      */
@@ -78,7 +80,6 @@ public class CoursesApi {
         if (result == null || result.equals("")) {
             throw new RuntimeException("Viga aine leidmises");
         }
-        System.out.println(result);
         return new Oppeaine(result);
     }
 
@@ -86,6 +87,7 @@ public class CoursesApi {
      * Giga hakk, api lingi genereerimiseks :)
      */
     public static String generateAPILink(String courseUrl) {
+        // TODO: Deprecated? Vt inputServleti uuendatud loogikat
         if (courseUrl.contains("details") || courseUrl.contains("#")) {
             String newlink = courseUrl.replace("#", "api");
             newlink = newlink.replace("/details", "");
@@ -96,5 +98,19 @@ public class CoursesApi {
             return newlink;
         }
         return courseUrl;
+    }
+
+    public static String getLatestCourseChange(Oppeaine aine) {
+        // TODO: Implementeerida, hektel stub
+        // Peaks olema kõige kergem võimalik request - hetkel selleks mõeldud ÕIS API meetod tundub olevat katki
+
+        // Et panna tööle, võib uncommentida järgneva koodi
+        // See on lihtsalt hetkel mõttetu, kuna kasutab sama aeglast API call-i
+
+        /*
+            return getAineFromCode(aine.getCode()).getLastUpdated();
+        */
+
+        return "";
     }
 }

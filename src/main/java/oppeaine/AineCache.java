@@ -2,16 +2,17 @@ package oppeaine;
 
 import OIS_API.CoursesApi;
 import OIS_API.OisUserController;
+import pdfsave.JsonFileReader;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class AineCache {
-    private static ArrayList<Oppeaine> ained = new ArrayList<>();
+    private static final ArrayList<Oppeaine> ained = new ArrayList<>();
+    private static final String cacheFile = "salvestatudOppeained.json";
 
-    public AineCache() {;
-    }
+    /*
     public AineCache(String aineteJsonFail) {
         try {
             File fail = new File(aineteJsonFail);
@@ -26,12 +27,40 @@ public class AineCache {
             e.printStackTrace();
         }
     }
-/*
     public AineCache(JSONArray ainedJson) {
         for (int i = 0; i < ainedJson.length(); i++) {
             JSONObject aineJSON = ainedJson.optJSONObject(i);
         }
     }*/
+
+    public static void updateCacheFromFile() {
+        ArrayList<Oppeaine> loetudAined = JsonFileReader.readOppeained(cacheFile);
+        int i = 0;
+        for (Oppeaine uusAine: loetudAined) {
+            if (!ained.contains(uusAine)) {
+                ained.add(uusAine);
+                i++;
+            }
+        }
+        System.out.println("Cache'i loeti failist " + cacheFile + " " + Integer.toString(i) + " õppeainet.");
+    }
+
+    public static void clearCache() {
+        ained.clear();
+    }
+
+    public static void writeCacheToFile() {
+        JsonFileReader.writeOppeained(cacheFile, ained);
+    }
+
+    public static void printCache() {
+        System.out.println("\n===============");
+        System.out.println("Cache sisaldab:");
+        for (Oppeaine aine: ained) {
+            System.out.println(aine.toString());
+        }
+        System.out.println("===============");
+    }
 
     public static Oppeaine getAine(String kood) {
         Oppeaine aine = null;
@@ -45,22 +74,31 @@ public class AineCache {
             i++;
         }
 
+        //System.out.print("Cache'ist otsiti ainet, ");
         if (aine != null) {
+            //System.out.print(aine + " mis leiti cache'ist ");
             if (aineHasChanged(aine)) { // TODO: Api päring ning seotud meetod parandada
                 Oppeaine uusAine = CoursesApi.getAineFromCode(aine.getCode());
                 ained.set(i, uusAine);
+                //System.out.println("ja mis oli muutunud.");
+            } else {
+                ;
+                //System.out.println(" mis ei olnud muutunud.");
             }
             return ained.get(i);
         }
 
+        //System.out.println("mille kood on " + kood + ", mida cache'ist ei leitud.");
         Oppeaine uusAine = CoursesApi.getAineFromCode(kood);
         ained.add(uusAine);
 
+        writeCacheToFile();
         return uusAine;
     }
 
     /**
-     * Lisab õppeaine objekti puhvrisse.
+     * Lisab õppeaine objekti puhvrisse. NB! Ained lisatakse automaatselt getAine() meetodi korral.
+     * (Teha private'iks?)
      * @param oa Õppeaine objekt
      * @return True, kui ainet polnud varem olemas. False, kui oli.
      */
@@ -68,20 +106,20 @@ public class AineCache {
         //TODO: optimiseerida meetod kasutades kas latestUuid või latestChanged
         //TODO: kasutada HashSeti(?)
         boolean aineExists = false;
+        //System.out.println(oa.convertToJson().toString());
+        printCache();
         if (ained.contains(oa)) {
-            System.out.println("Prooviti lisada aine " + oa.toString() + " mis oli juba olemas.");
+            System.out.println("Prooviti lisada aine " + oa.toString() + " mis oli juba olemas.\n");
+            System.out.println();
             return false;
         } else {
             ained.add(oa);
-            System.out.println("Lisati edukalt aine " + oa.toString());
+            System.out.println("Lisati edukalt aine " + oa.toString() + "\n");
             return true;
         }
     }
 
     private static boolean aineHasChanged(Oppeaine aine) {
-        //return !(CoursesApi.getLatestCourseChange(aine).equals(aine.getLastChanged()));
-        // Hetkel stub
-        //TODO
-        return false;
+        return !(CoursesApi.getLatestCourseChange(aine).equals(aine.getLastUpdated()));
     }
 }

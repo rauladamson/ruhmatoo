@@ -17,17 +17,18 @@ import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @WebServlet("/inputServlet")
 public class InputServlet extends HttpServlet {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    //private static AineCache oppeained = new AineCache();
 
     public InputServlet() {
         super();
-        // TODO Auto-generated constructor stub
+        AineCache.updateCacheFromFile();
     }
 
     protected void addJsonArrayToJsonObject(JSONObject jsonObject, String key, Object value) {
@@ -58,8 +59,15 @@ public class InputServlet extends HttpServlet {
             }
 
             if (paramName.contains("url-input")) {
-                Oppeaine oa = CoursesApi.getAineFromUserURL(paramValues[0]); // luuakse uus Õppeaine objekt
-                System.out.println(oa.toString()); // Debugggimiseks
+                Pattern leiaAinekoodUrlist = Pattern.compile("[A-Z]{4}\\.[0-9]{2}\\.[0-9]{3}");
+                Matcher matcher = leiaAinekoodUrlist.matcher(paramValues[0]);
+
+                if(!matcher.find()) {
+                    System.out.println(paramValues[0]);
+                    throw new RuntimeException("EI leidnud koodi URL-ist >:(");
+                }
+
+                Oppeaine oa = AineCache.getAine(matcher.group());
 
                 // Õppeaine object to Json file
                 JSONObject jo = oa.convertToJson();
@@ -73,8 +81,6 @@ public class InputServlet extends HttpServlet {
                 }
 
                 addJsonArrayToJsonObject(jsonObject, "url-input", oa);
-
-                AineCache.addAine(oa); // Õppeaine objekt lisatakse Õppeaine objektide listi
             } else if (paramName.contains("cal-input")) {
 
                 /* OTSE KLIENDILE VÄLJASTAMINE:
@@ -92,7 +98,6 @@ public class InputServlet extends HttpServlet {
                 addJsonArrayToJsonObject(jsonObject, "cal-input", calendarData);
             } else { // TODO
                 Oppeaine oa = AineCache.getAine(paramValues[0]);
-                AineCache.addAine(oa);
                 //builder.append("Parameter name: ").append(paramName); // vastuse sisule lisatakse võti
                 //builder.append("Parameter values: ").append(Arrays.toString(paramValues)); // vastuse sisule lisatakse väärtus
                 addJsonArrayToJsonObject(jsonObject, "text-input", paramValues);
@@ -100,7 +105,6 @@ public class InputServlet extends HttpServlet {
 
         }
 
-        //String text = builder.toString();
 
         response.setContentType("application/json"); // vastus saadetakse JSON-kujul
         response.setCharacterEncoding("UTF-8"); // kodeering on UTF-8
@@ -114,5 +118,11 @@ public class InputServlet extends HttpServlet {
         // TODO salvesta iga massiivi obj faili (KUI uuid hulgas pole): json
         // TODO kirjuta uuid eraldi faili
         // TODO uuid-d kuhugi cahce-i
+    }
+
+    @Override
+    public void destroy() {
+        AineCache.writeCacheToFile();
+        super.destroy();
     }
 }
