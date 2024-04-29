@@ -1,11 +1,8 @@
 package oppeaine;
 
 import OIS_API.CoursesApi;
-import OIS_API.OisUserController;
 import pdfsave.JsonFileReader;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class AineCache {
@@ -42,7 +39,7 @@ public class AineCache {
                 i++;
             }
         }
-        System.out.println("Cache'i loeti failist " + cacheFile + " " + Integer.toString(i) + " õppeainet.");
+        System.out.println("Cache'i loeti failist " + cacheFile + " " + i + " õppeainet.");
     }
 
     public static void clearCache() {
@@ -77,12 +74,12 @@ public class AineCache {
         //System.out.print("Cache'ist otsiti ainet, ");
         if (aine != null) {
             //System.out.print(aine + " mis leiti cache'ist ");
-            if (aineHasChanged(aine)) { // TODO: Api päring ning seotud meetod parandada
+            if (aineHasChanged(aine)) { // TODO: Api päring ning seotud meetod parandada. aineHasChanged ja getAineFromCode loogikat võiks ka kuidagi paremini kokku panna.
                 Oppeaine uusAine = CoursesApi.getAineFromCode(aine.getCode());
                 ained.set(i, uusAine);
                 //System.out.println("ja mis oli muutunud.");
             } else {
-                ;
+                //; Debuggimiseks mõeldud sout-id. Uncommenctida kui tahta näha, kuidas cache töötab.
                 //System.out.println(" mis ei olnud muutunud.");
             }
             return ained.get(i);
@@ -92,7 +89,12 @@ public class AineCache {
         Oppeaine uusAine = CoursesApi.getAineFromCode(kood);
         ained.add(uusAine);
 
+        // TODO: FOR DEBUGGING ONLY!
+        // TODO: Hetkel kirjutab see cache'i kettale iga kord kui sealt ainet query'takse.
+        // See oli debuggimisel vajalik. Hetkel on ta ka hea demo sellest, et cache tegelikult ka töötab.
         writeCacheToFile();
+        ///////////////////////////////////////////////
+
         return uusAine;
     }
 
@@ -105,7 +107,6 @@ public class AineCache {
     public static boolean addAine(Oppeaine oa) {
         //TODO: optimiseerida meetod kasutades kas latestUuid või latestChanged
         //TODO: kasutada HashSeti(?)
-        boolean aineExists = false;
         //System.out.println(oa.convertToJson().toString());
         printCache();
         if (ained.contains(oa)) {
