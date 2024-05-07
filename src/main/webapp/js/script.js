@@ -112,6 +112,7 @@ function submitForm(event) {
 
     xhr.onload = function() {
         if (this.status === 200) {
+            console.log(this.responseText);
 
             var responseObj = JSON.parse(this.responseText); // JSON stringist objektiks
 

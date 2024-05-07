@@ -6,8 +6,10 @@ public class Testing {
         String url2 = "https://ois2.ut.ee/api/courses/LTAT.03.003/versions/d2bd00a1-232d-5535-d840-b0b78d26496c";
         String url3 = "https://ois2.ut.ee/#/courses/LTAT.03.003/version/45b7f8eb-7e9e-cbde-6187-877820687815/details";
         // Kiire häkk: ,et teha Urlist API urli, # -> api, version -> versions, õppeaine versioonist -/details.
-        FetchData a = new FetchData();
+        //FetchData a = new FetchData();
         String[] urls = {url1, url2, url3};
-        String vastus = a.main(urls);
+        // String vastus = a.main(urls);
+
+        // See vaja ümber kirjutada kasutada CoursesApi klassi
     }
 }

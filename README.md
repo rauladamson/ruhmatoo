@@ -1,16 +1,14 @@
-## Objektorienteeritud programmeerimise rühmatöö: Kollaboratiivne ajaplaneerimise programm
-## Kood: LTAT.03.003
-
+## Aine "Objektorienteeritud programmeerimine" (LTAT.03.003) süvendusrühma lõpuprojekt: Kollaboratiivne ajaplaneerimise programm
 
 ## Liikmed:
-- Mattias Moor
 - Marielin Kepp
-- Martin Jaani
+- Mattias Moor
 - Raul Adamson
+- Martin Jaani
 
 
 ## Tutvustus
-Meie projektiks on ajaplaneerimise programm, mis võimaldab kasutajatel jagada oma kalendreid ja sündmusi teiste kasutajatega, et teha muudatusi koos. 
+Ajaplaneerimisrakendus, mis võimaldab kasutajatel jagada oma kalendreid ja sündmusi teiste kasutajatega, et koos muudatusi teha. 
 
 ##  Funktsionaalsuste nimekiri
 - **Kasutajate registreerimine ja sisselogimine:**
