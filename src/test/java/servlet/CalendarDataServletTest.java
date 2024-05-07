@@ -1,8 +1,8 @@
 package servlet;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -21,7 +21,7 @@ public class CalendarDataServletTest {
         HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
 
         // Setting up mock to return a dummy icalUrl value
-        Mockito.when(request.getParameter("icalUrl")).thenReturn("https://ois2.ut.ee/api/timetable/personal/link/4532c65c9c0b42db9865bfbc3fe2be5e/et");
+        Mockito.when(request.getParameter("icalUrl")).thenReturn("https://ois2.ut.ee/api/timetable/personal/link/8bf38d9ab00c498fa52393683212b641/et"); // semester
 
         // Creating a StringWriter to capture the response output
         StringWriter stringWriter = new StringWriter();
@@ -30,7 +30,6 @@ public class CalendarDataServletTest {
 
         // Calling the overridden doGet method
         CalendarDataServlet servlet = new CalendarDataServlet() {
-            @Override
             protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
                 super.doGet(req, resp);
             }
@@ -40,7 +39,6 @@ public class CalendarDataServletTest {
         // Printing the response to the console
         writer.flush(); // Ensuring all output is written
         String output = stringWriter.toString();
-        System.out.println(output);
     }
 }
 

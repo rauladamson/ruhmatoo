@@ -1,79 +1,47 @@
 package ical;
 
-import java.net.URL;
 import java.util.Date;
-import java.util.TimeZone;
-import biweekly.property.RecurrenceRule;
-import biweekly.util.Duration;
-import biweekly.util.com.google.ical.compat.javautil.DateIterator;
 import org.json.JSONObject;
 
-public class CalendarEvent {
+public class CalendarEvent implements CalendarInterface {  // Klass realiseerib liidest CalendarInterface
 
-    private URL iCalLink;
-    private String summary;
-    private Date start;
-    private Date end;
-    private RecurrenceRule recurrenceRule;
+    private String uid, summary, location, description, categories;
+    Date start;
+    Date end;
+    Long duration;
 
-    public CalendarEvent(URL iCalLink, String summary, Date start, Date end, RecurrenceRule recurrenceRule) {
-        this.iCalLink = iCalLink;
+
+    public CalendarEvent(String uid, String summary, String location, String description, String categories, Date start, Long duration) {
+        this.uid = uid;
         this.summary = summary;
+        this.location = location;
+        this.description = description;
+        this.categories = categories;
+        this.duration = duration;
         this.start = start;
-        this.end = end;
-        this.recurrenceRule = recurrenceRule;
     }
 
     public String getSummary() {
         return summary;
     }
-
-    public Date getStart() {
-        return start;
-    }
-
-    public URL getiCalLink() {
-        return iCalLink;
-    }
-
-    public void setiCalLink(URL iCalLink) {
-        this.iCalLink = iCalLink;
-    }
-
-    public Date getEnd() {
-        return end;
-    }
-
-    public RecurrenceRule getRecurrenceRule() {
-        return recurrenceRule;
-    }
-
-    public void setEnd(Date end) {
-        this.end = end;
-    }
-
-    public void calculateEndFromDuration(Duration duration) {
-        if (end == null && duration != null) {
-            long durationMillis = duration.toMillis();
-            this.end = new Date(start.getTime() + durationMillis);
-        }
-    }
-
-    public DateIterator getRecurrenceIterator() {
-        if (recurrenceRule != null) {
-            return recurrenceRule.getDateIterator(start, TimeZone.getDefault());
-        }
-        return null;
-    }
+    public void setEnd(Date end) {this.end = end;}
 
     public JSONObject toJson() {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("summary", getSummary());
-        jsonObject.put("start", getStart().toString());
-        jsonObject.put("end", getEnd().toString());
+        jsonObject.put("uid", this.uid);
+        jsonObject.put("summary", this.getSummary());
+        jsonObject.put("start", this.getStart().toString());
+        jsonObject.put("end", this.getEnd().toString());
+        jsonObject.put("location", this.location);
+        jsonObject.put("description", this.description);
+        jsonObject.put("categories", this.categories);
+        jsonObject.put("duration", this.duration.toString());
         return jsonObject;
     }
 
+    public Date getStart() {return this.start;}
+    public Date getEnd() {return this.end;}
+    public void findEnd() {}
 }
 
 

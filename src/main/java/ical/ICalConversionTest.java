@@ -2,18 +2,19 @@ package ical;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import servlet.CalendarDataServlet;
 
 import java.util.Scanner;
 
-public class ICalToJsonTest {
+public class ICalConversionTest {
     public static void main(String[] args) {
         Scanner URL = new Scanner(System.in);  // Create a Scanner object
         System.out.println("Enter iCal link");
-        JSONArray events = ICalToJson.convert(URL.nextLine());
+        JSONObject iCalObj = CalendarDataServlet.convert(URL.nextLine());
 
-        System.out.println(events.length());
-        for (int i = 0; i < events.length(); i++) {
-            JSONObject event = events.getJSONObject(i);
+        System.out.println(iCalObj.length());
+        for (int i = 0; i < iCalObj.length(); i++) {
+            JSONObject event = iCalObj.getJSONObject(String.valueOf(i));
             System.out.println(event);
 
         }

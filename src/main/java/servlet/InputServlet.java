@@ -85,42 +85,25 @@ public class InputServlet extends HttpServlet {
                     }
 
                     addJsonArrayToJsonObject(jsonObject, "url-input", oa);
-
                     oppeained.add(oa); // Õppeaine objekt lisatakse Õppeaine objektide listi
+
                 } else if (paramName.contains("cal-input")) {
-
-                    /* OTSE KLIENDILE VÄLJASTAMINE:
-
-                    request.setAttribute("icalUrl", paramValues[0]);
-                    RequestDispatcher dispatcher = request.getRequestDispatcher("/calendarData");
-                    dispatcher.forward(request, response);*/
-
                     // kuna me tahame kalendrit vahepeal töödelda, siis ei sa atulemust kohe tagasi saata
                     CalendarDataServlet calendarDataServlet = new CalendarDataServlet();
-                    String calendarData = calendarDataServlet.getCalendarData(paramValues[0]);
-                    /*if (calendarData != null) {
-                        builder.append(calendarData);
-                    }*/
+                    String calendarData = calendarDataServlet.convert(paramValues[0]).toString();
                     addJsonArrayToJsonObject(jsonObject, "cal-input", calendarData);
                 } else { // TODO
-                    //builder.append("Parameter name: ").append(paramName); // vastuse sisule lisatakse võti
-                    //builder.append("Parameter values: ").append(Arrays.toString(paramValues)); // vastuse sisule lisatakse väärtus
                     addJsonArrayToJsonObject(jsonObject, "text-input", paramValues);
                 }
-
             }
 
-            //String text = builder.toString();
+            //System.out.println(jsonObject.toString());
 
             response.setContentType("application/json"); // vastus saadetakse JSON-kujul
             response.setCharacterEncoding("UTF-8"); // kodeering on UTF-8
             response.getWriter().write(String.valueOf(jsonObject)); // JSON-sõne vastusesse kirjutamine
+            //response.getWriter().write(String.valueOf(jsonObject)); // JSON-sõne vastusesse kirjutamine
 
-            /* String text = builder.toString();
-            response.setContentType("text/plain");
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().write(text);
-            */
             // TODO salvesta iga massiivi obj faili (KUI uuid hulgas pole): json
             // TODO kirjuta uuid eraldi faili
             // TODO uuid-d kuhugi cahce-i
