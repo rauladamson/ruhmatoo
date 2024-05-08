@@ -30,7 +30,8 @@ public class CalendarEvent implements CalendarInterface {  // Klass realiseerib 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("uid", this.uid);
         jsonObject.put("summary", this.getSummary());
-        jsonObject.put("start", this.getStart().toString());
+        jsonObject.put("start", this.getStart().toLocaleString());
+        //System.out.println(this.getStart().toLocaleString());
         jsonObject.put("end", this.getEnd().toString());
         jsonObject.put("location", this.location);
         jsonObject.put("description", this.description);

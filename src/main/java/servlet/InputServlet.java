@@ -1,29 +1,20 @@
 package servlet;
 
 import java.io.*;
-import java.text.ParseException;
 import java.util.*;
-//import java.util.HashMap;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-//import javax.servlet.http.HttpSession;
 
-//import pdf.PDFPrintTest;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 
-import pdfsave.FetchData;
+import OIS_API.CoursesApi;
 import oppeaine.Oppeaine;
-import pdfsave.JsonFileReader;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 @WebServlet("/inputServlet")
 public class InputServlet extends HttpServlet {
@@ -44,14 +35,12 @@ public class InputServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        System.out.println("InputServlet doPost");
         Map<String, String[]> inputsMap = request.getParameterMap(); // sisend teisedatakse Mapiks
         ArrayList<Oppeaine> oppeained = new ArrayList<>(); // luuakse uus Õppeaine objektide list
-        //HashMap<String, String[]> inputsMap = new PDFPrintTest(null).getInputsMap(); // etapp 1 - vana
-        //StringBuilder builder = new StringBuilder(); // luuakse StringBuilder objekt
 
         // Assume you have a JSON object like this: {k1 : array, k2 : array, k3 : array}
         JSONObject jsonObject = new JSONObject();
-
 
         if (!inputsMap.isEmpty()) { // kui sisend ei ole tühi, siis töödeldakse vastuse sisust asjakohaseid väärtused
 
@@ -66,14 +55,11 @@ public class InputServlet extends HttpServlet {
 
                     //builder.append("Parameter name: ").append(paramName); // vastuse sisule lisatakse võti
 
-                    Oppeaine oa = FetchData.fetchAPIData(paramValues[0]); // luuakse uus Õppeaine objekt
+                    Oppeaine oa = CoursesApi.getAineFromUserURL(paramValues[0]); // luuakse uus Õppeaine objekt
                     // TODO kontrolli paramValues pikkust - kas on alati ainult üks el?
                     //builder.append("Parameter obj: ").append(oa); // vastuse sisule lisatakse Õppeaine objekt
 
-                    // Õppeaine object to Json file
-                    JSONObject jo = new JSONObject(oa);
-                    jo.put("uuid", oa.getUuid()); // Uuid
-                    jo.put("data", oa.getData()); // Data
+                    JSONObject jo = new JSONObject(oa);  // Õppeaine object to Json file
                     String joString = jo.toString();
 
                     String filename = paramName + ".json";
@@ -88,16 +74,20 @@ public class InputServlet extends HttpServlet {
                     oppeained.add(oa); // Õppeaine objekt lisatakse Õppeaine objektide listi
 
                 } else if (paramName.contains("cal-input")) {
+
+                    System.out.println("Calendar input: " + paramValues[0]);
                     // kuna me tahame kalendrit vahepeal töödelda, siis ei sa atulemust kohe tagasi saata
                     CalendarDataServlet calendarDataServlet = new CalendarDataServlet();
                     String calendarData = calendarDataServlet.convert(paramValues[0]).toString();
+
+                    //System.out.println(calendarData);
                     addJsonArrayToJsonObject(jsonObject, "cal-input", calendarData);
                 } else { // TODO
                     addJsonArrayToJsonObject(jsonObject, "text-input", paramValues);
                 }
             }
 
-            //System.out.println(jsonObject.toString());
+            System.out.println(jsonObject);
 
             response.setContentType("application/json"); // vastus saadetakse JSON-kujul
             response.setCharacterEncoding("UTF-8"); // kodeering on UTF-8

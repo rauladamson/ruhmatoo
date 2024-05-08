@@ -42,6 +42,7 @@
         }
 
         protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+           // System.out.println("CalendarDataServletTestDoGet()");
             String icalUrl = request.getParameter("icalUrl");
             if (icalUrl == null || icalUrl.isEmpty()) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "icalUrl parameter is missing");
@@ -49,6 +50,8 @@
             }
 
             JSONObject jsonArray = this.convert(icalUrl);
+
+            System.out.println(jsonArray.get("events"));
             if (jsonArray == null) {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to convert iCal data");
                 return;

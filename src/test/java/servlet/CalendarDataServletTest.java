@@ -23,6 +23,7 @@ public class CalendarDataServletTest {
         // Setting up mock to return a dummy icalUrl value
         Mockito.when(request.getParameter("icalUrl")).thenReturn("https://ois2.ut.ee/api/timetable/personal/link/8bf38d9ab00c498fa52393683212b641/et"); // semester
 
+        //System.out.println("testDoGet()");
         // Creating a StringWriter to capture the response output
         StringWriter stringWriter = new StringWriter();
         PrintWriter writer = new PrintWriter(stringWriter);
@@ -39,6 +40,8 @@ public class CalendarDataServletTest {
         // Printing the response to the console
         writer.flush(); // Ensuring all output is written
         String output = stringWriter.toString();
+
+       // System.out.println(output);
     }
 }
 

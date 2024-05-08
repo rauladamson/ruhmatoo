@@ -226,8 +226,8 @@
                                 <span id="dateDay"></span>
                             </h1>
                             <div class="overview">
-                                <div class="event-dropdown-container" id="recurring-events"><h4>KORDUV</h4><div class="event-dropdown"></div></div>
-                                <div class="event-dropdown-container" id="onetime-events"><h4>ÜHEKORDNE</h4><div class="event-dropdown"></div></div>
+                                <div class="event-dropdown-container" ><h4>KORDUV</h4><div class="event-dropdown" id="recurring-events"></div></div>
+                                <div class="event-dropdown-container"><h4>ÜHEKORDNE</h4><div class="event-dropdown"  id="onetime-events"></div></div>
                                 <!--<p>
                                     <input type="text" value="" placeholder="new note"/>
                                     <a href="#" title="Add note" class="addNote animate">+</a>

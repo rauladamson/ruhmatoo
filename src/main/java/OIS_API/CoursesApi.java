@@ -1,9 +1,7 @@
 package OIS_API;
 
 import oppeaine.Oppeaine;
-import org.json.JSONObject;
 
-import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -16,11 +14,12 @@ public class CoursesApi {
 
     /**
      * Meetod, mis teeb API-le GET-calli.
+     *
      * @param url Täispikkuses URL, millele request teha ( nt http://ois2.ut.ee/api/coures/LTAT.03.003 )
      * @return Otsene output.
      * @throws IOException
      */
-    private static String callApiDirectlyGET(URL url) throws IOException {
+    public static String callApiDirectlyGET(URL url) throws IOException {
         StringBuilder result = new StringBuilder();
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
         urlConnection.setRequestMethod("GET");

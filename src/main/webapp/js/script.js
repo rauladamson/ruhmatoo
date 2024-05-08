@@ -1,6 +1,6 @@
 /* KALENDER */
 Date.prototype.getAdjustedDay = function() {
-    var day = this.getDay();
+    let day = this.getDay();
     return day === 0 ? 6 : day - 1;
 };
 
@@ -72,7 +72,7 @@ function addCalInput() {
 
 function deleteAllUserInput() {
 
-    var form = document.getElementById("course-input-form-contaner");
+    let form = document.getElementById("course-input-form-contaner");
     form.innerHTML = "";
 }
 
@@ -84,7 +84,7 @@ function deleteEl(directParentEl) {
 }
 
 function revealResult(){
-    var el = document.getElementById("course-overview");
+    let el = document.getElementById("course-overview");
     el.classList.remove("hidden");
 
 }
@@ -106,15 +106,16 @@ function submitForm(event) {
     event.preventDefault(); // Prevent the form from being submitted normally
 
 
-    var xhr = new XMLHttpRequest();
+
+    let xhr = new XMLHttpRequest();
     xhr.open('POST', 'inputServlet', true);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
     xhr.onload = function() {
         if (this.status === 200) {
-            console.log(this.responseText);
+            //console.log(this.responseText);
 
-            var responseObj = JSON.parse(this.responseText); // JSON stringist objektiks
+            let responseObj = JSON.parse(this.responseText); // JSON stringist objektiks
 
             //console.log(responseObj);
             let courseOverview = document.getElementById('course-overview');
@@ -122,44 +123,17 @@ function submitForm(event) {
             childDiv1.innerHTML = responseObj['url-input'];
             courseOverview.appendChild(childDiv1);
 
-            let calendarGrid = document.getElementById('calendar-grid');
 
-            let calInput = JSON.parse(responseObj['cal-input']);
+            for (let i of responseObj['cal-input']) {
+                let calInput = JSON.parse(i);
+                let newiCalObj = new iCalObj(calInput['iCalLink'], calInput['events']);
+                calendar.iCalObjects.push(newiCalObj);
 
-
-            let newiCalObj = new iCalObj(calInput['iCalLink'], calInput['events']);
-            let newiCalObjEvents = newiCalObj.getEvents();
-
-            const onetimeEvents = document.getElementById('onetime-events').getElementsByClassName('event-dropdown')[0];
-            const recurringEvents = document.getElementById('recurring-events').getElementsByClassName('event-dropdown')[0];
-
-            console.log(onetimeEvents);
-            console.log(recurringEvents);
-
-            for (let event of newiCalObjEvents) {
-
-                let childDiv2 = document.createElement("div"); // luuakse uus div container
-                childDiv2.innerHTML = event;
-
-                //console.log(event.isRecurring())
-
-                if (event.isRecurring()) {
-                    console.log("recurring");
-                    recurringEvents.appendChild(childDiv2);
-                } else {
-                    console.log("onetime");
-                    onetimeEvents.appendChild(childDiv2);
-                }
-
-                calendarGrid.appendChild(childDiv2);
             }
-
-            console.log(onetimeEvents);
-            console.log(recurringEvents);
         }
-    };
+    }
 
-    var formData = new FormData(event.target);
+    let formData = new FormData(event.target);
     xhr.send(new URLSearchParams(formData).toString());
 
 }
@@ -169,15 +143,33 @@ class iCalObj {
         this.iCalLink = null;
         this.events = [];
 
-        for (let event of eventsInput) {
-            //console.log(event);
-            this.events.push(new CalendarEvent(event.uid, event.summary, event.location, event.description, event.categories, new Date(event.start), new Date(event.end), event.duration, event.occurrences, event.recurring));
-        }
+        for (let event of eventsInput) {this.events.push(new CalendarEvent(event.uid, event.summary, event.location, event.description, event.categories, event.start, event.end, event.duration, event.occurrences, event.recurring))}
 
-        //console.log(this.events);
     }
     getEvents() {
         return this.events;
+    }
+
+    findEventsInMonth(month, year) {
+
+        let suitableEventList = [];
+        for (let event of this.getEvents()) {
+            let eventoccurrencesInMonth = event.getOccurrences().filter(function(occurrence) {return ((occurrence.getMonth() === month) && (occurrence.getFullYear() === year));});
+            if (eventoccurrencesInMonth.length > 0) {suitableEventList.push({"event": event, "occurrencesInMonth": eventoccurrencesInMonth});}
+        }
+
+        return suitableEventList;
+    }
+
+    findEventsOnDay(day, month, year) {
+
+        let suitableEventList = [];
+        for (let event of this.getEvents()) {
+            let eventoccurrencesInMonth = event.getOccurrences().filter(function(occurrence) {return ((occurrence.getDate() === day) && (occurrence.getMonth() === month) && (occurrence.getFullYear() === year));});
+            if (eventoccurrencesInMonth.length > 0) {suitableEventList.push({"event": event, "occurrencesOnDay": eventoccurrencesInMonth});}
+        }
+
+        return suitableEventList;
     }
 }
 
@@ -188,17 +180,25 @@ class CalendarEvent {
         this.location = location;
         this.description = description;
         this.categories = categories;
-        this.start = start;
-        this.end = end;
+       this.start = new Date(start.replace(" EEST", "").replace(" EET", ""));
+        this.end = new Date(end.replace(" EEST", "").replace(" EET", ""));
+        this.start = new Date(start);
+        this.end = new Date(end);
         this.duration = duration;
-        this.occurrences = occurrences;
+        this.occurrences = [];
         this.recurring = recurring;
+
+       if (occurrences) {for (let occurrence of occurrences) {this.occurrences.push(new Date(occurrence.replace(" EEST", "").replace(" EET", "")))}}
+
+        //if (occurrences) {for (let occurrence of occurrences) {this.occurrences.push(new Date(occurrence))}}
+        else {this.occurrences.push(this.start);}
+
     }
     getSummary() {
         return this.summary;
     }
     setEnd(end) {
-        this.end = this.end;
+        this.end = end;
     }
     getStart() {
         return this.start;
@@ -216,6 +216,10 @@ class CalendarEvent {
     isRecurring() {
         return this.recurring;
     }
+
+    getUid() {
+        return this.uid;
+    }
 }
 
 
@@ -223,6 +227,9 @@ class CalendarEvent {
 // kalendri kood
 class Calendar {
     constructor() {
+
+        this.iCalObjects = [];
+        this.eventsInSelectedMonth = [];
         this.currentDate = new Date(); // algväärtuseks käesolev kuupäev
         this.selectedDate = new Date(); // algväärtuseks käesolev kuupäev
 
@@ -260,16 +267,8 @@ class Calendar {
         this.addMonths(); // kuude lisamine (Jan - Dec)
         this.addMonthDays(); // kuu päevade lisamine (1 - 28/29/30/31)
 
-        //this.selectedDayEl = document.getElementsByClassName('.day.selected');
         this.selectedMonthEl = document.getElementsByClassName('month selected')[0];
         this.selectedYearEl = document.getElementsByClassName('yearNr selected')[0];
-
-        //let testP = document.getElementById("test");
-        // testP.innerText = "";
-        // testP.innerText += " " + this.selectedDate;
-        //testP.innerText += " " + this.selectedMonthEl;
-        //testP.innerText += " " + this.selectedYearEl;
-
         this.selectMonth(this.selectedMonthEl);
         this.selectYear(this.selectedYearEl);
     }
@@ -317,37 +316,73 @@ class Calendar {
 
     }
 
+    findEvents(day, month, year) {
+       let eventsInSelectedMonth = [];
+
+        for (let iCal of this.iCalObjects) {
+
+             if ((day !== null)  && (month !== null) && (year !== null)) {
+              //  console.log(day, month, year)
+                let suitableEventListinical = iCal.findEventsOnDay(day, month, year);
+                if (suitableEventListinical.length === 0) {continue;}
+                eventsInSelectedMonth.push(...suitableEventListinical);
+            } else if ((month !== null)  && (year !== null)) {
+                 let suitableEventListinical = iCal.findEventsInMonth(this.selectedDate.getMonth(), this.selectedDate.getFullYear());
+                 if (suitableEventListinical.length === 0) {continue;}
+                 eventsInSelectedMonth.push(...suitableEventListinical);
+             }
+        }
+
+        if ((day !== null)  && (month !== null) && (year !== null)) {eventsInSelectedMonth.sort(function(a, b) {return a.event.getStart().getHours() - b.event.getStart().getHours()});}
+        else if ((month !== null)  && (year !== null)) {eventsInSelectedMonth.sort(function(a, b) {return a.event.getStart().getAdjustedDay() - b.event.getStart().getAdjustedDay()});}
+
+        return eventsInSelectedMonth;
+    }
+
+
     // muuda valitud kuud
     selectMonth(el) {
 
         let oldSelectedMonthEl = document.getElementsByClassName('month selected')[0];
-
         if (oldSelectedMonthEl) {oldSelectedMonthEl.classList.remove("selected");}
+        let eventsInMonth = this.findEvents(null, Number(el.dataset.value), this.selectedDate.getFullYear());
+
+        let onetimeEvents = document.getElementById('onetime-events');
+        let recurringEvents = document.getElementById('recurring-events');
+        onetimeEvents.innerHTML = "";
+        recurringEvents.innerHTML = "";
+
+           for (let eventKVPair of eventsInMonth) {
+
+               let event = eventKVPair.event;
+               let occurrencesInMonth = eventKVPair.occurrencesInMonth;
+
+              // console.log(event)
+              // console.log(occurrencesInMonth)
+
+               let childDiv2 = document.createElement("div"); // luuakse uus div container
+               childDiv2.classList.add("event-dropdown-el");
+               childDiv2.innerHTML = event.getSummary() + " " + event.categories; // + " " + event.description;
+
+              // console.log(event.getSummary() + " " + event.getUid() + " " + event.description)
 
 
-        /*let testP = document.getElementById("test");
+               if (occurrencesInMonth.length > 1) {recurringEvents.appendChild(childDiv2);}
+               else {
+                  // console.log("pole")
+                   onetimeEvents.appendChild(childDiv2);
+               }
+           }
 
-          testP.innerText = "";
-         testP.innerText += " " + this.selectedDate;
-          testP.innerText += " " + el.dataset.value;*/
-        //var dateMonth = document.getElementById("dateMonth");
-        //dateMonth.innerText = el.innerText;
 
-        //testP.innerText += " " + dateMonth.innerText;
         el.classList.add("selected");
-
         this.selectedMonthEl = el;
+        this.selectedDate.setMonth(Number(el.dataset.value));
 
-        this.selectedDate.setMonth(el.dataset.value);
-
-        //      testP.innerText += " " + this.selectedDate;
-//
-        //this.selectedMonthNr = el.dataset.value;
         this.addMonthDays();
-        //this.updateMonth();
 
         // kui konkreetset kuupäeva pole valitud, siis kuvatakse kõik kuu sündmused
-        var dateElement = document.querySelector('.date');
+        let dateElement = document.querySelector('.date');
         dateElement.innerText = el.innerText;
     }
 
@@ -356,11 +391,11 @@ class Calendar {
         /*let oldSelectedDayEl = document.getElementsByClassName('day selected')[0];
         oldSelectedDayEl.classList.remove("selected");*/
 
-        //var dateDay = document.getElementById("dateDay");
+        //let dateDay = document.getElementById("dateDay");
         //dateDay.innerText = el.title;
         el.classList.add("selected");
 
-        this.selectedDate.setDate(el.dataset.value);
+        this.selectedDate.setDate(Number(el.dataset.value));
     }
 
 
@@ -401,9 +436,32 @@ class Calendar {
         this.addMonthDays();
     }
 
+    addGroupOfEventsToDays(day, month, year, parentEl, classListItems) {
+        //parentEl.innerHTML = "";
+
+        let childDivs = parentEl.getElementsByTagName('div');
+        while(childDivs[0]) {
+            parentEl.removeChild(childDivs[0]);
+        }
+
+        let arrayOfEvents = this.findEvents(day, month, year);
+        if (arrayOfEvents.length > 0) {
+
+            for (let eventKVPair of arrayOfEvents) {
+                let event = eventKVPair.event;
+
+                for (let occurrence of eventKVPair.occurrencesOnDay) { // kõik toimumiskorrad päevas (juhuks, kui neid on rohkem kui üks) lisatakse kalendrisse
+                    this.addEvent(event.getSummary(), parentEl, classListItems);
+                }
+            }
+        }
+    }
     // sündmuse kalendrisse lisamine
-    addEvent(el) {
-        el.classList.add("event");
+    addEvent(text, parent, classListItems) {
+        let childDiv2 = document.createElement("div"); // luuakse uus div container
+        childDiv2.innerHTML = text;
+        for (let item of classListItems) {childDiv2.classList.add(item);}
+        parent.appendChild(childDiv2);
     }
 
     // kõigi alamelementide kustutamine
@@ -446,74 +504,72 @@ class Calendar {
 
           - Eelmise kuu päevad (juhul, kui kuu ei alga esmaspäevaga): eelmises kuus on 28-31 päeva, seega on olemas päevad 23-31 ning iga kord kuvatakse neist sobivad.
           - Käesoleva kuu päevad: kuvatakse kõik kuupäevad vastavalt valitud kuule.
-          - Järgmise kuu päevad (juhul, kui kuu ei lõpe pühapäevaga): makismaalselt kuus päeva järgmisest kuust, seega on olemas päevad 1-6 ning iga kord kuvatakse neist sobivad.
+          - Järgmise kuu päevad (juhul, kui kuu ei lõpe pühapäevaga): makismaalselt kuus päeva järgmisest kuust, seega on olemas päevad 1-6 ning iga kord kuvatakse neist sobivad.*/
 
-          */
-        let testP = document.getElementById("test");
-
-        let monthNr = this.selectedDate.getMonth();
-        let yearNr = this.selectedDate.getFullYear();
-
-        // päevade arv kuus
-        let daysInMonth = this.months[monthNr]['days'];
+        let monthNr = Number(this.selectedDate.getMonth());
+        let yearNr = Number(this.selectedDate.getFullYear());
+        let daysInMonth = (monthNr === 1 ? new Date(yearNr, monthNr + 1, 0).getDate() : this.months[monthNr]['days']);  // päevade arv kuus
         let weekdayOfFirst = new Date(yearNr, monthNr).getAdjustedDay();
         let weekdayOfLast =  new Date(yearNr, monthNr, daysInMonth).getAdjustedDay();
+        let thisMonthEls = document.querySelectorAll('.day:not(.prevMonthDay):not(.nextMonthDay)');
+
+        //console.log(this.eventsInSelectedMonth);
+
+        for (let i = 1; i <= thisMonthEls.length; i++) {
+            let thisMonthDayEl = thisMonthEls[i - 1];
+            thisMonthDayEl.classList.add('hidden'); // esmalt peidetakse kõik eelmise kuu elemendid
+
+            // kuvatakse algava kuu esimese nädalapäeva numbri ja esmaspäeva vahe võrra eelmise kuu elemente
+            if (i < daysInMonth){
+                thisMonthDayEl.classList.remove("hidden");
+                //console.log(new Date(yearNr, monthNr, i) + " " + monthNr)
+                thisMonthDayEl.dataset.date = new Date(yearNr, monthNr, i);
+                this.addGroupOfEventsToDays(i,monthNr,yearNr, thisMonthDayEl, ["calendarEventDiv"])
+
+            }
+        }
 
 
-        //testP.innerText = "";
-        //testP.innerText += " " + this.selectedDate;
-        //testP.innerText += " " + daysInMonth;
-        //testP.innerText += " " + new Date(yearNr, monthNr);
-        //testP.innerText += " " + weekdayOfLast;
-
+        // kõik eelmise ja järgmise kuu päevad peidetakse
         let prevMonthDayEls = document.querySelectorAll('.prevMonthDay');
-        for(var i = 0; i < prevMonthDayEls.length; i++){prevMonthDayEls[i].classList.add('hidden');}
-
-
         let nextMonthDayEls = document.querySelectorAll('.nextMonthDay');
-        for(var i = 0; i < nextMonthDayEls.length; i++){nextMonthDayEls[i].classList.add('hidden');}
+        let daysInPrevMonth = null;
 
-        // eelmise kuu päevade lisamine, kui kuu ei alga esmaspäevaga
-        if (weekdayOfFirst !== 0) {
+        // eelmise kuu päevade lisamine, kui kuu ei alga esmaspäevaga: Jaanuaris on 31 päeva, muul juhul leitakse eelmise kuu päevade arv
+        if (weekdayOfFirst !== 0) {daysInPrevMonth = (monthNr === 0 ? 31 : (monthNr === 2 ? new Date(yearNr, monthNr, 0).getDate() : this.months[monthNr - 1]['days'])); }
 
-            // testP.innerText = "";
-            //  testP.innerText += " " + monthNr;
-            //testP.innerText += " " + this.months[monthNr - 1];
+        //console.log(new Date(yearNr, monthNr, 0).getDate());
+        for (let i = 0; i < prevMonthDayEls.length; i++) {
+            let prevMonthDayEl = prevMonthDayEls[i];
+            let elDayVal = Number(prevMonthDayEls[i].dataset.value);
 
-            // Jaanuaris on 31 päeva, muul juhul leitakse eelmise kuu päevade arv
-            let daysInPrevMonth = (monthNr === 0 ? 31 : (monthNr === 3 ? new Date(yearNr, monthNr - 1, 0).getAdjustedDay() : this.months[monthNr - 1]['days']));
+            prevMonthDayEl.classList.add('hidden'); // esmalt peidetakse kõik eelmise kuu elemendid
 
+            // kuvatakse algava kuu esimese nädalapäeva numbri ja esmaspäeva vahe võrra eelmise kuu elemente
+            if ((daysInPrevMonth) && ((daysInPrevMonth - weekdayOfFirst + 1) <= elDayVal) && (elDayVal <= (daysInPrevMonth))){
+                prevMonthDayEl.classList.remove("hidden");
+                prevMonthDayEl.classList.add("half-hidden");
+                let prevDate = (monthNr === 0 ? new Date(yearNr - 1, 11, elDayVal) : new Date(yearNr, monthNr - 1, elDayVal));
+                prevMonthDayEl.dataset.date = prevDate;
 
-            for (let i = daysInPrevMonth - weekdayOfFirst + 1; i <= daysInPrevMonth; i++) {
-                //testP.innerText += " I. " + i;
-
-                // leitakse näidatav element
-                let elToShow = document.querySelectorAll('.prevMonthDay[data-value="' + i + '"]')[0];
-
-                if (elToShow) {
-                    elToShow.classList.remove("hidden");
-                    elToShow.classList.add("half-hidden");
-                }
-
+                this.addGroupOfEventsToDays(elDayVal, prevDate.getMonth(), prevDate.getFullYear(), prevMonthDayEl)
             }
 
         }
 
+        for (let i = 0; i < nextMonthDayEls.length; i++){
 
-        // järgmise kuu päevade lisamine, kui kuu ei lõpe pühapäevaga
-        if (weekdayOfLast !== 6) {
-            // testP.innerText += " " + (6 - weekdayOfLast);
+            let nextMonthDayEl = nextMonthDayEls[i];
+            nextMonthDayEl.classList.add('hidden');
 
-            for (let i =  1; i <= (6 - weekdayOfLast); i++) {
-                //testP.innerText += " I. " + i;
+            // kuvatakse algava kuu viimasenädalapäeva numbri ja pühapäeva vahe võrra eelmise kuu elemente
+            if (i < 6 - weekdayOfLast) {
+                nextMonthDayEl.classList.remove("hidden");
+                nextMonthDayEl.classList.add("half-hidden");
+                let nextDate = (monthNr === 11 ? new Date(yearNr + 1, 0, i) : new Date(yearNr, monthNr + 1, i));
+                nextMonthDayEl.dataset.date = nextDate;
 
-                // leitakse näidatav element
-                let elToShow = document.querySelectorAll('.nextMonthDay[data-value="' + i + '"]')[0];
-
-                if (elToShow) {
-                    elToShow.classList.remove("hidden");
-                    elToShow.classList.add("half-hidden");
-                }
+                this.addGroupOfEventsToDays(i, nextDate.getMonth(), nextDate.getFullYear(), nextMonthDayEl)
             }
         }
     }
@@ -525,7 +581,7 @@ class Calendar {
 
 /* NAV Copyright (c) 2024 by Jeff Bredenkamp (https://codepen.io/jeffbredenkamp/pen/VypMNE) */
 
-var navigation = new TimelineLite({paused:true, reversed:true});
+let navigation = new TimelineLite({paused:true, reversed:true});
 navigation.to("#navigationWrap", 0.5, {opacity: 1, display: 'block'})
     .to(".navbar", 0.3, {opacity: 0}, "-=0.1")
     .to(".close", 0.3, {display: "block", opacity: 1}, "-=0.1")
@@ -565,7 +621,6 @@ class selectionMenu {
         this.menuItems.forEach((item, index) => {
             let rect = item.getBoundingClientRect();
 
-            ;
             this.itemOffsets[index] = {
                 left: rect.left,
                 top: rect.top,
@@ -639,7 +694,7 @@ class selectionMenu {
 /* KLASSIDE LOOMINE */
 const selectionMenuEl = new selectionMenu(); // uue Calendar klassi objekti loomine
 
-const calendar = new Calendar(); // uue Calendar klassi objekti loomine
+let calendar =  new Calendar(); // uue Calendar klassi objekti loomine
 
 let submitButton = document.getElementById("submitButton");
 

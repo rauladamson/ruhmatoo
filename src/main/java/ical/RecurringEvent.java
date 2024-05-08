@@ -26,7 +26,11 @@ public class RecurringEvent extends CalendarEvent  { // Tegemist on CalendarEven
     public JSONObject toJson() {
         JSONObject jsonObject = super.toJson();
         jsonObject.put("recurring", true);
-        jsonObject.put("occurrences", this.occurrences);
+        ArrayList<String> occurrenceStrings = new ArrayList<>();
+        for (Date occurrence : this.occurrences) {
+            occurrenceStrings.add(occurrence.toLocaleString());
+        }
+        jsonObject.put("occurrences", occurrenceStrings);
         return jsonObject;
     }
 

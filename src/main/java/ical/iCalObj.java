@@ -44,11 +44,13 @@ public class iCalObj { // klass CalendarEvent objektide hoidmiseks
             }
         }
 
+        //System.out.println(summary + " " + description + " " + occurenceDates.size());
+
         // TODO mis juhtub siis, kui aegu polegi ehk occurenceDates.size() == 0? (hetkel eeldame, et on alati vähemalt 1, aga kas saab olla ka ilma ajata sündmusi?)
         CalendarEvent newEvent = (occurenceDates.size() > 1) ? // kontrollitakse, kas sündmusel on rohkem kui 1 toimumisaeg
                 new RecurringEvent(uID, summary, location, description, categories, startDate, duration, occurenceDates) :  // kui jah, siis luuakse uus RecurringEvent objekt ning kõik toiumisajad lisatakse sellele
                 new OneTimeEvent(uID, summary, location, description, categories, startDate, duration); // kui ei, siis luuakse uus OneTimeEvent objekt
-        events.put(summary, newEvent); // sündmus lisatakse kalendrisse
+        events.put(uID, newEvent); // sündmus lisatakse kalendrisse
     }
 
     public JSONObject toJson() {
