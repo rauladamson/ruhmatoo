@@ -514,6 +514,9 @@ class Calendar {
 
         let monthNr = Number(this.selectedDate.getMonth());
         let yearNr = Number(this.selectedDate.getFullYear());
+
+        // See jookseb kokku teatud juhtudel, nt kui valida uus aasta ja siis seal mingi kuu.
+        // Siis ei ole millegipärast selectedDate objekti olemas.
         let daysInMonth = (monthNr === 1 ? new Date(yearNr, monthNr + 1, 0).getDate() : this.months[monthNr]['days']);  // päevade arv kuus
         let weekdayOfFirst = new Date(yearNr, monthNr).getAdjustedDay();
         let weekdayOfLast =  new Date(yearNr, monthNr, daysInMonth).getAdjustedDay();

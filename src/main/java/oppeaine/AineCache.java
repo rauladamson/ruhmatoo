@@ -98,13 +98,18 @@ public class AineCache {
         return uusAine;
     }
 
+    // Mattias: Märkisin praegu selle private-iks, et keelata selle kasutamist. Kui tekib tunne, et seda
+    //          on ikka vaja kasutada, paluks teavitada mind enne.
     /**
      * Lisab õppeaine objekti puhvrisse. NB! Ained lisatakse automaatselt getAine() meetodi korral.
-     * (Teha private'iks?)
+     * Hetkel pole see meetod kasutuses. Ilmselt pole sellel enam tulevikus kasutust, kuna see vajab
+     * lisamiseks Oppeaine objekti, aga (algseid) Oppeaine objekte peaksime me saama ainult AineCache.getAine()
+     * meetodilt, mis ise juba tegeleb vajadusel aine lisamisega.
+     * Praegu ikkagi jätab igaksjuhuks alles.
      * @param oa Õppeaine objekt
      * @return True, kui ainet polnud varem olemas. False, kui oli.
      */
-    public static boolean addAine(Oppeaine oa) {
+    private static boolean addAine(Oppeaine oa) {
         //TODO: optimiseerida meetod kasutades kas latestUuid või latestChanged
         //TODO: kasutada HashSeti(?)
         //System.out.println(oa.convertToJson().toString());
