@@ -85,7 +85,7 @@ public class InputServlet extends HttpServlet {
                         e.printStackTrace();
                     }
 
-                    addJsonArrayToJsonObject(jsonObject, "url-input", oa);
+                    addJsonArrayToJsonObject(jsonObject, "course-input", oa);
                     AineCache.addAine(oa); // Õppeaine objekt lisatakse Õppeaine objektide listi
 
                 } else if (paramName.contains("cal-input")) { // kuna me tahame kalendrit vahepeal töödelda, siis ei saa tulemust kohe tagasi saata
@@ -95,7 +95,7 @@ public class InputServlet extends HttpServlet {
                 } else { // muul juhul on tegemist ainekoodiga
                     Oppeaine oa = AineCache.getAine(paramValues[0]);
                     AineCache.addAine(oa);
-                    addJsonArrayToJsonObject(jsonObject, "text-input", paramValues);
+                    addJsonArrayToJsonObject(jsonObject, "course-input", oa);
                 }
             }
 

@@ -118,17 +118,23 @@ function submitForm(event) {
             let responseObj = JSON.parse(this.responseText); // JSON stringist objektiks
 
             //console.log(responseObj);
-            let courseOverview = document.getElementById('course-overview');
-            let childDiv1 = document.createElement("div"); // luuakse uus div container
-            childDiv1.innerHTML = responseObj['url-input'];
-            courseOverview.appendChild(childDiv1);
 
 
-            for (let i of responseObj['cal-input']) {
-                let calInput = JSON.parse(i);
-                let newiCalObj = new iCalObj(calInput['iCalLink'], calInput['events']);
-                calendar.iCalObjects.push(newiCalObj);
+            if (responseObj.hasOwnProperty('course-input')) {
+                let courseOverview = document.getElementById('course-overview');
+                let childDiv1 = document.createElement("div"); // luuakse uus div container
+                childDiv1.innerHTML = responseObj['course-input'];
+                courseOverview.appendChild(childDiv1);
+            }
 
+
+            if (responseObj.hasOwnProperty('cal-input')) {
+                for (let i of responseObj['cal-input']) {
+                    let calInput = JSON.parse(i);
+                    let newiCalObj = new iCalObj(calInput['iCalLink'], calInput['events']);
+                    calendar.iCalObjects.push(newiCalObj);
+
+                }
             }
         }
     }
