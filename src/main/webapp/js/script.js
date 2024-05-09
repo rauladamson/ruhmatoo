@@ -128,7 +128,9 @@ function submitForm(event) {
             }
 
 
+            console.log(responseObj);
             if (responseObj.hasOwnProperty('cal-input')) {
+                //console.log(true)
                 for (let i of responseObj['cal-input']) {
                     let calInput = JSON.parse(i);
                     let newiCalObj = new iCalObj(calInput['iCalLink'], calInput['events']);
@@ -561,7 +563,7 @@ class Calendar {
                 let prevDate = (monthNr === 0 ? new Date(yearNr - 1, 11, elDayVal) : new Date(yearNr, monthNr - 1, elDayVal));
                 prevMonthDayEl.dataset.date = prevDate;
 
-                this.addGroupOfEventsToDays(elDayVal, prevDate.getMonth(), prevDate.getFullYear(), prevMonthDayEl)
+                this.addGroupOfEventsToDays(elDayVal, prevDate.getMonth(), prevDate.getFullYear(), prevMonthDayEl, ["calendarEventDiv"])
             }
 
         }
@@ -578,7 +580,7 @@ class Calendar {
                 let nextDate = (monthNr === 11 ? new Date(yearNr + 1, 0, i) : new Date(yearNr, monthNr + 1, i));
                 nextMonthDayEl.dataset.date = nextDate;
 
-                this.addGroupOfEventsToDays(i, nextDate.getMonth(), nextDate.getFullYear(), nextMonthDayEl)
+                this.addGroupOfEventsToDays(i, nextDate.getMonth(), nextDate.getFullYear(), nextMonthDayEl, ["calendarEventDiv"])
             }
         }
     }
@@ -704,7 +706,6 @@ class selectionMenu {
 const selectionMenuEl = new selectionMenu(); // uue Calendar klassi objekti loomine
 
 let calendar =  new Calendar(); // uue Calendar klassi objekti loomine
-
 let submitButton = document.getElementById("submitButton");
 
 submitButton.addEventListener("click", () => {

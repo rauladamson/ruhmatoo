@@ -47,16 +47,6 @@ public class InputServlet extends HttpServlet {
         for (String paramName : inputsMap.keySet()) { // sisendväärtuste iteratsioon
             String[] paramValues = inputsMap.get(paramName); // võtamele vastava väärtuse massiv massiiv
 
-            // TODO kas seda on vaja? sisendit valideeritakse juba
-            // Mattias: See oli siin enne minu tulekut, kuid vist ei ole kasutajal võimalik valet asja sisestada,
-            //          see pigem selle jaoks et meie enda vigu leida. Ilmselt lõpuks pole vajalik
-
-            /*if (paramValues.length != 1) { // Ootame sisendit kindlas vormis
-                throw new IOException("Vale sisend: " + Arrays.toString(paramValues));
-            }*/
-            //System.out.println("Parameter name: " + paramName);
-            //System.out.println("Parameter values: " + Arrays.toString(paramValues));
-
             if (paramName.contains("url-input")) {
 
                 Pattern leiaAinekoodUrlist = Pattern.compile("[A-Z]{4}\\.[0-9]{2}\\.[0-9]{3}");
@@ -75,6 +65,7 @@ public class InputServlet extends HttpServlet {
             } else if (paramName.contains("cal-input")) { // kuna me tahame kalendrit vahepeal töödelda, siis ei saa tulemust kohe tagasi saata
                 CalendarDataServlet calendarDataServlet = new CalendarDataServlet();
                 String calendarData = calendarDataServlet.convert(paramValues[0]).toString();
+                //System.out.println(calendarData);
                 addJsonArrayToJsonObject(jsonObject, "cal-input", calendarData);
             } else { // muul juhul on tegemist ainekoodiga
                 Oppeaine oa = AineCache.getAine(paramValues[0]);
