@@ -15,6 +15,10 @@ public class Oppeaine {
     // Hetkel on klass mõeldud olema immutable - s.t. kui õppeainet uuendada, siis vahetada see uue objektiga välja.
     // Kas oleks parem teha niimodi, et objektide uuendamisel otsitakse erinevusi ja siis hoopis muudetakse ainult see, mida vaja?
 
+    // TODO: Teha konstruktorid protected'iks, et vältida AineCache'ist määda hiilimist(?)
+    //       (siis muidugi peaks AineCache'i tegema selle alamklassiks, vüi leidma mingi loogilisema
+    //        lahenduse, et ainult AineCache saaks konstruktoreid kutsuda)
+
     /**
      * Konstruktor olemasoleva JSON-i põhjal õppeaine loomiseks.
      * @param jsonText JSON andmed, String formaadis.
@@ -57,7 +61,7 @@ public class Oppeaine {
 
     /**
      * Sisemiste parameetrite muutmiseks. Ei luba lisada uusi parameetreid.
-     * NB! Mitte kasutadda, kui just absoluutselt pole vaja. Õppeainete haldamisega peaks tegelema AineCache.
+     * NB! Mitte kasutada, kui just absoluutselt pole vaja. Õppeainete haldamisega peaks tegelema AineCache.
      * @param key Võti.
      * @param newValue Uus väärtus.
      * @throws NoSuchElementException Viskab, kui võtmega antud parameetrit pole juba olemas.
