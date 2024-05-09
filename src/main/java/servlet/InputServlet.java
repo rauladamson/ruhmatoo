@@ -9,11 +9,18 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import oppeaine.AineCache;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import OIS_API.CoursesApi;
 import oppeaine.Oppeaine;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 @WebServlet("/inputServlet")
@@ -23,7 +30,7 @@ public class InputServlet extends HttpServlet {
 
     public InputServlet() {
         super();
-        // TODO Auto-generated constructor stub
+        AineCache.updateCacheFromFile();
     }
 
     protected void addJsonArrayToJsonObject(JSONObject jsonObject, String key, Object value) {
@@ -32,35 +39,43 @@ public class InputServlet extends HttpServlet {
         }
         jsonObject.getJSONArray(key).put(value);
     }
+
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        System.out.println("InputServlet doPost");
         Map<String, String[]> inputsMap = request.getParameterMap(); // sisend teisedatakse Mapiks
-        ArrayList<Oppeaine> oppeained = new ArrayList<>(); // luuakse uus Õppeaine objektide list
-
-        // Assume you have a JSON object like this: {k1 : array, k2 : array, k3 : array}
-        JSONObject jsonObject = new JSONObject();
+        JSONObject jsonObject = new JSONObject(); // luuakse uus JSON objekt
 
         if (!inputsMap.isEmpty()) { // kui sisend ei ole tühi, siis töödeldakse vastuse sisust asjakohaseid väärtused
 
-           // System.out.println(inputsMap);
             for (String paramName : inputsMap.keySet()) { // sisendväärtuste iteratsioon
                 String[] paramValues = inputsMap.get(paramName); // võtamele vastava väärtuse massiv massiiv
+
+                // TODO kas seda on vaja? sisendit valideeritakse juba
+                /*if (paramValues.length != 1) { // Ootame sisendit kindlas vormis
+                    throw new IOException("Vale sisend: " + Arrays.toString(paramValues));
+                }*/
 
                 //System.out.println("Parameter name: " + paramName);
                 //System.out.println("Parameter values: " + Arrays.toString(paramValues));
 
                 if (paramName.contains("url-input")) {
 
-                    //builder.append("Parameter name: ").append(paramName); // vastuse sisule lisatakse võti
+                    Pattern leiaAinekoodUrlist = Pattern.compile("[A-Z]{4}\\.[0-9]{2}\\.[0-9]{3}");
+                    Matcher matcher = leiaAinekoodUrlist.matcher(paramValues[0]);
 
-                    Oppeaine oa = CoursesApi.getAineFromUserURL(paramValues[0]); // luuakse uus Õppeaine objekt
-                    // TODO kontrolli paramValues pikkust - kas on alati ainult üks el?
-                    //builder.append("Parameter obj: ").append(oa); // vastuse sisule lisatakse Õppeaine objekt
+                    if(!matcher.find()) {
+                        System.out.println(paramValues[0]);
+                        throw new RuntimeException("EI leidnud koodi URL-ist >:(");
+                    }
 
-                    JSONObject jo = new JSONObject(oa);  // Õppeaine object to Json file
+                    Oppeaine oa = AineCache.getAine(matcher.group());
+
+                    // TODO siin tuleb formaadi üle vaadata
+                    JSONObject jo = new JSONObject(oa);
                     String joString = jo.toString();
+                   // JSONObject jo = oa.convertToJson(); // Õppeaine object to Json file
+
 
                     String filename = paramName + ".json";
                     try (FileWriter file = new FileWriter(filename)) {
@@ -71,32 +86,32 @@ public class InputServlet extends HttpServlet {
                     }
 
                     addJsonArrayToJsonObject(jsonObject, "url-input", oa);
-                    oppeained.add(oa); // Õppeaine objekt lisatakse Õppeaine objektide listi
+                    AineCache.addAine(oa); // Õppeaine objekt lisatakse Õppeaine objektide listi
 
-                } else if (paramName.contains("cal-input")) {
-
-                    System.out.println("Calendar input: " + paramValues[0]);
-                    // kuna me tahame kalendrit vahepeal töödelda, siis ei sa atulemust kohe tagasi saata
+                } else if (paramName.contains("cal-input")) { // kuna me tahame kalendrit vahepeal töödelda, siis ei saa tulemust kohe tagasi saata
                     CalendarDataServlet calendarDataServlet = new CalendarDataServlet();
                     String calendarData = calendarDataServlet.convert(paramValues[0]).toString();
-
-                    //System.out.println(calendarData);
                     addJsonArrayToJsonObject(jsonObject, "cal-input", calendarData);
-                } else { // TODO
+                } else { // muul juhul on tegemist ainekoodiga
+                    Oppeaine oa = AineCache.getAine(paramValues[0]);
+                    AineCache.addAine(oa);
                     addJsonArrayToJsonObject(jsonObject, "text-input", paramValues);
                 }
             }
 
-            System.out.println(jsonObject);
-
             response.setContentType("application/json"); // vastus saadetakse JSON-kujul
             response.setCharacterEncoding("UTF-8"); // kodeering on UTF-8
             response.getWriter().write(String.valueOf(jsonObject)); // JSON-sõne vastusesse kirjutamine
-            //response.getWriter().write(String.valueOf(jsonObject)); // JSON-sõne vastusesse kirjutamine
 
             // TODO salvesta iga massiivi obj faili (KUI uuid hulgas pole): json
             // TODO kirjuta uuid eraldi faili
             // TODO uuid-d kuhugi cahce-i
         }
+    }
+
+    @Override
+    public void destroy() {
+        AineCache.writeCacheToFile();
+        super.destroy();
     }
 }
