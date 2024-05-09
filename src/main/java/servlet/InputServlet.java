@@ -81,7 +81,7 @@ public class InputServlet extends HttpServlet {
                 Oppeaine oa = AineCache.getAine(paramValues[0]);
                 // Samuti eemaldatud cache'i aine lisamine.
 
-                addJsonArrayToJsonObject(jsonObject, "text-input", paramValues);
+                addJsonArrayToJsonObject(jsonObject, "text-input", oa);
             }
         }
 
