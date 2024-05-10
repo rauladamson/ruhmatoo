@@ -26,6 +26,12 @@
       <version>3.0.2</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/javax.servlet/servlet-api -->
+      <dependency>
+        <groupId>jakarta.servlet</groupId>
+        <artifactId>jakarta.servlet-api</artifactId>
+        <version>6.1.0-M2</version>
+      </dependency>
+
       <!-- other dependencies -->
       <dependency>
         <groupId>javax.servlet</groupId>
@@ -33,13 +39,23 @@
         <version>4.0.1</version>
         <scope>provided</scope>
       </dependency>
+
+
     <!-- https://mvnrepository.com/artifact/org.apache.tomcat/tomcat-servlet-api -->
     <dependency>
-        <groupId>org.apache.tomcat</groupId>
-        <artifactId>tomcat-servlet-api</artifactId>
-        <version>10.0.14</version>
-        <scope>provided</scope>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>tomcat-servlet-api</artifactId>
+      <version>11.0.0-M20</version>
     </dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.codehaus.cargo/cargo-maven3-plugin -->
+    <dependency>
+      <groupId>org.codehaus.cargo</groupId>
+      <artifactId>cargo-maven3-plugin</artifactId>
+      <version>1.10.13</version>
+    </dependency>
+
+
     <dependency>
       <groupId>net.sf.biweekly</groupId>
       <artifactId>biweekly</artifactId>
@@ -109,6 +125,15 @@
           <version>2.2</version>
           <configuration>
             <port>9090</port>
+            <path>/</path>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.cargo</groupId>
+          <artifactId>cargo-maven2-plugin</artifactId>
+          <version>1.9.5</version>
+          <configuration>
+            <port>8080</port>
             <path>/</path>
           </configuration>
         </plugin>

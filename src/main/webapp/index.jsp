@@ -1,4 +1,7 @@
 <%@ page import="java.util.Random" %>
+<%@ page import="jakarta.servlet.SessionCookieConfig" %>
+
+<!DOCTYPE html>
     <html>
 
     <head>
@@ -10,6 +13,7 @@
     <body>
 
     <header>
+
 
         <nav>
             <!--Copyright (c) 2024 by Jeff Bredenkamp (https://codepen.io/jeffbredenkamp/pen/VypMNE)-->
