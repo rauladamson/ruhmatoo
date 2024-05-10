@@ -353,7 +353,15 @@ class Calendar {
 
         let oldSelectedMonthEl = document.getElementsByClassName('month selected')[0];
         if (oldSelectedMonthEl) {oldSelectedMonthEl.classList.remove("selected");}
-        let eventsInMonth = this.findEvents(null, Number(el.dataset.value), this.selectedDate.getFullYear());
+
+        let monthIndex = Number(el.dataset.value);
+
+        if (this.months[monthIndex] === undefined) {
+            console.error(`Month index ${monthIndex} is undefined`);
+            return;
+        }
+
+        let eventsInMonth = this.findEvents(null, monthIndex, this.selectedDate.getFullYear());
 
         let onetimeEvents = document.getElementById('onetime-events');
         let recurringEvents = document.getElementById('recurring-events');
@@ -387,7 +395,13 @@ class Calendar {
         this.selectedMonthEl = el;
         this.selectedDate.setMonth(Number(el.dataset.value));
 
-        this.addMonthDays();
+        this.addMonthDays(); // TODO Potential bug:
+        /*
+        Uncaught TypeError: Cannot read properties of undefined (reading 'days')
+    at Calendar.addMonthDays (script.js?830510671:522:109)
+    at Calendar.selectMonth (script.js?830510671:390:14)
+    at HTMLUListElement.<anonymous> (script.js?830510671:269:67)
+         */
 
         // kui konkreetset kuupäeva pole valitud, siis kuvatakse kõik kuu sündmused
         let dateElement = document.querySelector('.date');
@@ -410,9 +424,10 @@ class Calendar {
     selectYear(el) { // funktsioon muudab valitud aastat
 
         let selectedYearEl = document.getElementsByClassName('yearNr selected')[0];
-
-        selectedYearEl.classList.remove("selected");
-        selectedYearEl.classList.add("half-hidden");
+        if (selectedYearEl) {
+            selectedYearEl.classList.remove("selected");
+            selectedYearEl.classList.add("half-hidden");
+        }
 
         let prevSelectedYear = this.selectedDate.getFullYear();
         let selectedYearNr = Number(el.dataset.value);
@@ -516,6 +531,11 @@ class Calendar {
 
         let monthNr = Number(this.selectedDate.getMonth());
         let yearNr = Number(this.selectedDate.getFullYear());
+
+        if (!this.months[monthNr]) {
+            console.error(`Month index ${monthNr} is undefined`);
+            return;
+        }
 
         // See jookseb kokku teatud juhtudel, nt kui valida uus aasta ja siis seal mingi kuu.
         // Siis ei ole millegipärast selectedDate objekti olemas.

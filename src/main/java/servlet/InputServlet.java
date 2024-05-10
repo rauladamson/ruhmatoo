@@ -35,7 +35,7 @@ public class InputServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        System.out.println("Reached doPost");
         Map<String, String[]> inputsMap = request.getParameterMap(); // sisend teisedatakse Mapiks
         JSONObject jsonObject = new JSONObject(); // luuakse uus JSON objekt
 
