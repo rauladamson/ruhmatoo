@@ -52,6 +52,10 @@ function addTextInput() {
     );
 }
 
+function createNewDropdownDiv() {
+
+}
+
 function addUrlInput() {
     let form = document.getElementById("course-input-form-contaner");
     createNewFormChildDiv("Lisa url:",
@@ -63,7 +67,8 @@ function addUrlInput() {
 
 function addCalInput() {
     let form = document.getElementById("course-input-form-contaner");
-    createNewFormChildDiv("Lisa iCal link:",
+
+    ("Lisa iCal link:",
         `cal-input-${form.getElementsByClassName('iCalInput').length + 1}`,
         "url",
         "...",
@@ -102,48 +107,36 @@ function showHiddenEl(elId) {
 }
 
 
-function submitForm(event) {
-    event.preventDefault(); // Prevent the form from being submitted normally
+function submitForm(responseObj) { // SEE ON TEGELIKUST FUNKTSIOONIST ERINEV
+
+    let courseOverview = document.getElementById('course-overview');
+    let childDiv1 = document.createElement("div"); // luuakse uus div container
+    childDiv1.textContent =  responseObj['url-input'];
+    courseOverview.appendChild(childDiv1);
 
 
-
-    let xhr = new XMLHttpRequest();
-    xhr.open('POST', 'inputServlet', true);
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-
-    xhr.onload = function() {
-        if (this.status === 200) {
-            //console.log(this.responseText);
-
-            let responseObj = JSON.parse(this.responseText); // JSON stringist objektiks
-
-            //console.log(responseObj);
-
-
-            if (responseObj.hasOwnProperty('course-input')) {
-                let courseOverview = document.getElementById('course-overview');
-                let childDiv1 = document.createElement("div"); // luuakse uus div container
-                childDiv1.innerHTML = responseObj['course-input'];
-                courseOverview.appendChild(childDiv1);
-            }
-
-
-            console.log(responseObj);
-            if (responseObj.hasOwnProperty('cal-input')) {
-                //console.log(true)
-                for (let i of responseObj['cal-input']) {
-                    let calInput = JSON.parse(i);
-                    let newiCalObj = new iCalObj(calInput['iCalLink'], calInput['events']);
-                    calendar.iCalObjects.push(newiCalObj);
-
-                }
-            }
-        }
+    if (responseObj.hasOwnProperty('course-input')) {
+        let courseOverview = document.getElementById('course-overview');
+        let childDiv1 = document.createElement("div"); // luuakse uus div container
+        childDiv1.innerHTML = responseObj['course-input'];
+        courseOverview.appendChild(childDiv1);
     }
 
-    let formData = new FormData(event.target);
-    xhr.send(new URLSearchParams(formData).toString());
 
+    //console.log(responseObj);
+    if (responseObj.hasOwnProperty('cal-input')) {
+        //console.log(true)
+        for (let i of responseObj['cal-input']) {
+            let calInput = JSON.parse(i);
+            let newiCalObj = new iCalObj(calInput['iCalLink'], calInput['events']);
+
+
+
+            calendar.iCalObjects.push(newiCalObj);
+            if (calendar.initialized === false) {calendar.initialize()}
+
+        }
+    }
 }
 
 class iCalObj {
@@ -188,7 +181,7 @@ class CalendarEvent {
         this.location = location;
         this.description = description;
         this.categories = categories;
-       this.start = new Date(start.replace(" EEST", "").replace(" EET", ""));
+        this.start = new Date(start.replace(" EEST", "").replace(" EET", ""));
         this.end = new Date(end.replace(" EEST", "").replace(" EET", ""));
         this.start = new Date(start);
         this.end = new Date(end);
@@ -196,7 +189,7 @@ class CalendarEvent {
         this.occurrences = [];
         this.recurring = recurring;
 
-       if (occurrences) {for (let occurrence of occurrences) {this.occurrences.push(new Date(occurrence.replace(" EEST", "").replace(" EET", "")))}}
+        if (occurrences) {for (let occurrence of occurrences) {this.occurrences.push(new Date(occurrence.replace(" EEST", "").replace(" EET", "")))}}
 
         //if (occurrences) {for (let occurrence of occurrences) {this.occurrences.push(new Date(occurrence))}}
         else {this.occurrences.push(this.start);}
@@ -231,7 +224,6 @@ class CalendarEvent {
 }
 
 
-
 // kalendri kood
 class Calendar {
     constructor() {
@@ -240,6 +232,7 @@ class Calendar {
         this.eventsInSelectedMonth = [];
         this.currentDate = new Date(); // algväärtuseks käesolev kuupäev
         this.selectedDate = new Date(); // algväärtuseks käesolev kuupäev
+        this.initialized = false;
 
         this.days = {0: "E", 1: "T", 2: "K", 3: "N", 4: "R", 5: "L", 6: "P"};
 
@@ -269,6 +262,12 @@ class Calendar {
         this.monthList.addEventListener('click', (event) => {this.selectMonth(event.target);});
         this.daysList.addEventListener('click', (event) => {this.selectDay(event.target);});
 
+
+    }
+
+    /* FUNKTSIOONID */
+
+    initialize() {
         // funktsioonide väljakutsed initsialiseerimisel
         this.addYears(); // aastate lisamine (2024 +- 5)
         this.addWeekdays(); // nädalapäevade lisamine (E - P)
@@ -279,9 +278,8 @@ class Calendar {
         this.selectedYearEl = document.getElementsByClassName('yearNr selected')[0];
         this.selectMonth(this.selectedMonthEl);
         this.selectYear(this.selectedYearEl);
+        this.initialized = true;
     }
-
-    /* FUNKTSIOONID */
 
     createNewChidldEl(parent, i, outerTag, innerTag, outerClassListItems, innerClassListItems, text = null, nrToCheck = null, elToAddChildTo = null) {
 
@@ -325,24 +323,35 @@ class Calendar {
     }
 
     findEvents(day, month, year) {
-       let eventsInSelectedMonth = [];
+        let eventsInSelectedMonth = [];
 
         for (let iCal of this.iCalObjects) {
 
-             if ((day !== null)  && (month !== null) && (year !== null)) {
-              //  console.log(day, month, year)
+            if ((day !== null)  && (month !== null) && (year !== null)) {
+                //  console.log(day, month, year)
                 let suitableEventListinical = iCal.findEventsOnDay(day, month, year);
                 if (suitableEventListinical.length === 0) {continue;}
                 eventsInSelectedMonth.push(...suitableEventListinical);
             } else if ((month !== null)  && (year !== null)) {
-                 let suitableEventListinical = iCal.findEventsInMonth(this.selectedDate.getMonth(), this.selectedDate.getFullYear());
-                 if (suitableEventListinical.length === 0) {continue;}
-                 eventsInSelectedMonth.push(...suitableEventListinical);
-             }
+                let suitableEventListinical = iCal.findEventsInMonth(this.selectedDate.getMonth(), this.selectedDate.getFullYear());
+                if (suitableEventListinical.length === 0) {continue;}
+                eventsInSelectedMonth.push(...suitableEventListinical);
+            }
         }
 
-        if ((day !== null)  && (month !== null) && (year !== null)) {eventsInSelectedMonth.sort(function(a, b) {return a.event.getStart().getHours() - b.event.getStart().getHours()});}
-        else if ((month !== null)  && (year !== null)) {eventsInSelectedMonth.sort(function(a, b) {return a.event.getStart().getAdjustedDay() - b.event.getStart().getAdjustedDay()});}
+
+
+        eventsInSelectedMonth.sort(function(a, b) {
+            let dayDiff = a.event.getStart().getAdjustedDay() - b.event.getStart().getAdjustedDay() // esmalt sorteeritakse nädalapäeva järgi
+
+            if (dayDiff !== 0) {
+                return dayDiff;
+            }
+
+            // ja siis algusaja järgi
+            return a.event.getStart().getHours() - b.event.getStart().getHours();
+        });
+
 
         return eventsInSelectedMonth;
     }
@@ -350,6 +359,7 @@ class Calendar {
 
     // muuda valitud kuud
     selectMonth(el) {
+
 
         let oldSelectedMonthEl = document.getElementsByClassName('month selected')[0];
         if (oldSelectedMonthEl) {oldSelectedMonthEl.classList.remove("selected");}
@@ -360,27 +370,37 @@ class Calendar {
         onetimeEvents.innerHTML = "";
         recurringEvents.innerHTML = "";
 
-           for (let eventKVPair of eventsInMonth) {
-
-               let event = eventKVPair.event;
-               let occurrencesInMonth = eventKVPair.occurrencesInMonth;
-
-              // console.log(event)
-              // console.log(occurrencesInMonth)
-
-               let childDiv2 = document.createElement("div"); // luuakse uus div container
-               childDiv2.classList.add("event-dropdown-el");
-               childDiv2.innerHTML = event.getSummary() + " " + event.categories; // + " " + event.description;
-
-              // console.log(event.getSummary() + " " + event.getUid() + " " + event.description)
+        let onetimeEventFragment = document.createDocumentFragment();
+        let recurringEventFragment = document.createDocumentFragment();
 
 
-               if (occurrencesInMonth.length > 1) {recurringEvents.appendChild(childDiv2);}
-               else {
-                  // console.log("pole")
-                   onetimeEvents.appendChild(childDiv2);
-               }
-           }
+        //   this.yearSelect.appendChild(fragment);
+
+
+
+        for (let eventKVPair of eventsInMonth) {
+
+            let event = eventKVPair.event;
+            let occurrencesInMonth = eventKVPair.occurrencesInMonth;
+
+            let childDiv2 = document.createElement("div"); // luuakse uus div container
+            childDiv2.classList.add("event-dropdown-el");
+            childDiv2.innerHTML = event.getSummary() + " " + event.categories; // + " " + event.description;
+
+            // console.log(event.getSummary() + " " + event.getUid() + " " + event.description)
+
+            /* let delButton = document.createElement('button');
+   delButton.textContent = 'X';
+   delButton.classList.add("delete-btn"); // lisatakse klass
+   delButton.type = "button"
+   delButton.onclick = function() { deleteEl(formChildDiv); }; */
+
+            if (occurrencesInMonth.length > 1) {onetimeEventFragment.appendChild(childDiv2);}
+            else {recurringEventFragment.appendChild(childDiv2);}
+        }
+
+        onetimeEvents.appendChild(onetimeEventFragment);
+        recurringEvents.appendChild(recurringEventFragment);
 
 
         el.classList.add("selected");
@@ -725,6 +745,14 @@ document.getElementById("textInputBtn").addEventListener("click", () => {addText
 document.getElementById("urlInputBtn").addEventListener("click", () => {addUrlInput()});
 document.getElementById("calInputBtn").addEventListener("click", () => {addCalInput()});
 document.getElementById("binBtn").addEventListener("click", () => {deleteAllUserInput()});
-document.getElementById('course-input-form').addEventListener('submit', function(event) {submitForm(event);});
+document.getElementById('course-input-form').addEventListener('submit', submitForm);
 
-let icalArray = [];
+
+
+
+
+
+
+
+
+
