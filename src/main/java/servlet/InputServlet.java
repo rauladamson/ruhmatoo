@@ -39,6 +39,7 @@ public class InputServlet extends HttpServlet {
         Map<String, String[]> inputsMap = request.getParameterMap(); // sisend teisedatakse Mapiks
         JSONObject jsonObject = new JSONObject(); // luuakse uus JSON objekt
 
+        System.out.println("Inside doPost of inputServlet");
         if (inputsMap.isEmpty()) {
             return;
         }

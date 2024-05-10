@@ -202,7 +202,6 @@ header, footer, main {
 }
 
 .customButton1 {
-    background-color: none;
     text-decoration: none;
     background-color: #212121;
     border: none;
@@ -404,12 +403,10 @@ header, footer, main {
     padding: 14px 20px;
     letter-spacing: 1px;
     font-size: 12px;
-    box-sizing: border-box;
-    color: #98a0a6;
+    color: black;
     position: relative;
-    pointer-events: none;
     z-index: 1;
-    height: 75px;
+
 }
 
 .days:hover {
@@ -418,11 +415,12 @@ header, footer, main {
 
 .calendarEventDiv {
     padding: 10px;
-    background-color: #F5A1A3;
+    background-color: #7FC3BC;
+    margin-top: 5px;
 }
 .days {
     grid-template-columns: repeat(7, 1fr);
-    grid-auto-rows: max-content;
+    grid-template-rows: 200px 200px 200px 200px 200px;
 }
 
 .day:not(.hidden):nth-of-type(7n + 7) {
@@ -474,7 +472,6 @@ a{
     border-radius: 4px;
     background-color: #ffffff;
     color: #333333;
-    height: fill-available;
 }
 
 .calendar h1, .calendar h2{
@@ -568,7 +565,7 @@ a{
 }
 
 .day.selected {
-    background-color: #F5A1A3!important;
+    background-color: #E8A484!important;
     color: #ffffff;
 }
 
@@ -850,6 +847,10 @@ html {
 
     }
 
+}
+
+:root {
+    --timeOut: 0.3s;
 }
 
 .menu__border{
