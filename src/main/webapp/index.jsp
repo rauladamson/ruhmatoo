@@ -1,5 +1,4 @@
 <%@ page import="java.util.Random" %>
-<%@ page import="jakarta.servlet.SessionCookieConfig" %>
 
 <!DOCTYPE html>
     <html>

@@ -108,7 +108,7 @@ function submitForm(event) {
 
 
     let xhr = new XMLHttpRequest();
-    xhr.open('POST', 'inputServlet', true);
+    xhr.open('POST', '/inputServlet', true);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
     xhr.onload = function() {
@@ -139,7 +139,7 @@ function submitForm(event) {
                 }
             }
         }
-    }
+    };
 
     let formData = new FormData(event.target);
     xhr.send(new URLSearchParams(formData).toString());

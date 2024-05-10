@@ -5,8 +5,8 @@
   <artifactId>ruhmatoo</artifactId>
   <packaging>war</packaging>
   <properties>
-    <maven.compiler.source>17</maven.compiler.source>
-    <maven.compiler.target>17</maven.compiler.target>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
   </properties>
   <version>1.0-SNAPSHOT</version>
   <name>ruhmatoo Maven Webapp</name>
@@ -25,21 +25,23 @@
       <artifactId>pdfbox</artifactId>
       <version>3.0.2</version>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/javax.servlet/servlet-api -->
-      <dependency>
-        <groupId>jakarta.servlet</groupId>
-        <artifactId>jakarta.servlet-api</artifactId>
-        <version>6.1.0-M2</version>
-      </dependency>
 
-      <!-- other dependencies -->
-      <dependency>
-        <groupId>javax.servlet</groupId>
-        <artifactId>javax.servlet-api</artifactId>
-        <version>4.0.1</version>
-        <scope>provided</scope>
-      </dependency>
+    <!-- https://mvnrepository.com/artifact/jakarta.servlet/jakarta.servlet-api -->
+    <dependency>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+      <version>5.0.0</version>
+      <scope>provided</scope>
+    </dependency>
 
+
+    <dependency>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>tomcat</artifactId>
+      <version>11.0.0-M20</version>
+      <type>pom</type>
+      <scope>provided</scope>
+    </dependency>
 
     <!-- https://mvnrepository.com/artifact/org.apache.tomcat/tomcat-servlet-api -->
     <dependency>
@@ -48,13 +50,12 @@
       <version>11.0.0-M20</version>
     </dependency>
 
-    <!-- https://mvnrepository.com/artifact/org.codehaus.cargo/cargo-maven3-plugin -->
+    <!-- https://mvnrepository.com/artifact/org.apache.tomcat/tomcat-jasper -->
     <dependency>
-      <groupId>org.codehaus.cargo</groupId>
-      <artifactId>cargo-maven3-plugin</artifactId>
-      <version>1.10.13</version>
+      <groupId>org.apache.tomcat</groupId>
+        <artifactId>tomcat-jasper</artifactId>
+        <version>11.0.0-M20</version>
     </dependency>
-
 
     <dependency>
       <groupId>net.sf.biweekly</groupId>
@@ -78,6 +79,20 @@
       <artifactId>junit-jupiter</artifactId>
       <version>5.11.0-M1</version>
       <scope>test</scope>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.apache.tomcat/tomcat-catalina -->
+    <dependency>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>tomcat-catalina</artifactId>
+      <version>11.0.0-M20</version>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.apache.tomcat/tomcat-coyote -->
+    <dependency>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>tomcat-coyote</artifactId>
+      <version>11.0.0-M20</version>
     </dependency>
 
   </dependencies>
@@ -107,34 +122,52 @@
             </excludedGroups>
           </configuration>
         </plugin>
-        <plugin>
-          <artifactId>maven-war-plugin</artifactId>
-          <version>3.2.2</version>
-        </plugin>
+
         <plugin>
           <artifactId>maven-install-plugin</artifactId>
           <version>2.5.2</version>
         </plugin>
-        <plugin>
-          <artifactId>maven-deploy-plugin</artifactId>
-          <version>2.8.2</version>
-        </plugin>
+
         <plugin>
           <groupId>org.apache.tomcat.maven</groupId>
           <artifactId>tomcat7-maven-plugin</artifactId>
           <version>2.2</version>
           <configuration>
-            <port>9090</port>
             <path>/</path>
+            <port>8080</port>
+            <uriEncoding>UTF-8</uriEncoding>
           </configuration>
         </plugin>
+
+
+        <plugin>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <version>2.8.2</version>
+        </plugin>
+
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-war-plugin</artifactId>
+            <version>3.3.1</version>
+        </plugin>
+
         <plugin>
           <groupId>org.codehaus.cargo</groupId>
-          <artifactId>cargo-maven2-plugin</artifactId>
-          <version>1.9.5</version>
+          <artifactId>cargo-maven3-plugin</artifactId>
+          <version>1.10.13</version>
           <configuration>
-            <port>8080</port>
-            <path>/</path>
+            <container>
+              <containerId>tomcat11x</containerId>
+              <type>installed</type>
+              <home>C:\Program Files\Apache Software Foundation\Tomcat 11.0</home>
+            </container>
+            <configuration>
+              <type>standalone</type>
+              <properties>
+                <cargo.servlet.port>8080</cargo.servlet.port>
+                <cargo.tomcat.ajp.port>8009</cargo.tomcat.ajp.port>
+              </properties>
+            </configuration>
           </configuration>
         </plugin>
       </plugins>
