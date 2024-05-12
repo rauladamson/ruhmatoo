@@ -149,7 +149,68 @@ header, footer, main {
 
 /* customButton1 styles: https://uiverse.io/TISEPSE/perfect-pig-59*/
 
-.customButton1 > a {
+/*.customButton1 > a {*/
+/*    position: relative;*/
+/*    display: inline-block;*/
+/*    padding: 15px 30px;*/
+/*    border: 2px solid #fefefe;*/
+/*    text-transform: uppercase;*/
+/*    color: #fefefe;*/
+/*    text-decoration: none;*/
+/*    font-weight: 600;*/
+/*    font-size: 20px;*/
+/*    border-radius: 5px;*/
+/*}*/
+
+/*.customButton1 > a::before {*/
+/*    content: '';*/
+/*    position: absolute;*/
+/*    top: 6px;*/
+/*    left: -2px;*/
+/*    width: calc(100% + 4px);*/
+/*    height: calc(100% - 12px);*/
+/*    background-color: #212121;*/
+/*    transition: 0.3s ease-in-out;*/
+/*    transform: scaleY(1);*/
+
+/*}*/
+
+/*.customButton1 > a:hover::before {*/
+/*    transform: scaleY(0);*/
+/*}*/
+
+/*.customButton1 > a::after {*/
+/*    content: '';*/
+/*    position: absolute;*/
+/*    left: 6px;*/
+/*    top: -2px;*/
+/*    height: calc(100% + 4px);*/
+/*    width: calc(100% - 12px);*/
+/*    background-color: #212121;*/
+/*    transition: 0.3s ease-in-out;*/
+/*    transform: scaleX(1);*/
+/*    transition-delay: 0.5s;*/
+/*}*/
+
+/*.customButton1 > a:hover::after {*/
+/*    transform: scaleX(0);*/
+/*}*/
+
+/*.customButton1 > a > span {*/
+/*    position: relative;*/
+/*    z-index: 3;*/
+/*}*/
+
+/*.customButton1 {*/
+/*    text-decoration: none;*/
+/*    background-color: #212121;*/
+/*    border: none;*/
+/*    border-radius: 20px;*/
+/*    padding: 10px;*/
+
+/*}*/
+
+.customButton1 > button {
     position: relative;
     display: inline-block;
     padding: 15px 30px;
@@ -162,7 +223,7 @@ header, footer, main {
     border-radius: 5px;
 }
 
-.customButton1 > a::before {
+.customButton1 > button::before {
     content: '';
     position: absolute;
     top: 6px;
@@ -175,11 +236,11 @@ header, footer, main {
 
 }
 
-.customButton1 > a:hover::before {
+.customButton1 > button:hover::before {
     transform: scaleY(0);
 }
 
-.customButton1 > a::after {
+.customButton1 > button::after {
     content: '';
     position: absolute;
     left: 6px;
@@ -192,11 +253,11 @@ header, footer, main {
     transition-delay: 0.5s;
 }
 
-.customButton1 > a:hover::after {
+.customButton1 > button:hover::after {
     transform: scaleX(0);
 }
 
-.customButton1 > a > span {
+.customButton1 > button > span {
     position: relative;
     z-index: 3;
 }

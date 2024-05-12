@@ -746,7 +746,9 @@ document.getElementById("textInputBtn").addEventListener("click", () => {addText
 document.getElementById("urlInputBtn").addEventListener("click", () => {addUrlInput()});
 document.getElementById("calInputBtn").addEventListener("click", () => {addCalInput()});
 document.getElementById("binBtn").addEventListener("click", () => {deleteAllUserInput()});
-document.getElementById('course-input-form').addEventListener('submit', function(event) {submitForm(event);});
+document.getElementById('course-input-form').addEventListener('submit', function(event) {
+    submitForm(event);
+});
 // TODO: lisada event listener minmimized-input-formi jaoks
 
 let icalArray = [];

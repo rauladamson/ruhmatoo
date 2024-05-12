@@ -29,10 +29,11 @@ public class iCalObj { // klass CalendarEvent objektide hoidmiseks
         String summary = event.getSummary().getValue(); // sündmuse kirjeldus (nimetus ÕIS-is)
         String location = event.getLocation() != null ? event.getLocation().getValue() : "-"; // sündmuse toimumiskoht
         String description = event.getDescription().getValue().toString(); // sündmuse kirjeldus
-       String categories = event.getCategories().get(0).getValues().get(0); // sündmuse kategooria
+        String categories = event.getCategories().get(0).getValues().get(0); // sündmuse kategooria
 
         Date startDate = event.getDateStart().getValue(); // sündmuse algusaeg
-        Long duration = event.getDuration().getValue().toMillis(); // sündmuse kestvus
+        Long duration = event.getDuration() != null ? event.getDuration().getValue().toMillis() : 0; // sündmuse kestvus, null-safe
+
         RecurrenceRule recurrenceRule = event.getRecurrenceRule(); // sündmuse kordumise reegel
 
         ArrayList<Date> occurenceDates = new ArrayList<>(); // luuakse tühi massiiv sündmuse toimumisaegade hoidmiseks
