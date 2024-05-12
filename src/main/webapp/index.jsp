@@ -167,20 +167,24 @@
                     </div>
 
 
+<%--                    <form id="vormB" method="get"><label>--%>
+<%--                        <input type="text"/>--%>
+<%--                        <button> Esita B </button>--%>
+<%--                    </label></form>--%>
+
+
                     <form action="" method="POST" id="course-input-form">
                         <div id="course-input-form-contaner" class="flex-container">
 
                         </div>
 
-<%--                        VANA NUPP:--%>
 <%--                        <button id="submitButton" class="customButton1" data-el-id="inputResMinimized">--%>
 <%--                            <a href="#"><span>VAATA</span></a>--%>
-
+<%--&lt;%&ndash;                            Muuta see a klassist &ndash;%&gt;--%>
 <%--                        </button>--%>
-
                         <div class="customButton1">
                             <button>
-                                <span> Vaata </span>
+                                <span> ESITA TEST </span>
                             </button>
                         </div>
 
