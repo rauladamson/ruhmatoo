@@ -726,19 +726,20 @@ class selectionMenu {
 const selectionMenuEl = new selectionMenu(); // uue Calendar klassi objekti loomine
 
 let calendar =  new Calendar(); // uue Calendar klassi objekti loomine
-let submitButton = document.getElementById("submitButton");
 
-submitButton.addEventListener("click", () => {
-    let elId = submitButton.getAttribute('data-el-id');
+// let submitButton = document.getElementById("submitButton");
 
-    showHiddenEl("sm");
-    showHiddenEl(elId);
-    showHiddenEl("userInput");
-    revealResult();
-
-});
-
-showHiddenEl("sm");
+// submitButton.addEventListener("click", () => {
+//     let elId = submitButton.getAttribute('data-el-id');
+//
+//     showHiddenEl("sm");
+//     showHiddenEl(elId);
+//     showHiddenEl("userInput");
+//     revealResult();
+//
+// });
+//
+// showHiddenEl("sm");
 
 document.getElementById("inputResMinimized").getElementsByTagName('button')[0].addEventListener("click", () => {showHiddenEl("userInput");});
 document.getElementById("textInputBtn").addEventListener("click", () => {addTextInput()});
@@ -746,5 +747,6 @@ document.getElementById("urlInputBtn").addEventListener("click", () => {addUrlIn
 document.getElementById("calInputBtn").addEventListener("click", () => {addCalInput()});
 document.getElementById("binBtn").addEventListener("click", () => {deleteAllUserInput()});
 document.getElementById('course-input-form').addEventListener('submit', function(event) {submitForm(event);});
+// TODO: lisada event listener minmimized-input-formi jaoks
 
 let icalArray = [];

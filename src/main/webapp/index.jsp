@@ -177,8 +177,9 @@
 
                         </div>
 
-                        <button id="submitButton"class="customButton1" type="submit" data-el-id="inputResMinimized">
+                        <button id="submitButton" class="customButton1" type="submit" data-el-id="inputResMinimized">
                             <a href="#"><span>VAATA</span></a>
+<%--                            Muuta see a klassist --%>
                         </button>
 
 
