@@ -178,13 +178,15 @@
 
                         </div>
 
+<%--                        VANA NUPP:--%>
 <%--                        <button id="submitButton" class="customButton1" data-el-id="inputResMinimized">--%>
 <%--                            <a href="#"><span>VAATA</span></a>--%>
-<%--&lt;%&ndash;                            Muuta see a klassist &ndash;%&gt;--%>
+<%--                            Muuta see a klassist --%>
 <%--                        </button>--%>
+
                         <div class="customButton1">
                             <button>
-                                <span> ESITA TEST </span>
+                                <span> Vaata </span>
                             </button>
                         </div>
 
