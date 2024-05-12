@@ -1,9 +1,9 @@
-<%@ page import="java.util.Random" %>
+<!DOCTYPE html>
     <html>
 
     <head>
         <link rel="stylesheet" type="text/css" href="css/styles.css">
-        <%@ page contentType="text/html; charset=UTF-8" %>
+        <meta charset="UTF-8">
             <title>Kollaboratiivne ajaplaneerimise programm</title>
     </head>
 
@@ -312,7 +312,7 @@
     </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
-    <script src="./js/script.js?<%= (new Random()).nextInt()  %>"></script>
+    <script src="./js/script.js"></script>
 
     <%-- https://stackoverflow.com/questions/7413234/how-to-prevent-caching-of-my-javascript-file --%>
     <%-- see vajalik sest kui ma muudatusi teinud ei laadinud brauser kunagi uut versiooni. Ma ei tea kas see on hea lahendus --%>
