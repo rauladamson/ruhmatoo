@@ -1,17 +1,15 @@
     package servlet;
+
     import biweekly.ICalendar;
     import biweekly.io.text.ICalReader;
+    import ical.iCalObj;
+    import org.json.JSONObject;
 
     import javax.servlet.ServletException;
     import javax.servlet.annotation.WebServlet;
     import javax.servlet.http.HttpServlet;
     import javax.servlet.http.HttpServletRequest;
     import javax.servlet.http.HttpServletResponse;
-
-    import ical.iCalObj;
-    import org.json.JSONArray;
-    import org.json.JSONObject;
-
     import java.io.File;
     import java.io.IOException;
     import java.io.InputStream;
