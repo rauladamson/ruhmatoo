@@ -29,10 +29,10 @@ function createNewFormChildDiv(HTMLText, name, inputType, placeholderText, class
     delButton.classList.add("delete-btn"); // lisatakse klass
     delButton.type = "button"
     delButton.onclick = function() { deleteEl(formChildDiv); };
-
-    if (inputType === "url") {
-        input.pattern="https://.*";
-    }
+    // Pattern validation, debuggimiseks kommenteeritud
+    // if (inputType === "url") {
+    //     input.pattern="https://.*";
+    // }
 
     let div = document.getElementById("course-input-form-contaner");
     formChildDiv.appendChild(label);
