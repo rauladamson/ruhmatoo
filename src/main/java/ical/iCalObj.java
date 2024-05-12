@@ -1,8 +1,7 @@
 package ical;
 
 import biweekly.component.VEvent;
-import biweekly.property.*;
-import biweekly.util.Duration;
+import biweekly.property.RecurrenceRule;
 import biweekly.util.com.google.ical.compat.javautil.DateIterator;
 import org.json.JSONArray;
 import org.json.JSONObject;
