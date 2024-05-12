@@ -314,10 +314,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
     <script src="./js/script.js"></script>
 
-    <%-- https://stackoverflow.com/questions/7413234/how-to-prevent-caching-of-my-javascript-file --%>
-    <%-- see vajalik sest kui ma muudatusi teinud ei laadinud brauser kunagi uut versiooni. Ma ei tea kas see on hea lahendus --%>
-
-
     </body>
 
     </html>
