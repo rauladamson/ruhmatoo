@@ -120,8 +120,6 @@ function submitForm(event) {
             if (responseObj.hasOwnProperty('course-input')) {
                 // Vaikimisi väärtuste taastamine
                 // Seda võiks mingil paremal viisil teha
-                // Tegelikult ei oleks seda üldse vaja, selle asemel peaks panema mingi asja, mis kontrollib kas aine juba on seal sees
-                // (hetkel muidu saaks ühte ainet mitu korda lisada)
                 document.getElementById('course-overview-valitud-kursused').innerHTML = 'Oled valinud järgmised kursused:';
                 document.getElementById('course-overview-ainepunktid').innerHTML = 'Ainepunkte kokku: ';
 
