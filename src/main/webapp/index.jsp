@@ -200,8 +200,8 @@
 
 
                 <div>
-                    <p>Ainepunkte kokku: </p>
-                    <p>Oled valinud järgmised kursused: </p>
+                    <p id="course-overview-ainepunktid">Ainepunkte kokku: </p>
+                    <p id="course-overview-valitud-kursused">Oled valinud järgmised kursused: </p>
                 </div>
 
                 <div>
@@ -212,9 +212,10 @@
                     <p>Ainekavad nädala kaupa: </p>
                 </div>
 
-                <div>
-                    <p>Tutvu kursustega ühekaupa (ÕISist info): </p>
-                </div>
+<%--                // Mattias: Hetkel on pandud valitud kursused linkideks, minuarust on ebavajalik seda informatsiooni 2 korda näidata, kuid kui oli mõeldud seda kuidagi teistpidi teha, siis saab selle tagasi panna--%>
+<%--                <div>--%>
+<%--                    <p id="course-overview-tagasiside">Tutvu kursustega ühekaupa (ÕISist info): </p>--%>
+<%--                </div>--%>
 
                 <div>
                     <p>Teiste tudengite tagasiside kursusele: </p>

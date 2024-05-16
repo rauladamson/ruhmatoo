@@ -39,8 +39,29 @@ public class Oppeaine {
         }
     }
 
+    /**
+     * Tagastab õppeaine JSON-i kujul.
+     * NB! Veebirakenduse jaoks kasutada võimalusel convertToJsonForDisplay() meetodit.
+     * @return Koopia õppeaine kogu infost.
+     */
     public JSONObject convertToJson() {
         return new JSONObject(this.internalJsonData.toMap()); // Deep copy JSON objektist
+    }
+
+    /**
+     * Tagastab aine JSONi ainult omadustega, mida on vaja kasutajale näidata.
+     * Teeb JS-is elu lihtsamaks ja saadetavad andmed väiksemaks.
+     * @return Oppeaine lihtsustatud JSON kujul.
+     */
+    public JSONObject convertToJsonForDisplay() {
+        JSONObject tagastatavObjekt = new JSONObject();
+        tagastatavObjekt.put("EAP", this.getECTs());
+        tagastatavObjekt.put("Nimi", this.getName());
+        tagastatavObjekt.put("Ainekood", this.getCode());
+        tagastatavObjekt.put("hetkeseVersiooniLink", "https://ois2.ut.ee/#/courses/" + this.getCode() + "/details");
+        //TODO: Tagastada aine tagasiside, URL, ....
+
+        return tagastatavObjekt;
     }
 
     /**
