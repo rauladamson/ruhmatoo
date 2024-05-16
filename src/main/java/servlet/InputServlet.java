@@ -30,7 +30,11 @@ public class InputServlet extends HttpServlet {
         if (!jsonObject.has(key)) {
             jsonObject.put(key,  new JSONArray());
         }
-        jsonObject.getJSONArray(key).put(value);
+        if (value instanceof Oppeaine) { // Õppeaine objektil kasutada sisemist JSON-tagastus meetodit
+            jsonObject.getJSONArray(key).put(((Oppeaine) value).convertToJsonForDisplay());
+        } else { // Muidu arvaku ise, mida teha (vist tundmatu objekti korral kutsutakse välja toString?)
+            jsonObject.getJSONArray(key).put(value);
+        }
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)

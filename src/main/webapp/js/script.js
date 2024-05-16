@@ -117,14 +117,23 @@ function submitForm(event) {
 
             let responseObj = JSON.parse(this.responseText); // JSON stringist objektiks
 
-            //console.log(responseObj);
-
-
             if (responseObj.hasOwnProperty('course-input')) {
-                let courseOverview = document.getElementById('course-overview');
-                let childDiv1 = document.createElement("div"); // luuakse uus div container
-                childDiv1.innerHTML = responseObj['course-input'];
-                courseOverview.appendChild(childDiv1);
+                // Vaikimisi väärtuste taastamine
+                // Seda võiks mingil paremal viisil teha
+                // Tegelikult ei oleks seda üldse vaja, selle asemel peaks panema mingi asja, mis kontrollib kas aine juba on seal sees
+                // (hetkel muidu saaks ühte ainet mitu korda lisada)
+                document.getElementById('course-overview-valitud-kursused').innerHTML = 'Oled valinud järgmised kursused:';
+                document.getElementById('course-overview-ainepunktid').innerHTML = 'Ainepunkte kokku: ';
+
+                let eapCounter = 0;
+
+                // Ilmselt on mingi parem viis selle muutmiseks kui sedatüüpi otsene HTML-i muutmine?
+                responseObj['course-input'].forEach(function (oppeaine) {
+                    document.getElementById('course-overview-valitud-kursused').innerHTML += ' <a href="' + oppeaine['hetkeseVersiooniLink'] + '" target="_blank" rel="noopener noreferrer" >' + oppeaine['Nimi'] + '</a>, ';
+                    eapCounter += oppeaine['EAP'];
+                });
+
+                document.getElementById('course-overview-ainepunktid').innerHTML += eapCounter + ' EAP';
             }
 
 
