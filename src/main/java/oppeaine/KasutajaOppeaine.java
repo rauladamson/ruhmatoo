@@ -6,7 +6,7 @@ public class KasutajaOppeaine extends Oppeaine {
     private int veelTooaeg;
 
     public KasutajaOppeaine(Oppeaine oppeaine) {
-        super(oppeaine.getInternalJsonData());
+        super(oppeaine.convertToJson());
         this.eeldatavTooaeg = oppeaine.getECTs() * 26; // default method: 1 eap = 26 tundi
         this.tehtudTooaeg = 0;
         this.veelTooaeg = eeldatavTooaeg - tehtudTooaeg;

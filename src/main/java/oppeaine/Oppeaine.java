@@ -62,8 +62,8 @@ public class Oppeaine {
         tagastatavObjekt.put("EAP", this.getECTs());
         tagastatavObjekt.put("Nimi", this.getName());
         tagastatavObjekt.put("Ainekood", this.getCode());
-        tagastatavObjekt.put("hetkeseVersiooniLink", "https://ois2.ut.ee/#/courses/" + this.getCode() + "/details");
-        //TODO: Tagastada aine tagasiside, URL, ....
+        tagastatavObjekt.put("hetkeseVersiooniLink", "https://ois2.ut.ee/#/courses/" + this.getCode() + "/details"); // TODO: muuta, et see tagastaks tegelikult hetkese versiooni
+        //TODO: Tagastada aine tagasiside, tööjaotus jm vajalik
 
         return tagastatavObjekt;
     }
@@ -123,10 +123,6 @@ public class Oppeaine {
 
     public String getLastUpdated() {
         return lastUpdated;
-    }
-
-    public JSONObject getInternalJsonData() {
-        return internalJsonData;
     }
 
     /**
