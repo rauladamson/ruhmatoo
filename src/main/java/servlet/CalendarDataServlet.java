@@ -30,7 +30,7 @@
                 ICalReader reader = new ICalReader(tempFile.toFile()); // iCalReader objekti loomine
                 ICalendar icals = reader.readAll().get(0); // kõigi sisestatud iCal failide lugemine
 
-                System.out.println(icals);
+                //System.out.println(icals);
                 iCalObj iCalObj = new iCalObj(iCalLink, icals.getEvents()); // uue iCalObj objekti loomine
                 return iCalObj.toJson() ;
 

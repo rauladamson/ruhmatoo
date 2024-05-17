@@ -23,7 +23,7 @@ public class InputServlet extends HttpServlet {
 
     public InputServlet() {
         super();
-        AineCache.updateCacheFromFile();
+        //AineCache.updateCacheFromFile();
     }
 
     protected void addJsonArrayToJsonObject(JSONObject jsonObject, String key, Object value) {
@@ -39,10 +39,11 @@ public class InputServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        System.out.println("Reached doPost");
+        //System.out.println("Reached doPost");
         Map<String, String[]> inputsMap = request.getParameterMap(); // sisend teisedatakse Mapiks
         JSONObject jsonObject = new JSONObject(); // luuakse uus JSON objekt
 
+       System.out.println(inputsMap);
         if (inputsMap.isEmpty()) {
             return;
         }
@@ -71,11 +72,14 @@ public class InputServlet extends HttpServlet {
                 String calendarData = calendarDataServlet.convert(paramValues[0]).toString();
                 //System.out.println(calendarData);
                 addJsonArrayToJsonObject(jsonObject, "cal-input", calendarData);
-            } else { // muul juhul on tegemist ainekoodiga
+            } else if (paramName.contains("text-input")){ // muul juhul on tegemist ainekoodiga
                 Oppeaine oa = AineCache.getAine(paramValues[0]);
                 // Samuti eemaldatud cache'i aine lisamine.
 
                 addJsonArrayToJsonObject(jsonObject, "course-input", oa);
+            } else if (paramName == "mod-cal"){ // muul juhul on tegemist ainekoodiga
+                System.out.println("mod-cal");
+                System.out.println(paramValues[0]);
             }
         }
 

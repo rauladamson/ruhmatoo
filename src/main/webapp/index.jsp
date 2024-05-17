@@ -42,7 +42,7 @@
         <h1>VEEBIRAKENDUS X</h1>
     </header>
 
-    <main>
+    <main class="wrapper">
 
         <!-- Copyright (c) 2024 by abxlfazl khxrshidi (https://codepen.io/abxlfazl/pen/VwKzaEm)
 -->
@@ -67,7 +67,7 @@
                 </button>
 
                 <!-- Solar Icons: https://www.svgrepo.com/svg/528951/download-minimalistic -->
-                <button class="menu__item" >
+                <button class="menu__item" id="downloadBtn">
                     <svg class="icon" viewBox="0 0 24 24">
                         <path d="M12 3V16M12 16L16 11.625M12 16L8 11.625"/>
                         <path d="M15 21H9C6.17157 21 4.75736 21 3.87868 20.1213C3 19.2426 3 17.8284 3 15M21 15C21 17.8284 21 19.2426 20.1213 20.1213C19.8215 20.4211 19.4594 20.6186 19 20.7487"/>
@@ -166,28 +166,18 @@
 
                     </div>
 
-
-<%--                    <form id="vormB" method="get"><label>--%>
-<%--                        <input type="text"/>--%>
-<%--                        <button> Esita B </button>--%>
-<%--                    </label></form>--%>
-
-
-                    <form action="" method="POST" id="course-input-form">
+                    <form action="" method="get" id="course-input-form">
                         <div id="course-input-form-contaner" class="flex-container">
 
                         </div>
 
-<%--                        VANA NUPP:--%>
-<%--                        <button id="submitButton" class="customButton1" data-el-id="inputResMinimized">--%>
-<%--                            <a href="#"><span>VAATA</span></a>--%>
-<%--                            Muuta see a klassist --%>
-<%--                        </button>--%>
-
                         <div class="customButton1">
+
                             <button>
+
                                 <span> Vaata </span>
                             </button>
+
                         </div>
 
 
@@ -212,10 +202,10 @@
                     <p>Ainekavad nädala kaupa: </p>
                 </div>
 
-<%--                // Mattias: Hetkel on pandud valitud kursused linkideks, minuarust on ebavajalik seda informatsiooni 2 korda näidata, kuid kui oli mõeldud seda kuidagi teistpidi teha, siis saab selle tagasi panna--%>
-<%--                <div>--%>
-<%--                    <p id="course-overview-tagasiside">Tutvu kursustega ühekaupa (ÕISist info): </p>--%>
-<%--                </div>--%>
+                <%--                // Mattias: Hetkel on pandud valitud kursused linkideks, minuarust on ebavajalik seda informatsiooni 2 korda näidata, kuid kui oli mõeldud seda kuidagi teistpidi teha, siis saab selle tagasi panna--%>
+                <%--                <div>--%>
+                <%--                    <p id="course-overview-tagasiside">Tutvu kursustega ühekaupa (ÕISist info): </p>--%>
+                <%--                </div>--%>
 
                 <div>
                     <p>Teiste tudengite tagasiside kursusele: </p>
@@ -226,7 +216,7 @@
 
 
 
-            <div class=" hidden" id="calendar-grid">
+            <div class="" id="calendar-grid">
                 <!--Copyright (c) 2024 by Alex Oliver (https://codepen.io/alexoliverwd/pen/kKQgwo)-->
                 <div class="calendar">
 
@@ -257,54 +247,7 @@
                                 <div id ="yearEls" class="yearSelect"></div>
                             </div>
                             <ul class="weekday"></ul>
-                            <div class="days">
-                                <div title="23-prev" data-value="23" class="day prevMonthDay hidden"><a href="#" class="dayA">23</a></div>
-                                <div title="24-prev" data-value="24" class="day prevMonthDay hidden"><a href="#" class="dayA">24</a></div>
-                                <div title="25-prev" data-value="25" class="day prevMonthDay hidden"><a href="#" class="dayA">25</a></div>
-                                <div title="26-prev" data-value="26" class="day prevMonthDay hidden"><a href="#" class="dayA">26</a></div>
-                                <div title="27-prev" data-value="27" class="day prevMonthDay hidden"><a href="#" class="dayA">27</a></div>
-                                <div title="28-prev" data-value="28" class="day prevMonthDay hidden"><a href="#" class="dayA">28</a></div>
-                                <div title="29-prev" data-value="29" class="day prevMonthDay hidden"><a href="#" class="dayA">29</a></div>
-                                <div title="30-prev" data-value="30" class="day prevMonthDay hidden"><a href="#" class="dayA">30</a></div>
-                                <div title="31-prev" data-value="31" class="day prevMonthDay hidden"><a href="#" class="dayA">31</a></div>
-                                <div title="1" data-value="1" class="day"><a href="#" class="dayA">1</a></div>
-                                <div title="2" data-value="2" class="day"><a href="#" class="dayA">2</a></div>
-                                <div title="3" data-value="3" class="day"><a href="#" class="dayA">3</a></div>
-                                <div title="4" data-value="4" class="day"><a href="#" class="dayA">4</a></div>
-                                <div title="5" data-value="5" class="day"><a href="#" class="dayA">5</a></div>
-                                <div title="6" data-value="6" class="day"><a href="#" class="dayA">6</a></div>
-                                <div title="7" data-value="7" class="day"><a href="#" class="dayA">7</a></div>
-                                <div title="8" data-value="8" class="day"><a href="#" class="dayA">8</a></div>
-                                <div title="9" data-value="9" class="day"><a href="#" class="dayA">9</a></div>
-                                <div title="10" data-value="10" class="day"><a href="#" class="dayA">10</a></div>
-                                <div title="11" data-value="11" class="day"><a href="#" class="dayA">11</a></div>
-                                <div title="12" data-value="12" class="day"><a href="#" class="dayA">12</a></div>
-                                <div title="13" data-value="13" class="day"><a href="#" class="dayA">13</a></div>
-                                <div title="14" data-value="14" class="day"><a href="#" class="dayA">14</a></div>
-                                <div title="15" data-value="15" class="day"><a href="#" class="dayA">15</a></div>
-                                <div title="16" data-value="16" class="day"><a href="#" class="dayA">16</a></div>
-                                <div title="17" data-value="17" class="day"><a href="#" class="dayA">17</a></div>
-                                <div title="18" data-value="18" class="day"><a href="#" class="dayA">18</a></div>
-                                <div title="19" data-value="19" class="day"><a href="#" class="dayA">19</a></div>
-                                <div title="20" data-value="20" class="day"><a href="#" class="dayA">20</a></div>
-                                <div title="21" data-value="21" class="day"><a href="#" class="dayA">21</a></div>
-                                <div title="22" data-value="22" class="day"><a href="#" class="dayA">22</a></div>
-                                <div title="23" data-value="23" class="day"><a href="#" class="dayA">23</a></div>
-                                <div title="24" data-value="24" class="day"><a href="#" class="dayA">24</a></div>
-                                <div title="25" data-value="25" class="day"><a href="#" class="dayA">25</a></div>
-                                <div title="26" data-value="26" class="day"><a href="#" class="dayA">26</a></div>
-                                <div title="27" data-value="27" class="day"><a href="#" class="dayA">27</a></div>
-                                <div title="28" data-value="28" class="day"><a href="#" class="dayA">28</a></div>
-                                <div title="29" data-value="29" class="day"><a href="#" class="dayA">29</a></div>
-                                <div title="30" data-value="30" class="day"><a href="#" class="dayA">30</a></div>
-                                <div title="31" data-value="31" class="day"><a href="#" class="dayA">31</a></div>
-                                <div title="1-next" data-value="1" class="day nextMonthDay hidden"><a href="#" class="dayA">1</a></div>
-                                <div title="2-next" data-value="2" class="day nextMonthDay hidden"><a href="#" class="dayA">2</a></div>
-                                <div title="3-next" data-value="3" class="day nextMonthDay hidden"><a href="#" class="dayA">3</a></div>
-                                <div title="4-next" data-value="4" class="day nextMonthDay hidden"><a href="#" class="dayA">4</a></div>
-                                <div title="5-next" data-value="5" class="day nextMonthDay hidden"><a href="#" class="dayA">5</a></div>
-                                <div title="6-next" data-value="6" class="day nextMonthDay hidden"><a href="#" class="dayA">6</a></div>
-                            </div>
+                            <div class="days"></div>
                         </div>
                     </div>
 
@@ -315,14 +258,24 @@
         </div>
 
     </main>
+    <!--   Copyright (c) 2024 by Ivan Valentinov / jFog (https://codepen.io/jFog/pen/qBNZVyz)-->
+    <div class="ml-wrapper">
+        <div class="ml-content">
+            <h5 class="">kustuta sündmus?</h5>
+            <p id="pElForEvent" class=""></p>
+            <button class="event-del-btn cta" data-fn-call="month">kustuta sündmused käesolevas kuus</button>
+            <button class="event-del-btn cta" data-fn-call="all">kustuta kõik sündmused</button>
+            <button class="cta">tühista</button>
+        </div>
+    </div>
 
     <footer>
         <p>&copy; Marielin Kepp 2024</p>
     </footer>
 
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
     <script src="./js/script.js"></script>
 
     </body>
-
     </html>

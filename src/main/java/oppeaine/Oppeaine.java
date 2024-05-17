@@ -154,7 +154,7 @@ public class Oppeaine {
         /*
         *
         * */
-        return this.eeldatavTootundideArvOisis() - ( this.eeldatavTootundideArvOisis() / this.getNadalaidSemestris() * this.getNadalaidTehtud());
+        return 0;// this.eeldatavTootundideArvOisis() - ( this.eeldatavTootundideArvOisis() / this.getNadalaidSemestris() * this.getNadalaidTehtud());
     }
 
     public int leiaTootunnidNadalas(int nadalaNr) {
@@ -167,7 +167,7 @@ public class Oppeaine {
 
         // kui ei ole esimene nädal: IF(H4=TRUE;0;(I2  − J3)÷COUNTA(B4:B18))
 
-        if (this.getNadalaidTehtud() < nadalaNr) {
+        //if (this.getNadalaidTehtud() < nadalaNr) {
             /* if (nadalaNr > 1) {
             tunde = this.leiaTehtavadAineTootunnidSemestris()  / (this.getNadalaidSemestris() - nadalaNr)
 
@@ -176,7 +176,7 @@ public class Oppeaine {
         tunde = this.leiaTehtavadAineTootunnidSemestris() / this.getNadalaidSemestris();
 
         }*/
-        }
+        //}
 
         return tunde;
     }
