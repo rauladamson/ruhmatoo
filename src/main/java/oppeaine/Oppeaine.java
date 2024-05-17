@@ -20,6 +20,8 @@ public class Oppeaine {
     //       (siis muidugi peaks AineCache'i tegema selle alamklassiks, vüi leidma mingi loogilisema
     //        lahenduse, et ainult AineCache saaks konstruktoreid kutsuda)
 
+
+
     /**
      * Konstruktor olemasoleva JSON-i põhjal õppeaine loomiseks.
      * @param jsonText JSON andmed, String formaadis.
@@ -121,6 +123,10 @@ public class Oppeaine {
 
     public String getLastUpdated() {
         return lastUpdated;
+    }
+
+    public JSONObject getInternalJsonData() {
+        return internalJsonData;
     }
 
     /**
