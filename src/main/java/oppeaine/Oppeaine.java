@@ -150,11 +150,15 @@ public class Oppeaine {
         return super.equals(aine);
     }
 
+    // Peaksime seda planeerija all tegema ma arvan, see on liiga spetsiifiline
+    // Arvan, et peaksime tegema nadalas olevate tundide arvutamiseks eraldi meetodi, et me saaks hiljem teha ka planeerija nädala kaupa "bitesized pieces"
+    // Kui meil on see meetod olemas, siis saame seda kasutada ka teistes meetodites, kus on vaja leida tehtud tunnid mingil nädalal või leida, kui palju on veel teha jne.
+
+    /*
     public int leiaTehtavadAineTootunnidSemestris() {
-        /*
-        *
-        * */
-        return this.eeldatavTootundideArvOisis() - ( this.eeldatavTootundideArvOisis() / this.getNadalaidSemestris() * this.getNadalaidTehtud());
+        int tootundesemestris = this.getECTs() * 26;
+        double keskmiseltNadalas = (double) tootundesemestris / this.getNadalaidSemestris();
+        return (int) (tootundesemestris - ( keskmiseltNadalas * this.getNadalaidTehtud()));
     }
 
     public int leiaTootunnidNadalas(int nadalaNr) {
@@ -175,11 +179,13 @@ public class Oppeaine {
         else if ((nadalaNr == 1) && ( this.getNadalaidTehtud() == 0)){
         tunde = this.leiaTehtavadAineTootunnidSemestris() / this.getNadalaidSemestris();
 
-        }*/
+        }
         }
 
         return tunde;
     }
+    */
+
 
     @Override
     public int hashCode() {
