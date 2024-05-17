@@ -217,7 +217,7 @@ function showHiddenEl(elId) {
 
 }
 
-function submitForm(event) {
+function submitForm(sendData) {
 
     let xhr = new XMLHttpRequest();
     xhr.open('POST', 'inputServlet', true);
@@ -271,8 +271,7 @@ function submitForm(event) {
         }
     }
 
-    let formData = new FormData(event.target);
-    xhr.send(new URLSearchParams(formData).toString());
+    xhr.send(new URLSearchParams(sendData));
 
 }
 
@@ -931,7 +930,7 @@ document.getElementById("urlInputBtn").addEventListener("click", () => {addUrlIn
 document.getElementById("calInputBtn").addEventListener("click", () => {addCalInput();});
 
 document.getElementById("binBtn").addEventListener("click", () => {deleteAllUserInput()});
-document.getElementById('course-input-form').addEventListener('submit', function(event) {event.preventDefault(); submitForm(event);});
+document.getElementById('course-input-form').addEventListener('submit', function(event) {event.preventDefault(); submitForm(new FormData(event.target).toString());});
 
 
 let delButtons = document.getElementsByClassName("cta");
@@ -969,9 +968,4 @@ Array.from(delButtons).forEach(delButton => {
 
 let downloadBtn = document.getElementById("downloadBtn");
 
-downloadBtn.addEventListener('click', () => {
-
-    console.log(calendar.iCalObjects)
-    submitForm({"mod-cal": calendar.iCalObjects});
-
-});
+downloadBtn.addEventListener('click', (event) => {submitForm({"mod-cal": calendar.iCalObjects});});
