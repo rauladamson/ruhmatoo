@@ -43,7 +43,7 @@ public class InputServlet extends HttpServlet {
         Map<String, String[]> inputsMap = request.getParameterMap(); // sisend teisedatakse Mapiks
         JSONObject jsonObject = new JSONObject(); // luuakse uus JSON objekt
 
-       System.out.println(inputsMap);
+       //System.out.println(inputsMap);
         if (inputsMap.isEmpty()) {
             return;
         }
@@ -77,8 +77,7 @@ public class InputServlet extends HttpServlet {
                 // Samuti eemaldatud cache'i aine lisamine.
 
                 addJsonArrayToJsonObject(jsonObject, "course-input", oa);
-            } else if (paramName == "mod-cal"){ // muul juhul on tegemist ainekoodiga
-                System.out.println("mod-cal");
+            } else if (paramName.equals("mod-cal")){ // kui tegemist on muudetud kalendriga
                 System.out.println(paramValues[0]);
             }
         }
