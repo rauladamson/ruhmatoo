@@ -32,6 +32,10 @@ target/
 .idea/jarRepositories.xml
 .idea/compiler.xml
 .idea/libraries/
+
+# mingi jdk versioonide konflikt meie ide-de vahel, ei viitsi sellega praegu tegeleda, suuri erinevusi ei tohiks olla
+.idea/misc.xml
+
 *.iws
 *.iml
 *.ipr
