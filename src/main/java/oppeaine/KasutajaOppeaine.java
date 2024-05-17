@@ -1,6 +1,6 @@
 package oppeaine;
 
-public class KasutajaOppeaine extends Oppeaine{
+public class KasutajaOppeaine extends Oppeaine {
     private int eeldatavTooaeg;
     private int tehtudTooaeg;
     private int veelTooaeg;
