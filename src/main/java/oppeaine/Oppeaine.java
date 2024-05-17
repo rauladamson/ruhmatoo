@@ -7,6 +7,7 @@ import java.util.NoSuchElementException;
 
 public class Oppeaine {
     private final JSONObject internalJsonData;
+    private int nadalaidSemestris;
 
     // TODO: Cache'imiseks peaks olema veel võimalik optimiseerida lastUpdated ja structCode'i, kuna nende
     // TODO: Stringidel on vastavad teadaolevad piirangud (esimene on kuupäev, teine teatud pikkuse ja struktuuriga).
@@ -24,6 +25,7 @@ public class Oppeaine {
      * @param jsonText JSON andmed, String formaadis.
      * @throws JSONException Kui JSON-i objekti ei saa luua (ilmselt string ei ole õiges vormingus), visatakse edasi JSONException.
      */
+
     public Oppeaine(String jsonText) throws JSONException {
         try {
             this.internalJsonData = new JSONObject(jsonText);
@@ -146,6 +148,37 @@ public class Oppeaine {
         */
 
         return super.equals(aine);
+    }
+
+    public int leiaTehtavadAineTootunnidSemestris() {
+        /*
+        *
+        * */
+        return this.eeldatavTootundideArvOisis() - ( this.eeldatavTootundideArvOisis() / this.getNadalaidSemestris() * this.getNadalaidTehtud());
+    }
+
+    public int leiaTootunnidNadalas(int nadalaNr) {
+        // summeeroid kõigi ainete täätunnid sel nädalal
+        // kui esimene nädal: IF(H3=TRUE;0;I2 ÷COUNTA(B3:B18))
+
+
+        int tunde = 0;
+        // kui sel nädala on õppetöö tehtud, siis oin tunde 0, muul juhul
+
+        // kui ei ole esimene nädal: IF(H4=TRUE;0;(I2  − J3)÷COUNTA(B4:B18))
+
+        if (this.getNadalaidTehtud() < nadalaNr) {
+            /* if (nadalaNr > 1) {
+            tunde = this.leiaTehtavadAineTootunnidSemestris()  / (this.getNadalaidSemestris() - nadalaNr)
+
+        }
+        else if ((nadalaNr == 1) && ( this.getNadalaidTehtud() == 0)){
+        tunde = this.leiaTehtavadAineTootunnidSemestris() / this.getNadalaidSemestris();
+
+        }*/
+        }
+
+        return tunde;
     }
 
     @Override
