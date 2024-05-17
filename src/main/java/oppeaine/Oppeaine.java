@@ -20,6 +20,8 @@ public class Oppeaine {
     //       (siis muidugi peaks AineCache'i tegema selle alamklassiks, vüi leidma mingi loogilisema
     //        lahenduse, et ainult AineCache saaks konstruktoreid kutsuda)
 
+
+
     /**
      * Konstruktor olemasoleva JSON-i põhjal õppeaine loomiseks.
      * @param jsonText JSON andmed, String formaadis.
@@ -123,6 +125,10 @@ public class Oppeaine {
         return lastUpdated;
     }
 
+    public JSONObject getInternalJsonData() {
+        return internalJsonData;
+    }
+
     /**
      * toString meetod.
      * @return Tagastab inimloetavas vormis aine info. JSON-i saaamiseks kasutada Oppeaine.ConvertToJson().
@@ -150,11 +156,15 @@ public class Oppeaine {
         return super.equals(aine);
     }
 
+    // Peaksime seda planeerija all tegema ma arvan, see on liiga spetsiifiline
+    // Arvan, et peaksime tegema nadalas olevate tundide arvutamiseks eraldi meetodi, et me saaks hiljem teha ka planeerija nädala kaupa "bitesized pieces"
+    // Kui meil on see meetod olemas, siis saame seda kasutada ka teistes meetodites, kus on vaja leida tehtud tunnid mingil nädalal või leida, kui palju on veel teha jne.
+
+    /*
     public int leiaTehtavadAineTootunnidSemestris() {
-        /*
-        *
-        * */
-        return 0;// this.eeldatavTootundideArvOisis() - ( this.eeldatavTootundideArvOisis() / this.getNadalaidSemestris() * this.getNadalaidTehtud());
+        int tootundesemestris = this.getECTs() * 26;
+        double keskmiseltNadalas = (double) tootundesemestris / this.getNadalaidSemestris();
+        return (int) (tootundesemestris - ( keskmiseltNadalas * this.getNadalaidTehtud()));
     }
 
     public int leiaTootunnidNadalas(int nadalaNr) {
@@ -167,7 +177,7 @@ public class Oppeaine {
 
         // kui ei ole esimene nädal: IF(H4=TRUE;0;(I2  − J3)÷COUNTA(B4:B18))
 
-        //if (this.getNadalaidTehtud() < nadalaNr) {
+        if (this.getNadalaidTehtud() < nadalaNr) {
             /* if (nadalaNr > 1) {
             tunde = this.leiaTehtavadAineTootunnidSemestris()  / (this.getNadalaidSemestris() - nadalaNr)
 
@@ -175,11 +185,13 @@ public class Oppeaine {
         else if ((nadalaNr == 1) && ( this.getNadalaidTehtud() == 0)){
         tunde = this.leiaTehtavadAineTootunnidSemestris() / this.getNadalaidSemestris();
 
-        }*/
-        //}
+        }
+        }
 
         return tunde;
     }
+    */
+
 
     @Override
     public int hashCode() {
