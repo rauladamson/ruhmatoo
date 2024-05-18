@@ -96,6 +96,7 @@ function createNewDropdownDiv(event, occurrencesInMonth) {
     let dropdownEl = document.createElement("div");
     dropdownEl.classList.add("dropdown");
     dropdownEl.classList.add("event-dropdown-el");
+    dropdownEl.classList.add("column-flex");
     dropdownEl.dataset.uid = event.getUid();
 
     let dropdownElContentContainer = document.createElement("div");
@@ -218,67 +219,68 @@ function showHiddenEl(elId) {
 }
 
 function submitForm(sendData) {
+    return new Promise((resolve, reject) => {
+        let xhr = new XMLHttpRequest();
+        xhr.open('POST', 'inputServlet', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
-    //console.log(sendData);
+        xhr.onload = function() {
+            if (this.status === 200) {
+                let responseObj = JSON.parse(this.responseText);
 
-    let xhr = new XMLHttpRequest();
-    xhr.open('POST', 'inputServlet', true);
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                if (responseObj.hasOwnProperty('course-input')) {
+                    // Vaikimisi väärtuste taastamine
+                    // Seda võiks mingil paremal viisil teha
+                    // Tegelikult ei oleks seda üldse vaja, selle asemel peaks panema mingi asja, mis kontrollib kas aine juba on seal sees
+                    // (hetkel muidu saaks ühte ainet mitu korda lisada)
+                    document.getElementById('course-overview-valitud-kursused').innerHTML = 'Oled valinud järgmised kursused:';
+                    document.getElementById('course-overview-ainepunktid').innerHTML = 'Ainepunkte kokku: ';
 
-    xhr.onload = function() {
-        if (this.status === 200) {
+                    /*let courseOverview = document.getElementById('course-overview');
+            let childDiv1 = document.createElement("div"); // luuakse uus div container
+            childDiv1.innerHTML = responseObj['course-input'];
+            courseOverview.appendChild(childDiv1);*/
 
-           if (this.getResponseHeader('Content-Type') === 'text/calendar;charset=UTF-8') {
-               console.log(this.responseText);
+                    let eapCounter = 0;
 
-           } else {
-               let responseObj = JSON.parse(this.responseText); // JSON stringist objektiks
+                    // Ilmselt on mingi parem viis selle muutmiseks kui sedatüüpi otsene HTML-i muutmine?
+                    responseObj['course-input'].forEach(function (oppeaine) {
+                        document.getElementById('course-overview-valitud-kursused').innerHTML += ' <a href="' + oppeaine['hetkeseVersiooniLink'] + '" target="_blank" rel="noopener noreferrer" >' + oppeaine['Nimi'] + '</a>, ';
+                        eapCounter += oppeaine['EAP'];
+                    });
 
-               if (responseObj.hasOwnProperty('course-input')) {
-                   // Vaikimisi väärtuste taastamine
-                   // Seda võiks mingil paremal viisil teha
-                   // Tegelikult ei oleks seda üldse vaja, selle asemel peaks panema mingi asja, mis kontrollib kas aine juba on seal sees
-                   // (hetkel muidu saaks ühte ainet mitu korda lisada)
-                   document.getElementById('course-overview-valitud-kursused').innerHTML = 'Oled valinud järgmised kursused:';
-                   document.getElementById('course-overview-ainepunktid').innerHTML = 'Ainepunkte kokku: ';
-
-                   /*let courseOverview = document.getElementById('course-overview');
-           let childDiv1 = document.createElement("div"); // luuakse uus div container
-           childDiv1.innerHTML = responseObj['course-input'];
-           courseOverview.appendChild(childDiv1);*/
-
-                   let eapCounter = 0;
-
-                   // Ilmselt on mingi parem viis selle muutmiseks kui sedatüüpi otsene HTML-i muutmine?
-                   responseObj['course-input'].forEach(function (oppeaine) {
-                       document.getElementById('course-overview-valitud-kursused').innerHTML += ' <a href="' + oppeaine['hetkeseVersiooniLink'] + '" target="_blank" rel="noopener noreferrer" >' + oppeaine['Nimi'] + '</a>, ';
-                       eapCounter += oppeaine['EAP'];
-                   });
-
-                   document.getElementById('course-overview-ainepunktid').innerHTML += eapCounter + ' EAP';
-               }
+                    document.getElementById('course-overview-ainepunktid').innerHTML += eapCounter + ' EAP';
+                }
 
 
-               if (responseObj.hasOwnProperty('cal-input')) {
-                   //console.log(true)
-                   for (let i of responseObj['cal-input']) {
-                       let calInput = JSON.parse(i);
-                       let newiCalObj = new iCalObj(calInput['iCalLink'], calInput['events']);
+                if (responseObj.hasOwnProperty('cal-input')) {
+                    //console.log(true)
+                    for (let i of responseObj['cal-input']) {
+                        let calInput = JSON.parse(i);
+                        let newiCalObj = new iCalObj(calInput['iCalLink'], calInput['events']);
 
-                       calendar.iCalObjects.push(newiCalObj);
-                       if (calendar.initialized === false) {calendar.initialize()}
+                        calendar.iCalObjects.push(newiCalObj);
+                        if (calendar.initialized === false) {calendar.initialize()}
 
-                   }
-               }
-           }
+                    }
+                }
 
+                console.log('Resolving the Promise with:', responseObj);
 
+                resolve(responseObj);
+            } else {
+                reject(new Error('Request failed: ' + this.statusText));
+            }
         }
-    }
 
-    xhr.send(new URLSearchParams(sendData).toString());
+        xhr.onerror = function() {
+            reject(new Error('Network error'));
+        };
 
+        xhr.send(new URLSearchParams(sendData).toString());
+    });
 }
+
 
 class iCalObj {
     constructor(iCalLink, eventsInput) {
@@ -928,13 +930,27 @@ class selectionMenu {
 /* KLASSIDE LOOMINE */
 const selectionMenuEl = new selectionMenu(); // uue Calendar klassi objekti loomine
 let calendar =  new Calendar(); // uue Calendar klassi objekti loomine
-document.getElementById("inputResMinimized").getElementsByTagName('button')[0].addEventListener("click", () => {showHiddenEl("userInput");});
+document.getElementById("inputResMinimized").getElementsByTagName('button')[0].addEventListener("click", () => {showHiddenEl("userInput");
+    showHiddenEl("inputResMinimized")});
 document.getElementById("textInputBtn").addEventListener("click", () => {addTextInput()});
 document.getElementById("urlInputBtn").addEventListener("click", () => {addUrlInput()});
 document.getElementById("calInputBtn").addEventListener("click", () => {addCalInput();});
 document.getElementById("binBtn").addEventListener("click", () => {deleteAllUserInput()});
-document.getElementById('course-input-form').addEventListener('submit', function(event) {event.preventDefault(); submitForm(new FormData(event.target));});
-
+document.getElementById('course-input-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+    submitForm(new FormData(event.target))
+        .then(responseObj => {
+            // Handle the resolved promise here
+            // For example, you can log the response object
+            console.log(responseObj);
+        })
+        .catch(error => {
+            // Handle any errors here
+            console.error(error);
+        });
+    showHiddenEl("inputResMinimized")
+    showHiddenEl("userInput");
+});
 
 let delButtons = document.getElementsByClassName("cta");
 
@@ -959,8 +975,33 @@ Array.from(delButtons).forEach(delButton => {
     });
 })
 
+//document.getElementById("downloadBtn").addEventListener('click', (event) => {submitForm({"mod-cal": JSON.stringify(calendar.iCalObjects[0])});});
 document.getElementById("downloadBtn").addEventListener('click', (event) => {
-    console.log("dl");
-    submitForm({"mod-cal": JSON.stringify(calendar.iCalObjects[0])});
+    submitForm({"mod-cal": JSON.stringify(calendar.iCalObjects[0])})
+        .then(responseObj => {
+            // Start the download here
+            window.location.href = "calendar.ics";
+
+          /*  let downloadLink = document.querySelector('#downloadBtn').parentElement;
+            console.log(downloadLink); // Log the download link element
+
+            //downloadLink.href = "ical.ics"; // Set the href attribute of the download link
+            downloadLink.href = "calendar.ics" //responseObj['cal-save']; // Set the href attribute of the download link
+
+            downloadLink.download = 'calendar.ics'; // Set the download attribute of the download link
+            downloadLink.click(); // Simulate a click on the download link
+*/
+        })
+        .catch(error => console.error(error));
 });
-//document.getElementById("downloadBtn").addEventListener('click', (event) => {submitForm({"mod-cal": JSON.stringify(calendar.iCalObjects)});});
+
+document.getElementById("generateBtn").addEventListener('click', (event) => {
+    submitForm({"mod-cal": JSON.stringify(calendar.iCalObjects[0])})
+        .then(responseObj => {
+            // Start the download here
+            //window.location.href = "calendar.ics";
+
+            console.log(responseObj);
+        })
+        .catch(error => console.error(error));
+});

@@ -45,10 +45,9 @@ public class InputServlet extends HttpServlet {
         //System.out.println("Reached doPost");
         Map<String, String[]> inputsMap = request.getParameterMap(); // sisend teisedatakse Mapiks
         JSONObject jsonObject = new JSONObject(); // luuakse uus JSON objekt
-        String contentType = "application/json";
         boolean writeFile = false;
         String icalString = null;
-
+        File tempFile = null;
        //System.out.println(inputsMap);
         if (inputsMap.isEmpty()) {
             return;
@@ -75,9 +74,7 @@ public class InputServlet extends HttpServlet {
 
             } else if (paramName.contains("cal-input")) { // kuna me tahame kalendrit vahepeal töödelda, siis ei saa tulemust kohe tagasi saata
                 CalendarDataServlet calendarDataServlet = new CalendarDataServlet();
-                //System.out.println(paramValues[0]);
                 String calendarData = calendarDataServlet.convertUrl(paramValues[0]).toString();
-                //System.out.println(calendarData);
                 addJsonArrayToJsonObject(jsonObject, "cal-input", calendarData);
             } else if (paramName.contains("text-input")){ // muul juhul on tegemist ainekoodiga
                 Oppeaine oa = AineCache.getAine(paramValues[0]);
@@ -91,27 +88,19 @@ public class InputServlet extends HttpServlet {
                 CalendarDataServlet calendarDataServlet = new CalendarDataServlet();
                 //System.out.println(paramValues[0].getClass());
                 iCalObj iCalObj = calendarDataServlet.convertJson(paramValues[0]);
-                 icalString = iCalObj.saveToFile();
-                String filename = "calendar.ics"; // Replace with your filename
-                contentType = "text/calendar"; // Replace with the MIME type of your file
-                response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
-
-                // TODO teha biweeklyks ja salvestada faili
-                //addJsonArrayToJsonObject(jsonObject, "cal-input", iCalObjs.toString());
+                tempFile = iCalObj.saveToFile();
+                //response.setHeader("Content-Disposition", "attachment; filename=\"cal.ics\"");
+                addJsonArrayToJsonObject(jsonObject, "cal-save", tempFile.getAbsolutePath());
             }
         }
 
-        // Set the response headers for file download
-        /*response.setContentType("text/calendar");
 
-
-        // Write the file data to the response
-        response.getWriter().write(icalString);*/
-
-        response.setContentType(contentType); // vastus saadetakse JSON-kujul
+        response.setContentType( "application/json"); // vastus saadetakse JSON-kujul
         response.setCharacterEncoding("UTF-8"); // kodeering on UTF-8
-        response.getWriter().write(writeFile ? icalString : String.valueOf(jsonObject)); // JSON-sõne vastusesse kirjutamine
+        response.getWriter().write(String.valueOf(jsonObject)); // JSON-sõne vastusesse kirjutamine
 
+
+        //tempFile.delete();
         // Mattias: Varasemad todo'd eemaldatud, ainete cache'imisega tegeletakse AineCache klassis.
     }
 

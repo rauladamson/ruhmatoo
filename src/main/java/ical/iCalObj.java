@@ -12,6 +12,9 @@ import com.google.gson.JsonElement;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -84,18 +87,20 @@ public class iCalObj { // klass CalendarEvent objektide hoidmiseks
         return new JSONObject(gson.toJson(this));
     }
 
-    public String saveToFile() {
+    public File saveToFile() throws IOException {
         //System.out.println("Saving to file");
-
+        File tempFile = new File(System.getProperty("user.dir") + "/src/main/webapp", "calendar.ics");
         ICalendar ical = new ICalendar();
 
         for (CalendarEvent event : this.getEvents()) {
 
+            //System.out.println(event.getSummary() + " " + event.getDescription() + " " + event.getOccurrences().size());
             for (Date occurenceDate: event.getOccurrences()) {
                 VEvent vEvent = new VEvent();
                 vEvent.setSummary(event.getSummary());
                 vEvent.setLocation(event.getLocation());
-                vEvent.setDateStart(new DateStart(occurenceDate, false));
+                vEvent.setDateStart(new DateStart(occurenceDate, true));
+                //System.out.println(event.getDuration());
 
                 Duration duration = Duration.builder()    // Create a Duration instance
                         .hours((int) (event.getDuration() / (1000 * 60 * 60)))
@@ -108,7 +113,13 @@ public class iCalObj { // klass CalendarEvent objektide hoidmiseks
             }
         }
 
-        return Biweekly.write(ical).go();
+        try (FileWriter writer = new FileWriter(tempFile)) {writer.write( Biweekly.write(ical).go());}
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //return Biweekly.write(ical).go();
+        return tempFile;
     }
 
 

@@ -49,8 +49,6 @@
         public static iCalObj convertJson(String icals) {
 
             Gson gson = new Gson();
-            HashMap<String, iCalObj> iCalObjs = new HashMap<>();
-
             return gson.fromJson(icals, iCalObj.class);
         }
 

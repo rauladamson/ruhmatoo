@@ -12,8 +12,6 @@ import java.lang.reflect.Type;
 public class iCalObjSerializer implements JsonSerializer<iCalObj> {
     @Override
     public JsonElement serialize(iCalObj iCalObj, Type type, JsonSerializationContext jsonSerializationContext) {
-        // Create new JSON object which will act
-        // as a root to our tree (this represents Kasutaja object itself)
         JsonObject jsonObject = new JsonObject();
 
         jsonObject.addProperty("iCalLink", iCalObj.getiCalLink().toString());

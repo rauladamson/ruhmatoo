@@ -8,16 +8,10 @@ import org.json.JSONObject;
 
 public class RecurringEvent extends CalendarEvent  { // Tegemist on CalendarEvent alamklassiga, mis realiseerib liidest CalendarInterface
 
-    private ArrayList<Date> occurrences;
 
     public RecurringEvent(String uid, String summary, String location, String description, String categories, Date start,  Long duration, ArrayList<Date> occurrences) {
-        super(uid, summary, location, description, categories, start, duration);
-        this.occurrences = occurrences;
+        super(uid, summary, location, description, categories, start, duration, occurrences);
         this.findEnd();
-    }
-
-    public ArrayList<Date> getOccurrences() {
-        return occurrences;
     }
 
     public void addOccurrence(Date occurrence) {

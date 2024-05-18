@@ -13,7 +13,21 @@ public class CalendarEvent implements CalendarInterface {  // Klass realiseerib 
 
     private boolean done;
     private Long workAmount;
+    ArrayList<Date> occurrences;
 
+
+    public CalendarEvent(String uid, String summary, String location, String description, String categories, Date start, Long duration, ArrayList<Date> occurrences) {
+        this.uid = uid;
+        this.summary = summary;
+        this.location = location;
+        this.description = description;
+        this.categories = categories;
+        this.duration = duration;
+        this.start = start;
+        this.occurrences = occurrences;
+        this.done = false;
+        this.workAmount = duration; // TODO: coefficient for the future? Et saaks teha erinevad kursused olenevalt varasemast reaalsest tööajast
+    }
 
     public CalendarEvent(String uid, String summary, String location, String description, String categories, Date start, Long duration) {
         this.uid = uid;
@@ -23,10 +37,10 @@ public class CalendarEvent implements CalendarInterface {  // Klass realiseerib 
         this.categories = categories;
         this.duration = duration;
         this.start = start;
-
         this.done = false;
-        this.workAmount = duration; // TODO: coefficient for the future? Et saaks teha erinevad kursused olenevalt varasemast reaalsest tööajast
+        this.workAmount = duration;
     }
+
 
     public String getSummary() {
         return summary;
@@ -97,9 +111,7 @@ public class CalendarEvent implements CalendarInterface {  // Klass realiseerib 
     @Override
     public ArrayList<Date> getOccurrences() {
 
-        ArrayList<Date> occ = new ArrayList<>();
-        occ.add(this.getStart());
-        return occ;
+        return this.occurrences;
     }
 }
 
