@@ -4,7 +4,10 @@ public class KasutajaOppeaine {
     private int eeldatavTooaeg;
     private int tehtudTooaeg;
     private int veelTooaeg;
+    private boolean done;
+
     private Oppeaine algAine;
+
 
     public KasutajaOppeaine(Oppeaine oppeaine) {
         this.algAine = oppeaine;
@@ -35,5 +38,13 @@ public class KasutajaOppeaine {
 
     public void setVeelTooaeg(int veelTooaeg) {
         this.veelTooaeg = veelTooaeg;
+    }
+
+    public boolean isDone() {
+        return done;
+    }
+
+    public void setDone(boolean done) {
+        this.done = done;
     }
 }
