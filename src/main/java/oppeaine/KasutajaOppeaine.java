@@ -1,12 +1,13 @@
 package oppeaine;
 
-public class KasutajaOppeaine extends Oppeaine {
+public class KasutajaOppeaine {
     private int eeldatavTooaeg;
     private int tehtudTooaeg;
     private int veelTooaeg;
+    private Oppeaine algAine;
 
     public KasutajaOppeaine(Oppeaine oppeaine) {
-        super(oppeaine.convertToJson());
+        this.algAine = oppeaine;
         this.eeldatavTooaeg = oppeaine.getECTs() * 26; // default method: 1 eap = 26 tundi
         this.tehtudTooaeg = 0;
         this.veelTooaeg = eeldatavTooaeg - tehtudTooaeg;

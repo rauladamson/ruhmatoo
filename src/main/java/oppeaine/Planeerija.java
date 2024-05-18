@@ -1,5 +1,7 @@
 package oppeaine;
 
+import ical.CalendarEvent;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +41,26 @@ public class Planeerija {
         return arvutaTootundeNadalas() - arvutaTootundetehtud();
     }
 
+    public int arvutaTehtudtoo(List<CalendarEvent> events ) {
+        int tooTehtud = 0;
+        for (CalendarEvent event : events) {
+            if (event.isDone()) {
+                tooTehtud += event.getWorkAmount();
+            }
+        }
+        return tooTehtud;
+    }
+
+    public int arvutaTegemata(List<CalendarEvent> events) {
+        int tooTodo = 0;
+        for (CalendarEvent event : events) {
+            if (!event.isDone()) {
+                tooTodo += event.getWorkAmount();
+            }
+        }
+        return tooTodo;
+    }
+
     /* nadalateArvSemestris: mitu nädalat kokku on ehk mitme nädala peale õppetöö jaguneb
     *
     * */
@@ -47,12 +69,12 @@ public class Planeerija {
         this.nadalateArvSemestris = 0; //default method peab veel välja mõtlema.
     }
 
-    public int leiaTootunnidNadalas(Oppeaine oppeaine) {
+    public int leiaTootunnidNadalas(KasutajaOppeaine kasutajaOppeaine) {
         // sum kõik tunnid sel nädalal
         return 0;
     }
 
-    public int leiaTootunnidNadalasTehtud(Oppeaine oppeaine) {
+    public int leiaTootunnidNadalasTehtud(KasutajaOppeaine kasutajaOppeaine) {
         // sum kõik tehtud tunnid sel nädalal
         return 0;
     }

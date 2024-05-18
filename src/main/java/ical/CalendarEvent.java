@@ -11,6 +11,9 @@ public class CalendarEvent implements CalendarInterface {  // Klass realiseerib 
     Date end;
     Long duration;
 
+    private boolean done;
+    private Long workAmount;
+
 
     public CalendarEvent(String uid, String summary, String location, String description, String categories, Date start, Long duration) {
         this.uid = uid;
@@ -20,6 +23,9 @@ public class CalendarEvent implements CalendarInterface {  // Klass realiseerib 
         this.categories = categories;
         this.duration = duration;
         this.start = start;
+
+        this.done = false;
+        this.workAmount = duration; // TODO: coefficient for the future? Et saaks teha erinevad kursused olenevalt varasemast reaalsest tööajast
     }
 
     public String getSummary() {
@@ -58,12 +64,32 @@ public class CalendarEvent implements CalendarInterface {  // Klass realiseerib 
         jsonObject.put("description", this.description);
         jsonObject.put("categories", this.categories);
         jsonObject.put("duration", this.duration.toString());
+
+        jsonObject.put("done", this.done);
+        jsonObject.put("workAmount", this.workAmount);
+
         return jsonObject;
     }
 
     public Date getStart() {return this.start;}
     public Date getEnd() {return this.end;}
     public void findEnd() {}
+
+    public boolean isDone() {
+        return done;
+    }
+
+    public void setDone(boolean done) {
+        this.done = done;
+    }
+
+    public Long getWorkAmount() {
+        return workAmount;
+    }
+
+    public void setWorkAmount(Long workAmount) {
+        this.workAmount = workAmount;
+    }
 
     @Override
     public boolean isRecurring() {return false;}
