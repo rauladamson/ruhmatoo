@@ -1,5 +1,6 @@
 package ical;
 
+import java.util.ArrayList;
 import java.util.Date;
 import org.json.JSONObject;
 
@@ -26,6 +27,26 @@ public class CalendarEvent implements CalendarInterface {  // Klass realiseerib 
     }
     public void setEnd(Date end) {this.end = end;}
 
+    public String getUid() {
+        return uid;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getCategories() {
+        return categories;
+    }
+
+    public Long getDuration() {
+        return duration;
+    }
+
     public JSONObject toJson() {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("uid", this.uid);
@@ -43,6 +64,17 @@ public class CalendarEvent implements CalendarInterface {  // Klass realiseerib 
     public Date getStart() {return this.start;}
     public Date getEnd() {return this.end;}
     public void findEnd() {}
+
+    @Override
+    public boolean isRecurring() {return false;}
+
+    @Override
+    public ArrayList<Date> getOccurrences() {
+
+        ArrayList<Date> occ = new ArrayList<>();
+        occ.add(this.getStart());
+        return occ;
+    }
 }
 
 

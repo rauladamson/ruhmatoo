@@ -2,7 +2,10 @@
 
     import biweekly.ICalendar;
     import biweekly.io.text.ICalReader;
+    import com.google.gson.*;
     import ical.iCalObj;
+    import ical.iCalObjSerializer;
+    import org.json.JSONArray;
     import org.json.JSONObject;
 
     import javax.servlet.ServletException;
@@ -16,14 +19,17 @@
     import java.net.URL;
     import java.nio.file.Files;
     import java.nio.file.Path;
+    import java.nio.file.Paths;
     import java.nio.file.StandardCopyOption;
+    import java.util.HashMap;
 
     @WebServlet("/calendarData")
     public class CalendarDataServlet extends HttpServlet {
 
-        public static JSONObject convert(String icalUrl) {
+        public static JSONObject convertUrl(String icalUrl) {
             try {
                 Path tempFile = Files.createTempFile("ical", ".ics"); // ajutise faili loomine
+                //Path tempFile = Paths.get("ical.ics"); // fail salvestatakse: saab sisu uurida
                 URL iCalLink = new URL(icalUrl); // sisestatud iCal faili URL
                 try (InputStream in = iCalLink.openStream()) {Files.copy(in, tempFile, StandardCopyOption.REPLACE_EXISTING);} // TODO  mis siin tehakse=
 
@@ -40,6 +46,14 @@
             return null;
         }
 
+        public static iCalObj convertJson(String icals) {
+
+            Gson gson = new Gson();
+            HashMap<String, iCalObj> iCalObjs = new HashMap<>();
+
+            return gson.fromJson(icals, iCalObj.class);
+        }
+
         protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
            // System.out.println("CalendarDataServletTestDoGet()");
             String icalUrl = request.getParameter("icalUrl");
@@ -48,9 +62,9 @@
                 return;
             }
 
-            JSONObject jsonArray = this.convert(icalUrl);
+            JSONObject jsonArray = this.convertUrl(icalUrl);
 
-            System.out.println(jsonArray.get("events"));
+            //System.out.println(jsonArray.get("events"));
             if (jsonArray == null) {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to convert iCal data");
                 return;

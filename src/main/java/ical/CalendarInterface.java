@@ -1,13 +1,18 @@
 package ical;
 
 import java.util.Date;
+import java.util.List;
 
 public interface CalendarInterface {
-    public Date getStart();
+    Date getStart();
 
-    public Date getEnd();
+    Date getEnd();
 
-    public void findEnd();
+    void findEnd();
+
+    boolean isRecurring();
+
+    List getOccurrences();
 
     //public void addOccurrence(CalendarEvent occurrence);
 }

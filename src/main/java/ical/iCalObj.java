@@ -1,26 +1,50 @@
 package ical;
 
+import biweekly.Biweekly;
+import biweekly.ICalendar;
 import biweekly.component.VEvent;
+import biweekly.property.DateStart;
 import biweekly.property.RecurrenceRule;
+import biweekly.util.Duration;
 import biweekly.util.com.google.ical.compat.javautil.DateIterator;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.net.URL;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 public class iCalObj { // klass CalendarEvent objektide hoidmiseks
 
-    private HashMap<String, CalendarEvent> events;
+    //private HashMap<String, CalendarEvent> events;
+    private ArrayList<CalendarEvent> events;
     private URL iCalLink;
 
     public iCalObj(URL iCalLink,  List<VEvent> eventsInput) {
         this.iCalLink = iCalLink;
-        this.events = new HashMap<>();
+        this.events = new ArrayList<>();
         for (VEvent event : eventsInput) {this.handleEvent(event);}
     }
 
-    public HashMap<String, CalendarEvent> getEventsMap() {return events;}
+    public ArrayList<CalendarEvent> getEvents() {return events;}
+
+    public JsonArray getEventsJSON() {
+        Gson gson = new GsonBuilder().registerTypeAdapter(CalendarEvent.class, new CalendarEventSerializer()).create();
+        JsonArray jsonArray = new JsonArray();
+        events.stream().map(gson::toJsonTree).forEach(jsonArray::add);
+        return jsonArray;
+    }
+
+
+
+    public URL getiCalLink() {
+        return iCalLink;
+    }
 
     void handleEvent(VEvent event) {
 
@@ -50,26 +74,42 @@ public class iCalObj { // klass CalendarEvent objektide hoidmiseks
         CalendarEvent newEvent = (occurenceDates.size() > 1) ? // kontrollitakse, kas sündmusel on rohkem kui 1 toimumisaeg
                 new RecurringEvent(uID, summary, location, description, categories, startDate, duration, occurenceDates) :  // kui jah, siis luuakse uus RecurringEvent objekt ning kõik toiumisajad lisatakse sellele
                 new OneTimeEvent(uID, summary, location, description, categories, startDate, duration); // kui ei, siis luuakse uus OneTimeEvent objekt
-        events.put(uID, newEvent); // sündmus lisatakse kalendrisse
+        events.add(newEvent); // sündmus lisatakse kalendrisse
     }
 
+
+// allikas: https://github.com/Zukkari/java-serialization-template
     public JSONObject toJson() {
-        JSONObject jsonObject = new JSONObject();
-        JSONArray eventsArray = this.events.values().stream()
-                .map(CalendarEvent::toJson)
-                .collect(JSONArray::new, JSONArray::put, JSONArray::put);
-
-        jsonObject.put("iCalLink", this.iCalLink);
-        jsonObject.put("events", eventsArray);
-
-        //System.out.println(jsonObject);
-        return jsonObject;
+        Gson gson = new GsonBuilder().registerTypeAdapter(iCalObj.class, new iCalObjSerializer()).create();
+        return new JSONObject(gson.toJson(this));
     }
 
-    public JSONArray getEventsMapAsJSON() {
+    public String saveToFile() {
+        //System.out.println("Saving to file");
 
-        return this.events.values().stream(). // kõigi kalendrisse listaud sündmuste iteratsioon
-                map(CalendarEvent::toJson). // kõik sündmused teisendatakse JSON-formaati (tagastab JSONObject-i)
-                collect(JSONArray::new, JSONArray::put, JSONArray::put); // kloodud objektid listaakse JSON-formaadis massiivi (tagastab JSONArray)
+        ICalendar ical = new ICalendar();
+
+        for (CalendarEvent event : this.getEvents()) {
+
+            for (Date occurenceDate: event.getOccurrences()) {
+                VEvent vEvent = new VEvent();
+                vEvent.setSummary(event.getSummary());
+                vEvent.setLocation(event.getLocation());
+                vEvent.setDateStart(new DateStart(occurenceDate, false));
+
+                Duration duration = Duration.builder()    // Create a Duration instance
+                        .hours((int) (event.getDuration() / (1000 * 60 * 60)))
+                        .minutes((int) ((event.getDuration() / (1000 * 60)) % 60))
+                        .seconds((int) ((event.getDuration() / 1000) % 60))
+                        .build();
+
+                vEvent.setDuration(duration);
+                ical.addEvent(vEvent);
+            }
+        }
+
+        return Biweekly.write(ical).go();
     }
+
+
 }

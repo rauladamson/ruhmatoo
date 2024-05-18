@@ -12,9 +12,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Serial;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import ical.iCalObj;
 
 @WebServlet("/inputServlet")
 public class InputServlet extends HttpServlet {
@@ -42,6 +45,9 @@ public class InputServlet extends HttpServlet {
         //System.out.println("Reached doPost");
         Map<String, String[]> inputsMap = request.getParameterMap(); // sisend teisedatakse Mapiks
         JSONObject jsonObject = new JSONObject(); // luuakse uus JSON objekt
+        String contentType = "application/json";
+        boolean writeFile = false;
+        String icalString = null;
 
        //System.out.println(inputsMap);
         if (inputsMap.isEmpty()) {
@@ -69,7 +75,8 @@ public class InputServlet extends HttpServlet {
 
             } else if (paramName.contains("cal-input")) { // kuna me tahame kalendrit vahepeal töödelda, siis ei saa tulemust kohe tagasi saata
                 CalendarDataServlet calendarDataServlet = new CalendarDataServlet();
-                String calendarData = calendarDataServlet.convert(paramValues[0]).toString();
+                //System.out.println(paramValues[0]);
+                String calendarData = calendarDataServlet.convertUrl(paramValues[0]).toString();
                 //System.out.println(calendarData);
                 addJsonArrayToJsonObject(jsonObject, "cal-input", calendarData);
             } else if (paramName.contains("text-input")){ // muul juhul on tegemist ainekoodiga
@@ -78,13 +85,32 @@ public class InputServlet extends HttpServlet {
 
                 addJsonArrayToJsonObject(jsonObject, "course-input", oa);
             } else if (paramName.equals("mod-cal")){ // kui tegemist on muudetud kalendriga
-                System.out.println(paramValues[0]);
+                writeFile = true;
+               //System.out.println(paramValues[0]);
+                //System.out.println("mod-cal");
+                CalendarDataServlet calendarDataServlet = new CalendarDataServlet();
+                //System.out.println(paramValues[0].getClass());
+                iCalObj iCalObj = calendarDataServlet.convertJson(paramValues[0]);
+                 icalString = iCalObj.saveToFile();
+                String filename = "calendar.ics"; // Replace with your filename
+                contentType = "text/calendar"; // Replace with the MIME type of your file
+                response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
+
+                // TODO teha biweeklyks ja salvestada faili
+                //addJsonArrayToJsonObject(jsonObject, "cal-input", iCalObjs.toString());
             }
         }
 
-        response.setContentType("application/json"); // vastus saadetakse JSON-kujul
+        // Set the response headers for file download
+        /*response.setContentType("text/calendar");
+
+
+        // Write the file data to the response
+        response.getWriter().write(icalString);*/
+
+        response.setContentType(contentType); // vastus saadetakse JSON-kujul
         response.setCharacterEncoding("UTF-8"); // kodeering on UTF-8
-        response.getWriter().write(String.valueOf(jsonObject)); // JSON-sõne vastusesse kirjutamine
+        response.getWriter().write(writeFile ? icalString : String.valueOf(jsonObject)); // JSON-sõne vastusesse kirjutamine
 
         // Mattias: Varasemad todo'd eemaldatud, ainete cache'imisega tegeletakse AineCache klassis.
     }

@@ -219,62 +219,66 @@ function showHiddenEl(elId) {
 
 function submitForm(sendData) {
 
+    //console.log(sendData);
+
     let xhr = new XMLHttpRequest();
     xhr.open('POST', 'inputServlet', true);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
     xhr.onload = function() {
         if (this.status === 200) {
-           // console.log(this.responseText);
+
+           if (this.getResponseHeader('Content-Type') === 'text/calendar;charset=UTF-8') {
+               console.log(this.responseText);
+
+           } else {
+               let responseObj = JSON.parse(this.responseText); // JSON stringist objektiks
+
+               if (responseObj.hasOwnProperty('course-input')) {
+                   // Vaikimisi väärtuste taastamine
+                   // Seda võiks mingil paremal viisil teha
+                   // Tegelikult ei oleks seda üldse vaja, selle asemel peaks panema mingi asja, mis kontrollib kas aine juba on seal sees
+                   // (hetkel muidu saaks ühte ainet mitu korda lisada)
+                   document.getElementById('course-overview-valitud-kursused').innerHTML = 'Oled valinud järgmised kursused:';
+                   document.getElementById('course-overview-ainepunktid').innerHTML = 'Ainepunkte kokku: ';
+
+                   /*let courseOverview = document.getElementById('course-overview');
+           let childDiv1 = document.createElement("div"); // luuakse uus div container
+           childDiv1.innerHTML = responseObj['course-input'];
+           courseOverview.appendChild(childDiv1);*/
+
+                   let eapCounter = 0;
+
+                   // Ilmselt on mingi parem viis selle muutmiseks kui sedatüüpi otsene HTML-i muutmine?
+                   responseObj['course-input'].forEach(function (oppeaine) {
+                       document.getElementById('course-overview-valitud-kursused').innerHTML += ' <a href="' + oppeaine['hetkeseVersiooniLink'] + '" target="_blank" rel="noopener noreferrer" >' + oppeaine['Nimi'] + '</a>, ';
+                       eapCounter += oppeaine['EAP'];
+                   });
+
+                   document.getElementById('course-overview-ainepunktid').innerHTML += eapCounter + ' EAP';
+               }
 
 
-            let responseObj = JSON.parse(this.responseText); // JSON stringist objektiks
+               if (responseObj.hasOwnProperty('cal-input')) {
+                   //console.log(true)
+                   for (let i of responseObj['cal-input']) {
+                       let calInput = JSON.parse(i);
+                       let newiCalObj = new iCalObj(calInput['iCalLink'], calInput['events']);
 
-            if (responseObj.hasOwnProperty('course-input')) {
-                // Vaikimisi väärtuste taastamine
-                // Seda võiks mingil paremal viisil teha
-                // Tegelikult ei oleks seda üldse vaja, selle asemel peaks panema mingi asja, mis kontrollib kas aine juba on seal sees
-                // (hetkel muidu saaks ühte ainet mitu korda lisada)
-                document.getElementById('course-overview-valitud-kursused').innerHTML = 'Oled valinud järgmised kursused:';
-                document.getElementById('course-overview-ainepunktid').innerHTML = 'Ainepunkte kokku: ';
+                       calendar.iCalObjects.push(newiCalObj);
+                       if (calendar.initialized === false) {calendar.initialize()}
 
-                /*let courseOverview = document.getElementById('course-overview');
-        let childDiv1 = document.createElement("div"); // luuakse uus div container
-        childDiv1.innerHTML = responseObj['course-input'];
-        courseOverview.appendChild(childDiv1);*/
-
-                let eapCounter = 0;
-
-                // Ilmselt on mingi parem viis selle muutmiseks kui sedatüüpi otsene HTML-i muutmine?
-                responseObj['course-input'].forEach(function (oppeaine) {
-                    document.getElementById('course-overview-valitud-kursused').innerHTML += ' <a href="' + oppeaine['hetkeseVersiooniLink'] + '" target="_blank" rel="noopener noreferrer" >' + oppeaine['Nimi'] + '</a>, ';
-                    eapCounter += oppeaine['EAP'];
-                });
-
-                document.getElementById('course-overview-ainepunktid').innerHTML += eapCounter + ' EAP';
-            }
+                   }
+               }
+           }
 
 
-            if (responseObj.hasOwnProperty('cal-input')) {
-                //console.log(true)
-                for (let i of responseObj['cal-input']) {
-                    let calInput = JSON.parse(i);
-                    let newiCalObj = new iCalObj(calInput['iCalLink'], calInput['events']);
-
-
-
-                    calendar.iCalObjects.push(newiCalObj);
-                    if (calendar.initialized === false) {calendar.initialize()}
-
-                }
-            }
         }
     }
 
-    xhr.send(new URLSearchParams(sendData));
+    xhr.send(new URLSearchParams(sendData).toString());
 
 }
-
 
 class iCalObj {
     constructor(iCalLink, eventsInput) {
@@ -928,9 +932,8 @@ document.getElementById("inputResMinimized").getElementsByTagName('button')[0].a
 document.getElementById("textInputBtn").addEventListener("click", () => {addTextInput()});
 document.getElementById("urlInputBtn").addEventListener("click", () => {addUrlInput()});
 document.getElementById("calInputBtn").addEventListener("click", () => {addCalInput();});
-
 document.getElementById("binBtn").addEventListener("click", () => {deleteAllUserInput()});
-document.getElementById('course-input-form').addEventListener('submit', function(event) {event.preventDefault(); submitForm(new FormData(event.target).toString());});
+document.getElementById('course-input-form').addEventListener('submit', function(event) {event.preventDefault(); submitForm(new FormData(event.target));});
 
 
 let delButtons = document.getElementsByClassName("cta");
@@ -938,34 +941,26 @@ let delButtons = document.getElementsByClassName("cta");
 Array.from(delButtons).forEach(delButton => {
     delButton.addEventListener('click', (event) => {
 
-        console.log("click")
         let mainEl = document.getElementsByTagName("main")[0];
         let pElForEvent = document.getElementById("pElForEvent");
-
         let fnCall = delButton.getAttribute('data-fn-call');
 
-        //console.log(btnUid);
         if (tl.reversed()) {
-
             mainEl.style["z-index"] = 0;
             pElForEvent.innerText = delButton.dataset.value;
             pElForEvent.dataset.uid = delButton.getAttribute('data-uid');
             tl.play()
 
         } else {
-
-            if (fnCall !== null) {
-
-                calendar.deleteEventObjs(pElForEvent.getAttribute('data-uid'), fnCall);
-            }
+            if (fnCall !== null) {calendar.deleteEventObjs(pElForEvent.getAttribute('data-uid'), fnCall);}
             mainEl.style["z-index"] = 1;
             tl.reverse();
         }
-
     });
 })
-//console.log(delButtons);
 
-let downloadBtn = document.getElementById("downloadBtn");
-
-downloadBtn.addEventListener('click', (event) => {submitForm({"mod-cal": calendar.iCalObjects});});
+document.getElementById("downloadBtn").addEventListener('click', (event) => {
+    console.log("dl");
+    submitForm({"mod-cal": JSON.stringify(calendar.iCalObjects[0])});
+});
+//document.getElementById("downloadBtn").addEventListener('click', (event) => {submitForm({"mod-cal": JSON.stringify(calendar.iCalObjects)});});

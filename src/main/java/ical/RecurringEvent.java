@@ -2,6 +2,8 @@ package ical;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
 import org.json.JSONObject;
 
 public class RecurringEvent extends CalendarEvent  { // Tegemist on CalendarEvent alamklassiga, mis realiseerib liidest CalendarInterface
@@ -34,6 +36,7 @@ public class RecurringEvent extends CalendarEvent  { // Tegemist on CalendarEven
         return jsonObject;
     }
 
+
     @Override
     public Date getStart() { // TODO lisada esimene toimumisaeg
         return super.getStart();
@@ -46,5 +49,8 @@ public class RecurringEvent extends CalendarEvent  { // Tegemist on CalendarEven
 
     @Override
     public void findEnd() {this.setEnd(occurrences.get(occurrences.size() - 1));} // viimane toimumisaeg määrtaakse lõpukuupäevaks
+
+    @Override
+    public boolean isRecurring() {return true;}
 
 }
