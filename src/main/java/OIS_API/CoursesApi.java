@@ -77,7 +77,7 @@ public class CoursesApi {
             e.printStackTrace();
         }
         if (result == null || result.equals("")) {
-            throw new RuntimeException("Viga aine leidmises");
+            throw new RuntimeException("Viga aine leidmises, kood: " + code);
         }
         return new Oppeaine(result);
     }

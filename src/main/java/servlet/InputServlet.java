@@ -12,8 +12,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Serial;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,6 +51,7 @@ public class InputServlet extends HttpServlet {
         File tempFile = null;
        //System.out.println(inputsMap);
         if (inputsMap.isEmpty()) {
+            System.out.println("Tühi input");
             return;
         }
         // kui sisend ei ole tühi, siis töödeldakse vastuse sisust asjakohaseid väärtused
@@ -74,8 +76,31 @@ public class InputServlet extends HttpServlet {
 
             } else if (paramName.contains("cal-input")) { // kuna me tahame kalendrit vahepeal töödelda, siis ei saa tulemust kohe tagasi saata
                 CalendarDataServlet calendarDataServlet = new CalendarDataServlet();
-                String calendarData = calendarDataServlet.convertUrl(paramValues[0]).toString();
-                addJsonArrayToJsonObject(jsonObject, "cal-input", calendarData);
+                //System.out.println(paramValues[0]);
+                JSONObject calendarData = calendarDataServlet.convertUrl(paramValues[0]);
+                //System.out.println(calendarData);
+
+                // Kood õppeainete saamiseks kalendrist
+                Pattern leiaAinekood = Pattern.compile("[A-Z]{4}\\.[0-9]{2}\\.[0-9]{3}");
+                HashSet<String> kalendristSaadudOppeained = new HashSet<>(); // TODO: kui hashCode/equals implementatsioon on tehtud, panna see õppeainete setiks
+                JSONArray syndmused = Objects.requireNonNull(calendarData).getJSONArray("events");
+                for (int i = 0; i < syndmused.length(); i++) {
+                    JSONObject event = syndmused.getJSONObject(i);
+                    String kirjeldus = event.getString("summary");
+
+                    Matcher matcher = leiaAinekood.matcher(kirjeldus);
+                    if(!matcher.find()) {
+                        continue;
+                    }
+                    Oppeaine oa = AineCache.getAine(matcher.group());
+                    if (kalendristSaadudOppeained.contains(oa.getCode())) {
+                        continue;
+                    }
+                    kalendristSaadudOppeained.add(oa.getCode());
+                    addJsonArrayToJsonObject(jsonObject, "course-input", oa);
+                }
+
+                addJsonArrayToJsonObject(jsonObject, "cal-input", calendarData.toString());
             } else if (paramName.contains("text-input")){ // muul juhul on tegemist ainekoodiga
                 Oppeaine oa = AineCache.getAine(paramValues[0]);
                 // Samuti eemaldatud cache'i aine lisamine.
