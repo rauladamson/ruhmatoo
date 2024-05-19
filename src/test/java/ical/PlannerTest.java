@@ -1,5 +1,18 @@
 package ical;
 
+import oppeaine.AineCache;
+import oppeaine.Oppeaine;
+import org.json.JSONArray;
+import org.junit.jupiter.api.Test;
+import servlet.CalendarDataServlet;
+
+import java.io.File;
+import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+
 import org.json.JSONObject;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -8,11 +21,15 @@ import servlet.CalendarDataServlet;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ICalConversionTest2 {
+public class PlannerTest {
 
     //@Disabled
     @Test
@@ -21,23 +38,29 @@ public class ICalConversionTest2 {
         iCalObj ical = CalendarDataServlet.convertJson(iCalArray);
         System.out.println(ical.getEvents());
 
-        /*for (CalendarEvent event : ical.getEvents()) {
-            System.out.println(event.getOccurrences());
-        }*/
-        File test = ical.saveToFile();
-        System.out.println(test);
-        System.out.println();
-        String mainDir = System.getProperty("user.dir");
-        System.out.println(mainDir);
-        // Asserting that the conversion did not return null
-        assertNotNull(ical, "The conversion should not return null");
+        //HashSet<String> kalendristSaadudOppeained = new HashSet<>(); // TODO: kui hashCode/equals implementatsioon on tehtud, panna see õppeainete setiks
 
-        // Asserting the size of the JSONArray
-        assertTrue(ical != null, "The JSONArray should contain at least one event");
 
-        // Looping through the events and printing them
-        /*for (Object event : icals.get("events")) {
-            System.out.println(event);
+
+        // Kood õppeainete saamiseks kalendrist
+       /* Pattern leiaAinekood = Pattern.compile("[A-Z]{4}\\.[0-9]{2}\\.[0-9]{3}");
+        HashSet<String> kalendristSaadudOppeained = new HashSet<>(); // TODO: kui hashCode/equals implementatsioon on tehtud, panna see õppeainete setiks
+        JSONArray syndmused = Objects.requireNonNull(calendarData).getJSONArray("events");
+        for (int i = 0; i < syndmused.length(); i++) {
+            JSONObject event = syndmused.getJSONObject(i);
+            String kirjeldus = event.getString("summary");
+
+            Matcher matcher = leiaAinekood.matcher(kirjeldus);
+            if(!matcher.find()) {
+                continue;
+            }
+            Oppeaine oa = AineCache.getAine(matcher.group());
+            if (kalendristSaadudOppeained.contains(oa.getCode())) {
+                continue;
+            }
+            kalendristSaadudOppeained.add(oa.getCode());
+            addJsonArrayToJsonObject(jsonObject, "course-input", oa);
         }*/
+
     }
 }

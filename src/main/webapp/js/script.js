@@ -230,43 +230,33 @@ function submitForm(sendData) {
             if (this.status === 200) {
                 let responseObj = JSON.parse(this.responseText);
 
+                console.log(responseObj);
                 if (responseObj.hasOwnProperty('course-input')) {
+
+                    //console.log(true)
                     // Vaikimisi väärtuste taastamine
                     // Seda võiks mingil paremal viisil teha
                     // Tegelikult ei oleks seda üldse vaja, selle asemel peaks panema mingi asja, mis kontrollib kas aine juba on seal sees
                     // (hetkel muidu saaks ühte ainet mitu korda lisada)
-                    document.getElementById('course-overview-valitud-kursused').innerHTML = 'Oled valinud järgmised kursused:';
-                    document.getElementById('course-overview-ainepunktid').innerHTML = 'Ainepunkte kokku: ';
+                    let coCoursesList = document.getElementById('course-overview-valitud-kursused')
+                    coCoursesList.innerHTML = 'Oled valinud järgmised kursused:';
 
-                    /*let courseOverview = document.getElementById('course-overview');
-            let childDiv1 = document.createElement("div"); // luuakse uus div container
-            childDiv1.innerHTML = responseObj['course-input'];
-            courseOverview.appendChild(childDiv1);*/
-
-                    let eapCounter = 0;
+                    document.getElementById('course-overview-ainepunktid').innerText =  'Ainepunkte kokku: ' + responseObj['ect-total'] + ' EAP'
 
                     // Ilmselt on mingi parem viis selle muutmiseks kui sedatüüpi otsene HTML-i muutmine?
-                    responseObj['course-input'].forEach(function (oppeaine) {
-                        document.getElementById('course-overview-valitud-kursused').innerHTML += ' <a href="' + oppeaine['hetkeseVersiooniLink'] + '" target="_blank" rel="noopener noreferrer" >' + oppeaine['Nimi'] + '</a>, ';
-                        eapCounter += oppeaine['EAP'];
-                    });
+                    responseObj['course-input'].forEach(function (oppeaine) {document.getElementById('course-overview-valitud-kursused').innerHTML += ' <a href="' + oppeaine['hetkeseVersiooniLink'] + '" target="_blank" rel="noopener noreferrer" >' + oppeaine['Nimi'] + '</a>, ';});
 
-                    document.getElementById('course-overview-ainepunktid').innerHTML += eapCounter + ' EAP';
                 }
 
-
                 if (responseObj.hasOwnProperty('cal-input')) {
-                    //console.log(true)
+
                     for (let i of responseObj['cal-input']) {
                         let calInput = JSON.parse(i);
-                        let newiCalObj = new iCalObj(calInput['iCalLink'], calInput['events']);
-
-
-                        calendar.iCalObjects.push(newiCalObj);
-                        if (calendar.initialized === false) {calendar.initialize()}
-
+                        calendar.iCalObjects.push( new iCalObj(calInput['iCalLink'], calInput['events']));
                     }
-                    document.getElementById("calendar-grid").classList.remove("hidden")
+
+                    if (calendar.initialized === false) {calendar.initialize()}
+                    //document.getElementById("calendar-grid").classList.remove("hidden")
                 }
 
                 console.log('Resolving the Promise with:', responseObj);
@@ -726,7 +716,7 @@ class Calendar {
 
         daysList.appendChild(dayElsFragment);
 
-        Array.from(dayElsFragment.getElementsByClassName('day')).forEach(function(element) {
+        Array.from(document.getElementsByClassName('day')).forEach(function(element) {
             element.addEventListener('click', function() {
                 console.log('clicked')
             });
@@ -1012,7 +1002,7 @@ document.getElementById("downloadBtn").addEventListener('click', (event) => {
 });
 
 document.getElementById("generateBtn").addEventListener('click', (event) => {
-    submitForm({"mod-cal": JSON.stringify(calendar.iCalObjects[0])})
+    submitForm({"generate": JSON.stringify(calendar.iCalObjects[0])})
         .then(responseObj => {
             // Start the download here
             //window.location.href = "calendar.ics";

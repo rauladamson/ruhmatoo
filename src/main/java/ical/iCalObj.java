@@ -9,6 +9,9 @@ import biweekly.util.Duration;
 import biweekly.util.com.google.ical.compat.javautil.DateIterator;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import oppeaine.AineCache;
+import oppeaine.KasutajaOppeaine;
+import oppeaine.Oppeaine;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -17,10 +20,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import user.User;
+import user.UserCache;
 
 public class iCalObj { // klass CalendarEvent objektide hoidmiseks
 
@@ -51,7 +58,7 @@ public class iCalObj { // klass CalendarEvent objektide hoidmiseks
 
     void handleEvent(VEvent event) {
 
-        String uID = event.getUid().getValue(); // sündmuse unikaalne ID
+        String eventUid = event.getUid().getValue(); // sündmuse unikaalne ID
         String summary = event.getSummary().getValue(); // sündmuse kirjeldus (nimetus ÕIS-is)
         String location = event.getLocation() != null ? event.getLocation().getValue() : "-"; // sündmuse toimumiskoht
         String description = event.getDescription().getValue().toString(); // sündmuse kirjeldus
@@ -75,9 +82,29 @@ public class iCalObj { // klass CalendarEvent objektide hoidmiseks
 
         // TODO mis juhtub siis, kui aegu polegi ehk occurenceDates.size() == 0? (hetkel eeldame, et on alati vähemalt 1, aga kas saab olla ka ilma ajata sündmusi?)
         CalendarEvent newEvent = (occurenceDates.size() > 1) ? // kontrollitakse, kas sündmusel on rohkem kui 1 toimumisaeg
-                new RecurringEvent(uID, summary, location, description, categories, startDate, duration, occurenceDates) :  // kui jah, siis luuakse uus RecurringEvent objekt ning kõik toiumisajad lisatakse sellele
-                new OneTimeEvent(uID, summary, location, description, categories, startDate, duration); // kui ei, siis luuakse uus OneTimeEvent objekt
+                new RecurringEvent(eventUid, summary, location, description, categories, startDate, duration, occurenceDates) :  // kui jah, siis luuakse uus RecurringEvent objekt ning kõik toiumisajad lisatakse sellele
+                new OneTimeEvent(eventUid, summary, location, description, categories, startDate, duration); // kui ei, siis luuakse uus OneTimeEvent objekt
         events.add(newEvent); // sündmus lisatakse kalendrisse
+
+        System.out.println(Arrays.toString(summary.split(" ")));
+        /*Pattern leiaAinekood = Pattern.compile("[A-Z]{4}\\.[0-9]{2}\\.[0-9]{3}");
+        Matcher matcher = leiaAinekood.matcher(summary);*/
+
+        User user = UserCache.getUser();
+        HashMap<String, KasutajaOppeaine> userCourses = user.getUserCourses();
+
+        try  {
+            //matcher.find();
+            //Oppeaine oa = AineCache.getAine(matcher.group());
+            String[] split = summary.split(" ");
+            Oppeaine oa = AineCache.getAine(split[split.length - 1]);
+
+            if(!userCourses.containsKey(oa.getCode())) {user.addCourse(new KasutajaOppeaine(oa));}
+            userCourses.get(oa.getCode()).addEvent(newEvent);
+
+        } catch (Exception e) {
+            System.out.println("Ei leidnud ainekoodi");
+        }
     }
 
 

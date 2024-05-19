@@ -43,6 +43,15 @@ public class Oppeaine {
         }
     }
 
+    public Oppeaine(String code, String name, Integer ecTs) {
+        this.internalJsonData = new JSONObject();
+        this.internalJsonData.put("code", code);
+        this.internalJsonData.put("title", new JSONObject().put("et", name));
+        this.internalJsonData.put("credits", ecTs);
+        this.structCode = code;
+        this.lastUpdated = "";
+    }
+
     /**
      * Tagastab õppeaine JSON-i kujul.
      * NB! Veebirakenduse jaoks kasutada võimalusel convertToJsonForDisplay() meetodit.

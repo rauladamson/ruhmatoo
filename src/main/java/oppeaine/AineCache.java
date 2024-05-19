@@ -4,9 +4,11 @@ import OIS_API.CoursesApi;
 import pdfsave.JsonFileReader;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class AineCache {
-    private static final ArrayList<Oppeaine> ained = new ArrayList<>();
+    private static final HashMap<String, Oppeaine> ained = new HashMap<>();
+    private static final ArrayList<Oppeaine> ainedArrayList = new ArrayList<>();
     private static final String cacheFile = "salvestatudOppeained.json";
 
     /*
@@ -32,10 +34,12 @@ public class AineCache {
 
     public static void updateCacheFromFile() {
         ArrayList<Oppeaine> loetudAined = JsonFileReader.readOppeained(cacheFile);
+        System.out.println("Loeti failist " + cacheFile + " " + loetudAined.size() + " õppeainet.");
         int i = 0;
         for (Oppeaine uusAine: loetudAined) {
-            if (!ained.contains(uusAine)) {
-                ained.add(uusAine);
+            if (!ained.containsKey(uusAine.getCode())) {
+                ained.put(uusAine.getCode(), uusAine);
+                ainedArrayList.add(uusAine);
                 i++;
             }
         }
@@ -47,23 +51,38 @@ public class AineCache {
     }
 
     public static void writeCacheToFile() {
-        JsonFileReader.writeOppeained(cacheFile, ained);
+        JsonFileReader.writeOppeained(cacheFile, ainedArrayList);
     }
 
     public static void printCache() {
         System.out.println("\n===============");
         System.out.println("Cache sisaldab:");
-        for (Oppeaine aine: ained) {
+        for (Oppeaine aine: ainedArrayList) {
             System.out.println(aine.toString());
         }
         System.out.println("===============");
     }
 
     public static Oppeaine getAine(String kood) {
+        if (ained.isEmpty()) {updateCacheFromFile();}
         Oppeaine aine = null;
+        try {
+            aine = ained.get(kood);
+            //System.out.println("Aine leiti vahemälust: " + aine);
+          /*  if (aineHasChanged(aine)) { // TODO: Api päring ning seotud meetod parandada. aineHasChanged ja getAineFromCode loogikat võiks ka kuidagi paremini kokku panna.
+                Oppeaine uusAine = CoursesApi.getAineFromCode(aine.getCode());
+
+                ained.put(uusAine.getCode(), uusAine);*/
+       } catch (Exception e) {
+           System.err.println("Aine pole vahemälus, otsime ainet:");
+           aine = CoursesApi.getAineFromCode(kood);
+            ained.put(aine.getCode(), aine);
+       }
+        /*Oppeaine aine = null;
         int i = 0;
 
         for (Oppeaine potAine: ained) {
+            System.out.println(potAine.getCode());
             if (potAine.getCode().equals(kood)) {
                 aine = potAine;
                 break;
@@ -76,6 +95,7 @@ public class AineCache {
             //System.out.print(aine + " mis leiti cache'ist ");
             if (aineHasChanged(aine)) { // TODO: Api päring ning seotud meetod parandada. aineHasChanged ja getAineFromCode loogikat võiks ka kuidagi paremini kokku panna.
                 Oppeaine uusAine = CoursesApi.getAineFromCode(aine.getCode());
+
                 ained.set(i, uusAine);
                 //System.out.println("ja mis oli muutunud.");
             } else {
@@ -95,7 +115,8 @@ public class AineCache {
         writeCacheToFile();
         ///////////////////////////////////////////////
 
-        return uusAine;
+        return uusAine;*/
+        return aine;
     }
 
     // Mattias: Märkisin praegu selle private-iks, et keelata selle kasutamist. Kui tekib tunne, et seda
@@ -114,12 +135,12 @@ public class AineCache {
         //TODO: kasutada HashSeti(?)
         //System.out.println(oa.convertToJson().toString());
         printCache();
-        if (ained.contains(oa)) {
+        if (ained.containsKey(oa)) {
             System.out.println("Prooviti lisada aine " + oa.toString() + " mis oli juba olemas.\n");
             System.out.println();
             return false;
         } else {
-            ained.add(oa);
+            ained.put(oa.getCode(), oa);
             System.out.println("Lisati edukalt aine " + oa.toString() + "\n");
             return true;
         }

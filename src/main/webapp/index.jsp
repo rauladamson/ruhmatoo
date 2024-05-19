@@ -246,7 +246,7 @@
 
 
 
-            <div class="hidden" id="calendar-grid">
+            <div class="" id="calendar-grid">
                 <!--Copyright (c) 2024 by Alex Oliver (https://codepen.io/alexoliverwd/pen/kKQgwo)-->
                 <div class="calendar">
 
