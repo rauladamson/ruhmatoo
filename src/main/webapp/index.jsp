@@ -74,9 +74,12 @@
                     </svg>
                 </button>
 
+
+
                 <div class="menu__border"></div>
 
             </menu>
+
 
             <div class="svg-container">
                 <svg viewBox="0 0 202.9 45.5" >
@@ -93,15 +96,42 @@
         <!-- krystonschwarze: https://www.svgrepo.com/svg/510782/add-row -->
 
 
-        <div id="inputResMinimized" class="hidden">
-            <button data-el-id="userInput">
+        <div id="inputResMinimized" class="hidden row-flex">
 
-                <svg class="icon" viewBox="0 0 24 24"><path id="Vector" d="M3 14V15C3 16.1046 3.89543 17 5 17L19 17C20.1046 17 21 16.1046 21 15L21 13C21 11.8954 20.1046 11 19 11H13M10 8H7M7 8H4M7 8V5M7 8V11"></path></svg>
-            </button>
+            <div class="row-flex">
+                <button data-el-id="userInput">
+
+                    <svg class="icon" viewBox="0 0 24 24"><path id="Vector" d="M3 14V15C3 16.1046 3.89543 17 5 17L19 17C20.1046 17 21 16.1046 21 15L21 13C21 11.8954 20.1046 11 19 11H13M10 8H7M7 8H4M7 8V5M7 8V11"></path></svg>
+
+                </button>
+                <span>MUUDA SISENDIT</span>
+            </div>
+
+            <!-- https://uiverse.io/AlimurtuzaCodes/average-liger-0 -->
+            <div >
+                <button id="generateBtn">
+                    <svg height="24" width="24" fill="#FFFFFF" viewBox="0 0 24 24" data-name="Layer 1" id="Layer_1" class="sparkle">
+                        <path d="M10,21.236,6.755,14.745.264,11.5,6.755,8.255,10,1.764l3.245,6.491L19.736,11.5l-6.491,3.245ZM18,21l1.5,3L21,21l3-1.5L21,18l-1.5-3L18,18l-3,1.5ZM19.333,4.667,20.5,7l1.167-2.333L24,3.5,21.667,2.333,20.5,0,19.333,2.333,17,3.5Z"></path>
+                    </svg>
+
+                    <span class="text">GENEREERI</span>
+                </button>
+            </div>
+
         </div>
+
+
+
+
+
+
+
+
+
         <div class="flex-container">
 
             <div id="userInput" class="flex-container">
+
 
 
 
@@ -216,7 +246,7 @@
 
 
 
-            <div class="" id="calendar-grid">
+            <div class="hidden" id="calendar-grid">
                 <!--Copyright (c) 2024 by Alex Oliver (https://codepen.io/alexoliverwd/pen/kKQgwo)-->
                 <div class="calendar">
 

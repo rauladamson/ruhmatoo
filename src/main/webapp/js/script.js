@@ -102,6 +102,8 @@ function createNewDropdownDiv(event, occurrencesInMonth) {
     let dropdownElContentContainer = document.createElement("div");
     dropdownElContentContainer.innerText = event.getSummary() + " " + event.categories;
     dropdownElContentContainer.classList.add("dropdown-content-container");
+    dropdownElContentContainer.style.backgroundColor = event.bgColor;
+
 
     let dropdownButton = document.createElement("button");
     dropdownButton.classList.add("dropbtn");
@@ -259,10 +261,12 @@ function submitForm(sendData) {
                         let calInput = JSON.parse(i);
                         let newiCalObj = new iCalObj(calInput['iCalLink'], calInput['events']);
 
+
                         calendar.iCalObjects.push(newiCalObj);
                         if (calendar.initialized === false) {calendar.initialize()}
 
                     }
+                    document.getElementById("calendar-grid").classList.remove("hidden")
                 }
 
                 console.log('Resolving the Promise with:', responseObj);
@@ -287,7 +291,7 @@ class iCalObj {
         this.iCalLink = null;
         this.events = [];
 
-        for (let event of eventsInput) {this.events.push(new CalendarEvent(event.uid, event.summary, event.location, event.description, event.categories, event.start, event.end, event.duration, event.occurrences, event.recurring))}
+        for (let event of eventsInput) { this.events.push(new CalendarEvent(event.uid, event.summary, event.location, event.description, event.categories, event.start, event.end, event.duration, event.occurrences, event.recurring))}
 
     }
     getEvents() {
@@ -342,6 +346,11 @@ class CalendarEvent {
         this.duration = duration;
         this.occurrences = [];
         this.recurring = recurring;
+
+        let r = Math.floor(Math.random() * 256); // Random between 0-255
+        let g = Math.floor(Math.random() * 256); // Random between 0-255
+        let b = Math.floor(Math.random() * 256); // Random between 0-255
+        this.bgColor = 'rgb(' + r + ',' + g + ',' + b + ')';
 
         if (occurrences) {for (let occurrence of occurrences) {this.occurrences.push(new Date(occurrence.replace(" EEST", "").replace(" EET", "")))}}
 
@@ -610,15 +619,16 @@ class Calendar {
                 let event = eventKVPair.event;
 
                 for (let occurrence of eventKVPair.occurrencesOnDay) { // kõik toimumiskorrad päevas (juhuks, kui neid on rohkem kui üks) lisatakse kalendrisse
-                    this.addEvent(event.getSummary(), parentEl, classListItems);
+                    this.addEvent(event.getSummary(), parentEl, classListItems, event.bgColor);
                 }
             }
         }
     }
     // sündmuse kalendrisse lisamine
-    addEvent(text, parent, classListItems) {
+    addEvent(text, parent, classListItems, bgColor) {
         let childDiv2 = document.createElement("div"); // luuakse uus div container
-        childDiv2.innerHTML = text;
+        //childDiv2.innerHTML = text;
+        childDiv2.style.backgroundColor = bgColor;
         for (let item of classListItems) {childDiv2.classList.add(item);}
         parent.appendChild(childDiv2);
     }
@@ -715,7 +725,13 @@ class Calendar {
         }
 
         daysList.appendChild(dayElsFragment);
-        //console.log(daysList);
+
+        Array.from(dayElsFragment.getElementsByClassName('day')).forEach(function(element) {
+            element.addEventListener('click', function() {
+                console.log('clicked')
+            });
+        });
+
         return daysList;
 
 
@@ -749,7 +765,6 @@ class Calendar {
         let weekdayOfFirst = new Date(yearNr, monthNr).getAdjustedDay();
         let weekdayOfLast =  new Date(yearNr, monthNr, daysInMonth).getAdjustedDay();
         let thisMonthEls = this.monthDayEls.querySelectorAll('.day:not(.prevMonthDay):not(.nextMonthDay)');
-
 
         for (let i = 1; i <= thisMonthEls.length; i++) {
             let thisMonthDayEl = thisMonthEls[i - 1];
@@ -950,6 +965,7 @@ document.getElementById('course-input-form').addEventListener('submit', function
         });
     showHiddenEl("inputResMinimized")
     showHiddenEl("userInput");
+
 });
 
 let delButtons = document.getElementsByClassName("cta");
