@@ -5,7 +5,8 @@ import ical.CalendarEvent;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class KasutajaOppeaine extends Oppeaine {
+public class KasutajaOppeaine {
+    private final UUID uuid;
     private int eeldatavTooaeg;
     private int tehtudTooaeg;
     private int veelTooaeg;
@@ -31,13 +32,12 @@ public class KasutajaOppeaine extends Oppeaine {
      }
      */
 
-    private Oppeaine algAine;
+    private UUID parentUUid;
 
-
-    public KasutajaOppeaine(Oppeaine oppeaine) {
-        super("");
-        this.algAine = oppeaine;
-        this.eeldatavTooaeg = oppeaine.getECTs() * 26; // default method: 1 eap = 26 tundi
+    public KasutajaOppeaine(UUID parentUUid, Integer ects) {
+        this.uuid = UUID.randomUUID();
+        this.parentUUid = parentUUid;
+        this.eeldatavTooaeg = ects * 26; // default method: 1 eap = 26 tundi
         this.tehtudTooaeg = 0;
         this.veelTooaeg = eeldatavTooaeg - tehtudTooaeg;
         this.courseEvents = new HashMap<>();
@@ -77,5 +77,17 @@ public class KasutajaOppeaine extends Oppeaine {
 
     public void addEvent(CalendarEvent newEvent) {
         courseEvents.put(newEvent.getCategories(), newEvent);
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public HashMap<String, CalendarEvent> getCourseEvents() {
+        return courseEvents;
+    }
+
+    public UUID getParentUUid() {
+        return parentUUid;
     }
 }

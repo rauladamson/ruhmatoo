@@ -83,21 +83,17 @@ public class iCalObj { // klass CalendarEvent objektide hoidmiseks
                 new OneTimeEvent(eventUid, summary, location, description, categories, startDate, duration); // kui ei, siis luuakse uus OneTimeEvent objekt
         events.add(newEvent); // sündmus lisatakse kalendrisse
 
-        System.out.println(Arrays.toString(summary.split(" ")));
-        /*Pattern leiaAinekood = Pattern.compile("[A-Z]{4}\\.[0-9]{2}\\.[0-9]{3}");
-        Matcher matcher = leiaAinekood.matcher(summary);*/
 
         User user = UserCache.getUser();
-        HashMap<String, KasutajaOppeaine> userCourses = user.getUserCourses();
+        HashMap<UUID, KasutajaOppeaine> userCourses = user.getUserCourses();
 
         try  {
-            //matcher.find();
-            //Oppeaine oa = AineCache.getAine(matcher.group());
             String[] split = summary.split(" ");
             Oppeaine oa = AineCache.getAine(split[split.length - 1]);
-
-            if(!userCourses.containsKey(oa.getCode())) {user.addCourse(new KasutajaOppeaine(oa));}
-            userCourses.get(oa.getCode()).addEvent(newEvent);
+           //System.out.println(oa);
+            if(!userCourses.containsKey(oa.getCode())) {user.addCourse(new KasutajaOppeaine(UUID.fromString(oa.getProperty("uuid")), oa.getECTs()),
+                    newEvent,
+                    oa.getECTs());}
 
         } catch (Exception e) {
             System.out.println("Ei leidnud ainekoodi");

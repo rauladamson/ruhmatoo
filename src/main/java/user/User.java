@@ -17,7 +17,7 @@ public class User {
     private UUID uid;
     private String name, email, password, role;
     private ArrayList<iCalObj> userCalendars;
-    private HashMap<String, KasutajaOppeaine> userCourses;
+    private HashMap<UUID, KasutajaOppeaine> userCourses;
     private Integer totalEcts;
 
     public User(String name, String email, String password, String role) {
@@ -92,18 +92,31 @@ public class User {
         this.userCalendars = userCalendars;
     }
 
-    public HashMap<String, KasutajaOppeaine> getUserCourses() {
+    public HashMap<UUID, KasutajaOppeaine> getUserCourses() {
         return userCourses;
     }
 
-    public void setUserCourses(HashMap<String, KasutajaOppeaine> userCourses) {
+    public void setUserCourses(HashMap<UUID, KasutajaOppeaine> userCourses) {
         this.userCourses = userCourses;
     }
 
-    public void addCourse(KasutajaOppeaine course) {
-        userCourses.put(course.getCode(), course);
-        this.totalEcts += course.getECTs();
+    public void addCourse(KasutajaOppeaine course, CalendarEvent newEvent, Integer ects) {
+        this.userCourses.put(course.getUuid(), course);
+        course.addEvent(newEvent);
+        this.totalEcts += ects;
     }
+
+    public void addCourse(KasutajaOppeaine course, Integer ects) {
+        this.userCourses.put(course.getUuid(), course);
+        this.totalEcts += ects;
+    }
+
+    /* mis kellast mis kellani plaanid tegutseda?
+
+   for e-r:  8 - (geteventsonday: sum duration ) timeblock = 30 min 60 min
+   uus event = timeblock
+    *
+    * */
 
     @Override
     public String toString() {

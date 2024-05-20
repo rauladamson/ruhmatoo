@@ -4,6 +4,7 @@ import ical.CalendarEvent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class Planeerija {
     private List<KasutajaOppeaine> planeeritavOppeainelist;
@@ -18,7 +19,7 @@ public class Planeerija {
     }
 
     public void lisaOppeaine(Oppeaine oppeaine) {
-        this.planeeritavOppeainelist.add(new KasutajaOppeaine(oppeaine));
+        this.planeeritavOppeainelist.add(new KasutajaOppeaine(UUID.fromString(oppeaine.getProperty("uuid")), oppeaine.getECTs()));
     }
 
     public int arvutaTootundeNadalas() {

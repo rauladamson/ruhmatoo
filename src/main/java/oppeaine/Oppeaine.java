@@ -75,6 +75,7 @@ public class Oppeaine {
         } catch (JSONException e) {
             throw e;
         }
+
     }
 
     public Oppeaine() {
@@ -82,16 +83,6 @@ public class Oppeaine {
         this.structCode = "";
         this.lastUpdated = "";
     }
-
-
-    /*public Oppeaine(String code, String name, Integer ecTs) {
-        this.internalJsonData = new JSONObject();
-        this.internalJsonData.put("code", code);
-        this.internalJsonData.put("title", new JSONObject().put("et", name));
-        this.internalJsonData.put("credits", ecTs);
-        this.structCode = code;
-        this.lastUpdated = "";
-    }*/
 
     /**
      * Tagastab õppeaine JSON-i kujul.
@@ -117,8 +108,6 @@ public class Oppeaine {
 
         return tagastatavObjekt;
     }
-
-
 
     /**
      * Sisemiste parameetrite muutmiseks. Ei luba lisada uusi parameetreid.

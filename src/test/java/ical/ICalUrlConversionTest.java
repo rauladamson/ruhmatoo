@@ -1,5 +1,6 @@
 package ical;
 
+import database.DBConnector;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,11 +17,12 @@ public class ICalUrlConversionTest {
     public void testConvert() {
         User userObj = new User(); // luuakse uus kasutaja objekt
         UserCache.addUser(userObj); // objekt lisatakse vahemällu
+        DBConnector db = new DBConnector(); // andmebaasiga ühenduse loomine
 
         String iCalUrl = "https://ois2.ut.ee/api/timetable/personal/link/8bf38d9ab00c498fa52393683212b641/et";
         iCalObj ical = CalendarDataServlet.convertUrl(iCalUrl);
 
-        System.out.println(UserCache.getUser());
+        //System.out.println(UserCache.getUser());
         // Asserting that the conversion did not return null
         assertNotNull(ical, "The conversion should not return null");
 

@@ -87,17 +87,16 @@ public class DBConnector {
         return false;
     }
 
-    public void updateOppeained(ArrayList<Oppeaine> ainedArrayList) {
-        for (Oppeaine aine: ainedArrayList) {
-            if (!existsInTable("course", "uid", aine.getCode())) { // kui ainet pole veel andmebaasis, siis see lisatakse
+    public void updateOppeained(HashMap<String, Oppeaine> ained) {
+        for (String aineUuid: ained.keySet()) {
+            if (!existsInTable("course", "uid", aineUuid)) { // kui ainet pole veel andmebaasis, siis see lisatakse
                 try {
+                    Oppeaine aine = ained.get(aineUuid);
                     Statement stmt = conn.createStatement();
-                    String sql = "INSERT INTO course (uid, course_code, course_name, course_ect) VALUES ('" + aine.getCode() + "', '" + aine.getCode() + "', '" + aine.getName() + "', " + aine.getECTs() + ")";
+                    String sql = "INSERT INTO course (uid, parent_uid) VALUES ('" +  UUID.randomUUID() + "', '" + aine.getProperty("uid")  + ")";
                     stmt.execute(sql);
                     System.out.println("Kursus " + aine.getName() + " lisati andmebaasi");
                 } catch (Exception e) {e.printStackTrace();}
-            } else {
-                System.out.println("Kursus " + aine.getName() + " on juba andmebaasis");
             } //TODO: kui ainet on muudetud, siis see uuendatakse
 
         }
@@ -115,13 +114,15 @@ public class DBConnector {
 
     public static void main(String[] args) {
         DBConnector db = new DBConnector();
-
+        //db.dropTable("course");
         // tabelite loomine
         /*db.createTable("user_table", "(uid VARCHAR(255) PRIMARY KEY)");
         db.createTable("calendar", "(uid VARCHAR(255) PRIMARY KEY, user_uid VARCHAR(255), FOREIGN KEY (user_uid) REFERENCES user_table(uid) ON DELETE SET NULL)");
         db.createTable("calendar_event", "(uid VARCHAR(255) PRIMARY KEY, summary VARCHAR(255), location VARCHAR(255), description VARCHAR(255), categories VARCHAR(255))");
-        db.createTable("occurrences", "(uid VARCHAR(255) PRIMARY KEY, event_uid VARCHAR(255), FOREIGN KEY (event_uid) REFERENCES calendar_event(uid) ON DELETE SET NULL, datetime DATE)");        db.createTable("course", "(uid VARCHAR(255) PRIMARY KEY, calendar_event VARCHAR(255), FOREIGN KEY (calendar_event) REFERENCES calendar_event(uid) ON DELETE SET NULL, course_code VARCHAR(255), course_name VARCHAR(255), course_ect INT)");
+        db.createTable("occurrences", "(uid VARCHAR(255) PRIMARY KEY, event_uid VARCHAR(255), FOREIGN KEY (event_uid) REFERENCES calendar_event(uid) ON DELETE SET NULL, datetime DATE)");
+         db.createTable("course", "(uid VARCHAR(255) PRIMARY KEY, calendar_event VARCHAR(255), FOREIGN KEY (calendar_event) REFERENCES calendar_event(uid) ON DELETE SET NULL, course_code VARCHAR(255), course_name VARCHAR(255), course_ect INT)");
         */
+
     }
 
     public void updateUsers(HashMap<UUID, User> users) {

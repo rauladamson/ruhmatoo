@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.Serial;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,7 +31,7 @@ public class InputServlet extends HttpServlet {
 
     public InputServlet() {
         super();
-        AineCache.updateCacheFromDatabase();
+        AineCache.updateCacheFromFile();
         //UserCache.updateCacheFromFile();
     }
 
@@ -49,6 +50,7 @@ public class InputServlet extends HttpServlet {
         File tempFile;
 
         User user = UserCache.getUser();
+        HashMap<UUID, KasutajaOppeaine> userCourses = user.getUserCourses();
 
         if (inputsMap.isEmpty()) {System.out.println("Tühi sisend");return;}
         // TODO arraysse lisamine kustutada
@@ -68,14 +70,15 @@ public class InputServlet extends HttpServlet {
                 }
 
                 Oppeaine oa = AineCache.getAine(matcher.group());  // Siin pole eraldi vaja ainet faili salvestada. AineCache.getAine() tegeleb sellega ise automaatselt.
-                user.addCourse(new KasutajaOppeaine(oa));
+                if(!userCourses.containsKey(oa.getCode())) {user.addCourse(new KasutajaOppeaine(UUID.fromString(oa.getProperty("uuid")), oa.getECTs()), oa.getECTs());}
+
                 addJsonArrayToJsonObject(jsonObject, "course-input", oa);
 
             } else if (paramName.contains("text-input")){ // muul juhul on tegemist ainekoodiga
                 Oppeaine oa = AineCache.getAine(paramValues[0]);
-
                 addJsonArrayToJsonObject(jsonObject, "course-input", oa);
-                user.addCourse(new KasutajaOppeaine(oa));
+                if(!userCourses.containsKey(oa.getCode())) {user.addCourse(new KasutajaOppeaine(UUID.fromString(oa.getProperty("uuid")), oa.getECTs()), oa.getECTs());}
+
             } else {
 
                 iCalObj iCalObj;
@@ -83,12 +86,12 @@ public class InputServlet extends HttpServlet {
                      iCalObj = CalendarDataServlet.convertUrl(paramValues[0]);
                     UserCache.getUser().addCalendar(iCalObj); // kasutaja kalendri lisamine
 
-                    HashMap<String, KasutajaOppeaine> userCourses = user.getUserCourses();
                     if (!userCourses.isEmpty()) {addJsonArrayToJsonObject(jsonObject, "course-input", userCourses.values());} // kui sisendist leiti kursusi, siis lisatakse need vastusesse
 
                     addJsonArrayToJsonObject(jsonObject, "ect-total", user.getTotalECTs());
                     addJsonArrayToJsonObject(jsonObject, "cal-input", iCalObj.toJson().toString());
                 } else {
+
                     iCalObj = CalendarDataServlet.convertJson(paramValues[0]);
                     if (paramName.equals("mod-cal")){ // kui tegemist on muudetud kalendriga
                         tempFile = iCalObj.saveToFile(true);
@@ -99,6 +102,7 @@ public class InputServlet extends HttpServlet {
                         tempFile = iCalObj.saveToFile(false);
                         addJsonArrayToJsonObject(jsonObject, "cal-url", tempFile.getName());
                     }
+
                 }
             }
         }

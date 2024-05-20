@@ -33,16 +33,11 @@ public class AineCache {
 
     public static void updateCacheFromDatabase() {
 
-        /*for (Oppeaine aine: JsonFileReader.readOppeained("salvestatudOppeained.json")) {
-            ained.put(aine.getCode(), aine);
-            ainedArrayList.add(aine);
-        }*/
         DBConnector db = DBConnector.instance;
-
         ResultSet rs = db.getAllFromTable("course");
         try {
             while (rs.next()) {
-                ained.put(rs.getString("uid"), new Oppeaine()); // TODO see inner json tuleb korda teha
+                ained.put(rs.getString("course_name"), new Oppeaine()); // TODO see inner json tuleb korda teha
             }
         } catch (Exception e) {e.printStackTrace();}
 
@@ -53,19 +48,9 @@ public class AineCache {
         ained.clear();
     }
 
-    public static void writeCacheToFile() {
+    public static void writeCacheToFile() {JsonFileReader.writeOppeained(cacheFile, ainedArrayList);}
 
-        /*Gson gson = new GsonBuilder().registerTypeAdapter(Oppeaine.class, new OppeaineSerializer()).create();
-        JsonArray jsonArray = new JsonArray();
-        ained.values().stream().map(gson::toJsonTree).forEach(jsonArray::add);
-*/
-        JsonFileReader.writeOppeained(cacheFile, ainedArrayList);
-    }
-
-    public static void writeCacheToDatabase() {
-        DBConnector db = DBConnector.instance;
-        db.updateOppeained(ainedArrayList);
-    }
+    public static void writeCacheToDatabase() {DBConnector.instance.updateOppeained(ained);}
 
     public static void printCache() {
         System.out.println("\n===============");
@@ -77,10 +62,13 @@ public class AineCache {
     }
 
     public static Oppeaine getAine(String kood) {
-        if (ained.isEmpty()) {updateCacheFromDatabase();}
-        Oppeaine aine = null;
+        if (ained.isEmpty()) {updateCacheFromFile();}
+
+        System.out.println("Otsitakse ainet koodiga " + kood);
+        Oppeaine aine;
         try {
             aine = ained.get(kood);
+            //System.out.println("Aine leiti vahemälust: " + aine);
             //System.out.println("Aine leiti vahemälust: " + aine);
           /*  if (aineHasChanged(aine)) { // TODO: Api päring ning seotud meetod parandada. aineHasChanged ja getAineFromCode loogikat võiks ka kuidagi paremini kokku panna.
                 Oppeaine uusAine = CoursesApi.getAineFromCode(aine.getCode());

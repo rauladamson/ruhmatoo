@@ -315,7 +315,6 @@ class iCalObj {
             }
         }
 
-
         return suitableEventListInical;
 
     }
