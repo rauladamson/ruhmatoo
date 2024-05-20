@@ -114,9 +114,7 @@ public class iCalObj { // klass CalendarEvent objektide hoidmiseks
         return new JSONObject(gson.toJson(this));
     }
 
-    public File saveToFile() throws IOException {
-        //System.out.println("Saving to file");
-        File tempFile = new File(System.getProperty("user.dir") + "/src/main/webapp", "calendar.ics");
+    private ICalendar generateICal(){
         ICalendar ical = new ICalendar();
 
         for (CalendarEvent event : this.getEvents()) {
@@ -140,6 +138,22 @@ public class iCalObj { // klass CalendarEvent objektide hoidmiseks
             }
         }
 
+        return ical;
+    };
+
+    public File saveToFile(boolean temp) throws IOException {
+        //System.out.println("Saving to file");
+        File tempFile;
+        if (temp) {
+            tempFile = new File(System.getProperty("user.dir") + "/src/main/webapp/", "calendar.ics");
+        }
+        else {
+            String uuid = UUID.randomUUID().toString();
+            String filename = "calendar_" + uuid + ".ics";
+            tempFile = new File(System.getProperty("user.dir") + "/src/main/webapp/ics-files/", filename);
+        }
+        ICalendar ical = generateICal();
+
         try (FileWriter writer = new FileWriter(tempFile)) {writer.write( Biweekly.write(ical).go());}
         catch (IOException e) {
             e.printStackTrace();
@@ -148,6 +162,5 @@ public class iCalObj { // klass CalendarEvent objektide hoidmiseks
         //return Biweekly.write(ical).go();
         return tempFile;
     }
-
 
 }

@@ -86,13 +86,14 @@ public class InputServlet extends HttpServlet {
             } else if (paramName.equals("mod-cal")){ // kui tegemist on muudetud kalendriga
                 CalendarDataServlet calendarDataServlet = new CalendarDataServlet();
                 iCalObj iCalObj = calendarDataServlet.convertJson(paramValues[0]);
-                tempFile = iCalObj.saveToFile();
+                tempFile = iCalObj.saveToFile(true);
                 addJsonArrayToJsonObject(jsonObject, "cal-save", tempFile.getAbsolutePath());
 
             } else if (paramName.equals("generate")){ // kui tegemist on muudetud kalendriga
                 CalendarDataServlet calendarDataServlet = new CalendarDataServlet();
                 iCalObj iCalObj = calendarDataServlet.convertJson(paramValues[0]);
-               // System.out.println(iCalObj);
+                tempFile = iCalObj.saveToFile(false);
+                addJsonArrayToJsonObject(jsonObject, "cal-url", tempFile.getName());
             }
         }
 

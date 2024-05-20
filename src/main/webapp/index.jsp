@@ -117,7 +117,6 @@
                     <span class="text">GENEREERI</span>
                 </button>
             </div>
-
         </div>
 
 
@@ -215,7 +214,9 @@
 
                 </div>
             </div>
-
+            <div id="iCalURLContainer">
+                <p id="iCalURL"></p>
+            </div>
             <div class="hidden" id="course-overview">
 
 

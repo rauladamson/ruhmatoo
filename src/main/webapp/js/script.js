@@ -1006,8 +1006,10 @@ document.getElementById("generateBtn").addEventListener('click', (event) => {
         .then(responseObj => {
             // Start the download here
             //window.location.href = "calendar.ics";
+            filename = responseObj["cal-url"];
+            fullURL = document.location.origin+"/ics-files/"+filename;
+            document.getElementById('iCalURL').innerHTML = 'iCal viide: <a href="' + fullURL + '">' + fullURL + '</a>';
 
-            console.log(responseObj);
         })
         .catch(error => console.error(error));
 });
