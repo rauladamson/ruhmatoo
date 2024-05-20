@@ -7,6 +7,7 @@
     import ical.iCalObjSerializer;
     import org.json.JSONArray;
     import org.json.JSONObject;
+    import user.UserCache;
 
     import javax.servlet.ServletException;
     import javax.servlet.annotation.WebServlet;
@@ -26,7 +27,7 @@
     @WebServlet("/calendarData")
     public class CalendarDataServlet extends HttpServlet {
 
-        public static JSONObject convertUrl(String icalUrl) {
+        public static iCalObj convertUrl(String icalUrl) {
             try {
                 Path tempFile = Files.createTempFile("ical", ".ics"); // ajutise faili loomine
                 //Path tempFile = Paths.get("ical.ics"); // fail salvestatakse: saab sisu uurida
@@ -38,7 +39,8 @@
 
                 //System.out.println(icals);
                 iCalObj iCalObj = new iCalObj(iCalLink, icals.getEvents()); // uue iCalObj objekti loomine
-                return iCalObj.toJson() ;
+
+                return iCalObj;
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -47,6 +49,7 @@
         }
 
         public static iCalObj convertJson(String icals) {
+            System.out.println(icals);
 
             Gson gson = new Gson();
             return gson.fromJson(icals, iCalObj.class);
@@ -60,7 +63,7 @@
                 return;
             }
 
-            JSONObject jsonArray = this.convertUrl(icalUrl);
+            iCalObj jsonArray = this.convertUrl(icalUrl);
 
             //System.out.println(jsonArray.get("events"));
             if (jsonArray == null) {

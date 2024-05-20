@@ -8,11 +8,9 @@ import biweekly.property.RecurrenceRule;
 import biweekly.util.Duration;
 import biweekly.util.com.google.ical.compat.javautil.DateIterator;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import oppeaine.AineCache;
 import oppeaine.KasutajaOppeaine;
 import oppeaine.Oppeaine;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -20,9 +18,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -34,11 +29,13 @@ public class iCalObj { // klass CalendarEvent objektide hoidmiseks
     //private HashMap<String, CalendarEvent> events;
     private ArrayList<CalendarEvent> events;
     private URL iCalLink;
+    private UUID uuid;
 
     public iCalObj(URL iCalLink,  List<VEvent> eventsInput) {
         this.iCalLink = iCalLink;
         this.events = new ArrayList<>();
         for (VEvent event : eventsInput) {this.handleEvent(event);}
+        this.uuid = UUID.randomUUID();
     }
 
     public ArrayList<CalendarEvent> getEvents() {return events;}
@@ -50,18 +47,18 @@ public class iCalObj { // klass CalendarEvent objektide hoidmiseks
         return jsonArray;
     }
 
-
-
     public URL getiCalLink() {
         return iCalLink;
     }
+
+    public UUID getUuid() {return uuid;}
 
     void handleEvent(VEvent event) {
 
         String eventUid = event.getUid().getValue(); // sündmuse unikaalne ID
         String summary = event.getSummary().getValue(); // sündmuse kirjeldus (nimetus ÕIS-is)
         String location = event.getLocation() != null ? event.getLocation().getValue() : "-"; // sündmuse toimumiskoht
-        String description = event.getDescription().getValue().toString(); // sündmuse kirjeldus
+        String description = event.getDescription().getValue(); // sündmuse kirjeldus
         String categories = event.getCategories().get(0).getValues().get(0); // sündmuse kategooria
 
         Date startDate = event.getDateStart().getValue(); // sündmuse algusaeg
@@ -139,14 +136,11 @@ public class iCalObj { // klass CalendarEvent objektide hoidmiseks
         }
 
         return ical;
-    };
+    }
 
-    public File saveToFile(boolean temp) throws IOException {
-        //System.out.println("Saving to file");
+    public File saveToFile(boolean temp)  {
         File tempFile;
-        if (temp) {
-            tempFile = new File(System.getProperty("user.dir") + "/src/main/webapp/", "calendar.ics");
-        }
+        if (temp) {tempFile = new File(System.getProperty("user.dir") + "/src/main/webapp/", "calendar.ics");}
         else {
             String uuid = UUID.randomUUID().toString();
             String filename = "calendar_" + uuid + ".ics";
@@ -158,8 +152,6 @@ public class iCalObj { // klass CalendarEvent objektide hoidmiseks
         catch (IOException e) {
             e.printStackTrace();
         }
-
-        //return Biweekly.write(ical).go();
         return tempFile;
     }
 

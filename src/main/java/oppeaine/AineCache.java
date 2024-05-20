@@ -1,8 +1,18 @@
 package oppeaine;
 
 import OIS_API.CoursesApi;
+import database.DBConnector;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import ical.CalendarEvent;
+import ical.CalendarEventSerializer;
+import ical.iCalObj;
+import org.json.JSONObject;
 import pdfsave.JsonFileReader;
 
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -11,39 +21,32 @@ public class AineCache {
     private static final ArrayList<Oppeaine> ainedArrayList = new ArrayList<>();
     private static final String cacheFile = "salvestatudOppeained.json";
 
-    /*
-    public AineCache(String aineteJsonFail) {
-        try {
-            File fail = new File(aineteJsonFail);
-            if (!fail.exists()) {
-                if (!fail.createNewFile()) {
-                    throw new IOException("Ei saanud faili luua.");
-                }
-            }
-
-        } catch (Exception e) {
-            System.err.println("Ootamatu exception:");
-            e.printStackTrace();
-        }
-    }
-    public AineCache(JSONArray ainedJson) {
-        for (int i = 0; i < ainedJson.length(); i++) {
-            JSONObject aineJSON = ainedJson.optJSONObject(i);
-        }
-    }*/
 
     public static void updateCacheFromFile() {
-        ArrayList<Oppeaine> loetudAined = JsonFileReader.readOppeained(cacheFile);
-        System.out.println("Loeti failist " + cacheFile + " " + loetudAined.size() + " õppeainet.");
-        int i = 0;
-        for (Oppeaine uusAine: loetudAined) {
-            if (!ained.containsKey(uusAine.getCode())) {
-                ained.put(uusAine.getCode(), uusAine);
-                ainedArrayList.add(uusAine);
-                i++;
-            }
+
+        for (Oppeaine aine: JsonFileReader.readOppeained("salvestatudOppeained.json")) {
+            ained.put(aine.getCode(), aine);
+            ainedArrayList.add(aine);
         }
-        System.out.println("Cache'i loeti failist " + cacheFile + " " + i + " õppeainet.");
+        System.out.println("Cache'i loeti failist " + cacheFile + " " + ained.size() + " õppeainet.");
+    }
+
+    public static void updateCacheFromDatabase() {
+
+        /*for (Oppeaine aine: JsonFileReader.readOppeained("salvestatudOppeained.json")) {
+            ained.put(aine.getCode(), aine);
+            ainedArrayList.add(aine);
+        }*/
+        DBConnector db = DBConnector.instance;
+
+        ResultSet rs = db.getAllFromTable("course");
+        try {
+            while (rs.next()) {
+                ained.put(rs.getString("uid"), new Oppeaine()); // TODO see inner json tuleb korda teha
+            }
+        } catch (Exception e) {e.printStackTrace();}
+
+        System.out.println("Cache'i loeti andmebaasist " + ained.size() + " õppeainet.");
     }
 
     public static void clearCache() {
@@ -51,7 +54,17 @@ public class AineCache {
     }
 
     public static void writeCacheToFile() {
+
+        /*Gson gson = new GsonBuilder().registerTypeAdapter(Oppeaine.class, new OppeaineSerializer()).create();
+        JsonArray jsonArray = new JsonArray();
+        ained.values().stream().map(gson::toJsonTree).forEach(jsonArray::add);
+*/
         JsonFileReader.writeOppeained(cacheFile, ainedArrayList);
+    }
+
+    public static void writeCacheToDatabase() {
+        DBConnector db = DBConnector.instance;
+        db.updateOppeained(ainedArrayList);
     }
 
     public static void printCache() {
@@ -64,7 +77,7 @@ public class AineCache {
     }
 
     public static Oppeaine getAine(String kood) {
-        if (ained.isEmpty()) {updateCacheFromFile();}
+        if (ained.isEmpty()) {updateCacheFromDatabase();}
         Oppeaine aine = null;
         try {
             aine = ained.get(kood);
@@ -78,44 +91,7 @@ public class AineCache {
            aine = CoursesApi.getAineFromCode(kood);
             ained.put(aine.getCode(), aine);
        }
-        /*Oppeaine aine = null;
-        int i = 0;
 
-        for (Oppeaine potAine: ained) {
-            System.out.println(potAine.getCode());
-            if (potAine.getCode().equals(kood)) {
-                aine = potAine;
-                break;
-            }
-            i++;
-        }
-
-        //System.out.print("Cache'ist otsiti ainet, ");
-        if (aine != null) {
-            //System.out.print(aine + " mis leiti cache'ist ");
-            if (aineHasChanged(aine)) { // TODO: Api päring ning seotud meetod parandada. aineHasChanged ja getAineFromCode loogikat võiks ka kuidagi paremini kokku panna.
-                Oppeaine uusAine = CoursesApi.getAineFromCode(aine.getCode());
-
-                ained.set(i, uusAine);
-                //System.out.println("ja mis oli muutunud.");
-            } else {
-                //; Debuggimiseks mõeldud sout-id. Uncommenctida kui tahta näha, kuidas cache töötab.
-                //System.out.println(" mis ei olnud muutunud.");
-            }
-            return ained.get(i);
-        }
-
-        //System.out.println("mille kood on " + kood + ", mida cache'ist ei leitud.");
-        Oppeaine uusAine = CoursesApi.getAineFromCode(kood);
-        ained.add(uusAine);
-
-        // TODO: FOR DEBUGGING ONLY!
-        // TODO: Hetkel kirjutab see cache'i kettale iga kord kui sealt ainet query'takse.
-        // See oli debuggimisel vajalik. Hetkel on ta ka hea demo sellest, et cache tegelikult ka töötab.
-        writeCacheToFile();
-        ///////////////////////////////////////////////
-
-        return uusAine;*/
         return aine;
     }
 

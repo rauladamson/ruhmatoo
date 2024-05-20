@@ -24,7 +24,7 @@ public class ICalConversionTest2 {
         /*for (CalendarEvent event : ical.getEvents()) {
             System.out.println(event.getOccurrences());
         }*/
-        File test = ical.saveToFile();
+        File test = ical.saveToFile(true);
         System.out.println(test);
         System.out.println();
         String mainDir = System.getProperty("user.dir");

@@ -35,7 +35,7 @@ public class KasutajaOppeaine extends Oppeaine {
 
 
     public KasutajaOppeaine(Oppeaine oppeaine) {
-        super(oppeaine.getCode(), oppeaine.getName(), oppeaine.getECTs());
+        super("");
         this.algAine = oppeaine;
         this.eeldatavTooaeg = oppeaine.getECTs() * 26; // default method: 1 eap = 26 tundi
         this.tehtudTooaeg = 0;

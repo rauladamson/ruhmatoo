@@ -252,7 +252,7 @@ function submitForm(sendData) {
 
                     for (let i of responseObj['cal-input']) {
                         let calInput = JSON.parse(i);
-                        calendar.iCalObjects.push( new iCalObj(calInput['iCalLink'], calInput['events']));
+                        calendar.iCalObjects.push( new iCalObj(calInput['uuid'], calInput['iCalLink'], calInput['events']));
                     }
 
                     if (calendar.initialized === false) {calendar.initialize()}
@@ -277,7 +277,8 @@ function submitForm(sendData) {
 
 
 class iCalObj {
-    constructor(iCalLink, eventsInput) {
+    constructor(uuid, iCalLink, eventsInput) {
+        this.uuid = uuid;
         this.iCalLink = null;
         this.events = [];
 

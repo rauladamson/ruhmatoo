@@ -4,20 +4,19 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import ical.CalendarEvent;
 import ical.CalendarEventSerializer;
+import ical.iCalObj;
 import oppeaine.KasutajaOppeaine;
-import oppeaine.Oppeaine;
 
 import java.util.HashMap;
 import java.util.UUID;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 
 public class User {
 
     private UUID uid;
     private String name, email, password, role;
-    private ArrayList<Calendar> userCalendars;
+    private ArrayList<iCalObj> userCalendars;
     private HashMap<String, KasutajaOppeaine> userCourses;
     private Integer totalEcts;
 
@@ -79,7 +78,7 @@ public class User {
         this.role = role;
     }
 
-    public ArrayList<Calendar> getUserCalendars() {
+    public ArrayList<iCalObj> getUserCalendars() {
         return userCalendars;
     }
     public JsonArray getUserCalendarsAsJson() {
@@ -89,7 +88,7 @@ public class User {
         return jsonArray;
     }
 
-    public void setUserCalendars(ArrayList<Calendar> userCalendars) {
+    public void setUserCalendars(ArrayList<iCalObj> userCalendars) {
         this.userCalendars = userCalendars;
     }
 
@@ -117,4 +116,7 @@ public class User {
 
     }
 
+    public void addCalendar(iCalObj ical) {
+        userCalendars.add(ical);
+    }
 }

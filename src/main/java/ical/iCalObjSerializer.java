@@ -14,6 +14,7 @@ public class iCalObjSerializer implements JsonSerializer<iCalObj> {
     public JsonElement serialize(iCalObj iCalObj, Type type, JsonSerializationContext jsonSerializationContext) {
         JsonObject jsonObject = new JsonObject();
 
+        jsonObject.addProperty("uuid", iCalObj.getUuid().toString());
         jsonObject.addProperty("iCalLink", iCalObj.getiCalLink().toString());
         jsonObject.add("events", iCalObj.getEventsJSON());
         return jsonObject;

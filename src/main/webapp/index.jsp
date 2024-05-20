@@ -74,6 +74,13 @@
                     </svg>
                 </button>
 
+                <!-- Gabriele Malaspina: https://www.svgrepo.com/svg/489021/link-1 -->
+                <button class="menu__item" id="getLinkBtn">
+                    <svg class="icon" viewBox="0 0 24 24" >
+                            <path d="M14 12C14 14.2091 12.2091 16 10 16H6C3.79086 16 2 14.2091 2 12C2 9.79086 3.79086 8 6 8H8M10 12C10 9.79086 11.7909 8 14 8H18C20.2091 8 22 9.79086 22 12C22 14.2091 20.2091 16 18 16H16"></path>
+                    </svg>
+                </button>
+
 
 
                 <div class="menu__border"></div>
@@ -94,8 +101,6 @@
         </div>
 
         <!-- krystonschwarze: https://www.svgrepo.com/svg/510782/add-row -->
-
-
         <div id="inputResMinimized" class="hidden row-flex">
 
             <div class="row-flex">

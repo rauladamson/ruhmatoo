@@ -4,6 +4,7 @@ import java.io.*;
 import oppeaine.AineCache;
 import oppeaine.KasutajaOppeaine;
 import oppeaine.Oppeaine;
+import user.User;
 import user.UserCache;
 
 import org.json.JSONArray;
@@ -16,9 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Serial;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,12 +30,12 @@ public class InputServlet extends HttpServlet {
 
     public InputServlet() {
         super();
-        AineCache.updateCacheFromFile();
+        AineCache.updateCacheFromDatabase();
         //UserCache.updateCacheFromFile();
     }
 
     protected void addJsonArrayToJsonObject(JSONObject jsonObject, String key, Object value) {
-        if (!jsonObject.has(key)) {jsonObject.put(key,  new JSONArray());}
+        if (!jsonObject.has(key)) {jsonObject.put(key,  new JSONArray());} // TODO asendada serialiseerimisega
         if (value instanceof Oppeaine) {jsonObject.getJSONArray(key).put(((Oppeaine) value).convertToJsonForDisplay());} // Õppeaine objektil kasutada sisemist JSON-tagastus meetodit
         else {jsonObject.getJSONArray(key).put(value);} // Muidu arvaku ise, mida teha (vist tundmatu objekti korral kutsutakse välja toString?)
     }
@@ -47,9 +46,12 @@ public class InputServlet extends HttpServlet {
         // TODO asendata mapi iteratsiooni Jacksoniga või muu parallellne lähenemine
         Map<String, String[]> inputsMap = request.getParameterMap(); // sisend teisedatakse Mapiks
         JSONObject jsonObject = new JSONObject(); // luuakse uus JSON objekt
-        File tempFile = null;
+        File tempFile;
+
+        User user = UserCache.getUser();
 
         if (inputsMap.isEmpty()) {System.out.println("Tühi sisend");return;}
+        // TODO arraysse lisamine kustutada
 
         // kui sisend ei ole tühi, siis töödeldakse vastuse sisust asjakohaseid väärtused
         for (String paramName : inputsMap.keySet()) { // sisendväärtuste iteratsioon
@@ -66,34 +68,38 @@ public class InputServlet extends HttpServlet {
                 }
 
                 Oppeaine oa = AineCache.getAine(matcher.group());  // Siin pole eraldi vaja ainet faili salvestada. AineCache.getAine() tegeleb sellega ise automaatselt.
+                user.addCourse(new KasutajaOppeaine(oa));
                 addJsonArrayToJsonObject(jsonObject, "course-input", oa);
-
-            } else if (paramName.contains("cal-input")) { // kuna me tahame kalendrit vahepeal töödelda, siis ei saa tulemust kohe tagasi saata
-                CalendarDataServlet calendarDataServlet = new CalendarDataServlet();
-                JSONObject calendarData = calendarDataServlet.convertUrl(paramValues[0]);
-
-                HashMap<String, KasutajaOppeaine> userCourses = UserCache.getUserCourses();
-                if (!userCourses.isEmpty()) {addJsonArrayToJsonObject(jsonObject, "course-input", userCourses.values());} // kui sisendist leiti kursusi, siis lisatakse need vastusesse
-                addJsonArrayToJsonObject(jsonObject, "ect-total", UserCache.getUser().getTotalECTs());
-
-                addJsonArrayToJsonObject(jsonObject, "cal-input", calendarData.toString());
 
             } else if (paramName.contains("text-input")){ // muul juhul on tegemist ainekoodiga
                 Oppeaine oa = AineCache.getAine(paramValues[0]);
-                // Samuti eemaldatud cache'i aine lisamine.
+
                 addJsonArrayToJsonObject(jsonObject, "course-input", oa);
+                user.addCourse(new KasutajaOppeaine(oa));
+            } else {
 
-            } else if (paramName.equals("mod-cal")){ // kui tegemist on muudetud kalendriga
-                CalendarDataServlet calendarDataServlet = new CalendarDataServlet();
-                iCalObj iCalObj = calendarDataServlet.convertJson(paramValues[0]);
-                tempFile = iCalObj.saveToFile(true);
-                addJsonArrayToJsonObject(jsonObject, "cal-save", tempFile.getAbsolutePath());
+                iCalObj iCalObj;
+                if (paramName.contains("cal-input")) {
+                     iCalObj = CalendarDataServlet.convertUrl(paramValues[0]);
+                    UserCache.getUser().addCalendar(iCalObj); // kasutaja kalendri lisamine
 
-            } else if (paramName.equals("generate")){ // kui tegemist on muudetud kalendriga
-                CalendarDataServlet calendarDataServlet = new CalendarDataServlet();
-                iCalObj iCalObj = calendarDataServlet.convertJson(paramValues[0]);
-                tempFile = iCalObj.saveToFile(false);
-                addJsonArrayToJsonObject(jsonObject, "cal-url", tempFile.getName());
+                    HashMap<String, KasutajaOppeaine> userCourses = user.getUserCourses();
+                    if (!userCourses.isEmpty()) {addJsonArrayToJsonObject(jsonObject, "course-input", userCourses.values());} // kui sisendist leiti kursusi, siis lisatakse need vastusesse
+
+                    addJsonArrayToJsonObject(jsonObject, "ect-total", user.getTotalECTs());
+                    addJsonArrayToJsonObject(jsonObject, "cal-input", iCalObj.toJson().toString());
+                } else {
+                    iCalObj = CalendarDataServlet.convertJson(paramValues[0]);
+                    if (paramName.equals("mod-cal")){ // kui tegemist on muudetud kalendriga
+                        tempFile = iCalObj.saveToFile(true);
+                        addJsonArrayToJsonObject(jsonObject, "cal-save", tempFile.getAbsolutePath());
+                    }
+
+                    if (paramName.equals("generate")){ // kui tegemist on muudetud kalendriga
+                        tempFile = iCalObj.saveToFile(false);
+                        addJsonArrayToJsonObject(jsonObject, "cal-url", tempFile.getName());
+                    }
+                }
             }
         }
 
@@ -106,16 +112,12 @@ public class InputServlet extends HttpServlet {
         // Mattias: Varasemad todo'd eemaldatud, ainete cache'imisega tegeletakse AineCache klassis.
     }
 
-    // Public method to call doGet
-    public void callDoGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        this.doGet(req, resp);
-    }
 
     @Override
     public void destroy() {
         // Enne kui server läheb kinni, salvestada puhvris olevad ained.
-        AineCache.writeCacheToFile();
-        UserCache.writeCacheToFile();
+        AineCache.writeCacheToDatabase();
+        //UserCache.writeCacheToFile();
         super.destroy();
     }
 }

@@ -1,5 +1,11 @@
 package pdfsave;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
+import ical.iCalObj;
 import oppeaine.Oppeaine;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -11,7 +17,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class JsonFileReader {
     public static Set<String> readUuids() {
@@ -51,6 +59,16 @@ public class JsonFileReader {
             e.printStackTrace();
         }
     }
+
+    protected static void writeJsonToFile(String fail, JsonArray json) {
+        try (FileWriter file = new FileWriter(fail)) {
+            file.write(json.toString());
+            file.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     protected static void writeJsonToFile(String fail, JSONObject json) {
         try (FileWriter file = new FileWriter(fail)) {
             file.write(json.toString());
@@ -80,16 +98,20 @@ public class JsonFileReader {
 
     //TODO: Muuta Set-iks?
     public static ArrayList<Oppeaine> readOppeained(String fail) {
-        ArrayList<Oppeaine> uuedAined = new ArrayList<>();
+        //ArrayList<Oppeaine> uuedAined = new ArrayList<>();
         File aineteFail = new File(fail);
+        Gson gson = new Gson();
+        //return gson.fromJson(icals, iCalObj.class);
+
 
         if (!aineteFail.exists()) {
             System.err.println("Ei leidnud faili " + fail + ".");
-            return new ArrayList<>(0);
+            return null;
             //throw new RuntimeException("Ei leidnud faili " + fail + ".");
         }
 
         try (FileReader reader = new FileReader(aineteFail)) {
+            ArrayList<Oppeaine> uuedAined = new ArrayList<>();
 
             JSONTokener tokener = new JSONTokener(reader);
             JSONArray jsonArray = new JSONArray(tokener);
@@ -100,10 +122,12 @@ public class JsonFileReader {
 
                 uuedAined.add(oa);
             }
+            return uuedAined;
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return uuedAined;
+        return null;
+
     }
 
     public static void writeOppeained(String fail, ArrayList<Oppeaine> ained) {
@@ -112,6 +136,10 @@ public class JsonFileReader {
             kirjutatavadOppeained.put(aine.convertToJson());
         }
         writeJsonToFile(fail, kirjutatavadOppeained);
+    }
+
+    public static void writeOppeained(String fail, JsonArray ained) {
+        writeJsonToFile(fail, ained);
     }
 }
 

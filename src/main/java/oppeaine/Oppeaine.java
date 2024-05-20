@@ -1,13 +1,15 @@
 package oppeaine;
 
+import com.google.gson.*;
+import ical.CalendarEvent;
+import ical.CalendarEventSerializer;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.NoSuchElementException;
 
 public class Oppeaine {
-    private final JSONObject internalJsonData;
-    private int nadalaidSemestris;
+    protected final JSONObject internalJsonData; // TODO mis osa sellest vajalik on?
 
     // TODO: Cache'imiseks peaks olema veel võimalik optimiseerida lastUpdated ja structCode'i, kuna nende
     // TODO: Stringidel on vastavad teadaolevad piirangud (esimene on kuupäev, teine teatud pikkuse ja struktuuriga).
@@ -21,7 +23,6 @@ public class Oppeaine {
     //        lahenduse, et ainult AineCache saaks konstruktoreid kutsuda)
 
 
-
     /**
      * Konstruktor olemasoleva JSON-i põhjal õppeaine loomiseks.
      * @param jsonText JSON andmed, String formaadis.
@@ -29,6 +30,7 @@ public class Oppeaine {
      */
 
     public Oppeaine(String jsonText) throws JSONException {
+       // System.out.println(jsonText);
         try {
             this.internalJsonData = new JSONObject(jsonText);
 
@@ -43,14 +45,53 @@ public class Oppeaine {
         }
     }
 
-    public Oppeaine(String code, String name, Integer ecTs) {
+    /**
+     * Konstruktor olemasoleva JSON-i põhjal õppeaine loomiseks.
+     * NB! On eeldatud, et sellele konstruktorile antakse korrektne JSONObject (ei throwi).
+     * @param inputJson Sisendobjekt.
+     */
+    public Oppeaine(JSONObject inputJson) {
+       // System.out.println(inputJson.getClass() + " "  + inputJson);
+        this.internalJsonData = new JSONObject(inputJson.toMap());
+
+        if (inputJson.has("parent_code")) {
+            this.structCode = inputJson.getString("parent_code");
+        } else {
+            this.structCode = inputJson.getString("code");
+        }
+        this.lastUpdated = inputJson.getString("last_update");
+    }
+
+    public Oppeaine(JsonObject jsonText) throws JSONException {
+        try {
+            this.internalJsonData = new JSONObject(jsonText);
+
+            if (internalJsonData.has("parent_code")) {
+                this.structCode = internalJsonData.getString("parent_code");
+            } else {
+                this.structCode = internalJsonData.getString("code");
+            }
+            this.lastUpdated = internalJsonData.getString("last_update");
+        } catch (JSONException e) {
+            throw e;
+        }
+    }
+
+    public Oppeaine() {
+        this.internalJsonData = new JSONObject();
+        this.structCode = "";
+        this.lastUpdated = "";
+    }
+
+
+    /*public Oppeaine(String code, String name, Integer ecTs) {
         this.internalJsonData = new JSONObject();
         this.internalJsonData.put("code", code);
         this.internalJsonData.put("title", new JSONObject().put("et", name));
         this.internalJsonData.put("credits", ecTs);
         this.structCode = code;
         this.lastUpdated = "";
-    }
+    }*/
 
     /**
      * Tagastab õppeaine JSON-i kujul.
@@ -77,21 +118,7 @@ public class Oppeaine {
         return tagastatavObjekt;
     }
 
-    /**
-     * Konstruktor olemasoleva JSON-i põhjal õppeaine loomiseks.
-     * NB! On eeldatud, et sellele konstruktorile antakse korrektne JSONObject (ei throwi).
-     * @param inputJson Sisendobjekt.
-     */
-    public Oppeaine(JSONObject inputJson) {
-        this.internalJsonData = new JSONObject(inputJson.toMap());
 
-        if (inputJson.has("parent_code")) {
-            this.structCode = inputJson.getString("parent_code");
-        } else {
-            this.structCode = inputJson.getString("code");
-        }
-        this.lastUpdated = inputJson.getString("last_update");
-    }
 
     /**
      * Sisemiste parameetrite muutmiseks. Ei luba lisada uusi parameetreid.
@@ -125,14 +152,15 @@ public class Oppeaine {
         return internalJsonData.getInt("credits");
     }
 
-    public String getCode() {
-        // Vana kood on viidud konstruktorisse
-        return structCode;
-    }
+
+    public String getCode() {return structCode;}
 
     public String getLastUpdated() {
         return lastUpdated;
     }
+
+    protected JSONObject getInternalJsonData() {return this.internalJsonData;}
+
 
     /**
      * toString meetod.
