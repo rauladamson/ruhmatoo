@@ -40,7 +40,38 @@ tl.to(".wrapper", { // main on wrapperi sees, toimuvad stiilimuutused
         ease: Power4.easeOut}, "-=0.6" // animatsiooni algus kattub eelmise animatsiooniga
 );
 */
+function addDelBtnListeners(buttons, type) {
+    Array.from(buttons).forEach(delButton => {
+        delButton.addEventListener('click', () => {
 
+
+            let mainEl = document.getElementsByTagName("main")[0];
+            let pElForEvent = document.getElementById("pElForEvent");
+            let fnCall = delButton.getAttribute('data-fn-call');
+//console.log(mainEl)
+            if (tl.reversed()) {
+                let optionalDelBtn = document.getElementById("optionalDelBtn");
+                //console.log(optionalDelBtn)
+                if (type === "one") {
+                    optionalDelBtn.classList.remove("hidden")
+                } else {
+                    optionalDelBtn.classList.add("hidden")
+
+                }
+
+                mainEl.style["z-index"] = 0;
+                pElForEvent.innerText = delButton.dataset.value;
+                pElForEvent.dataset.uid = delButton.getAttribute('data-uid');
+                tl.play()
+
+            } else {
+                if (fnCall !== null) {calendar.deleteEventObjs(pElForEvent.getAttribute('data-uid'), fnCall);}
+                mainEl.style["z-index"] = 1;
+                tl.reverse();
+            }
+        });
+    })
+}
 
 /* Copyright (c) 2024 by Ivan Valentinov / jFog (https://codepen.io/jFog/pen/qBNZVyz) ENDS */
 
@@ -91,7 +122,7 @@ function addTextInput() {
     );
 }
 
-function createNewDropdownDiv(event, occurrencesInMonth) {
+function createNewDropdownDiv(event) {
 
     let dropdownEl = document.createElement("div");
     dropdownEl.classList.add("dropdown");
@@ -129,15 +160,13 @@ function createNewDropdownDiv(event, occurrencesInMonth) {
     delButton.dataset.value = event.getSummary() + " " + event.categories;
     delButton.dataset.uid = event.getUid();
 
-    delButton.addEventListener('click', (event) => {
+    delButton.addEventListener('click', () => {
 
         console.log("click")
         let mainEl = document.getElementsByTagName("main")[0];
         let pElForEvent = document.getElementById("pElForEvent");
 
-        let fnCall = delButton.getAttribute('data-fn-call');
 
-        //console.log(btnUid);
         if (tl.reversed()) {
 
             mainEl.style["z-index"] = 0;
@@ -249,6 +278,7 @@ function submitForm(sendData) {
                 }
 
                 if (responseObj.hasOwnProperty('cal-input')) {
+                    console.log(responseObj['cal-input'][0])
 
                     for (let i of responseObj['cal-input']) {
                         let calInput = JSON.parse(i);
@@ -257,6 +287,11 @@ function submitForm(sendData) {
 
                     if (calendar.initialized === false) {calendar.initialize()}
                     //document.getElementById("calendar-grid").classList.remove("hidden")
+                }
+
+                if (responseObj.hasOwnProperty('generate')) {
+
+                    calendar.generateEvents();
                 }
 
                 console.log('Resolving the Promise with:', responseObj);
@@ -391,7 +426,7 @@ class Calendar {
 
         this.iCalObjects = [];
         //this.eventsInSelectedMonth = [];
-        this.monthDayEls = this.addMonthDays();
+        //this.monthDayEls = this.addMonthDays();
         this.currentDate = new Date(); // algväärtuseks käesolev kuupäev
         this.selectedDate = new Date(); // algväärtuseks käesolev kuupäev
         this.initialized = false;
@@ -434,13 +469,48 @@ class Calendar {
         this.addYears(); // aastate lisamine (2024 +- 5)
         this.addWeekdays(); // nädalapäevade lisamine (E - P)
         this.addMonths(); // kuude lisamine (Jan - Dec)
-        //this.updateMonthDays(); // kuu päevade lisamine (1 - 28/29/30/31)
+        this.dayFragment = this.createDayEl();
 
+        this.addWeekGrid();
+        this.addYearGrid();
+        this.addWeekGrid();
         this.selectedMonthEl = document.getElementsByClassName('month selected')[0];
         this.selectedYearEl = document.getElementsByClassName('yearNr selected')[0];
         this.selectMonth(this.selectedMonthEl);
         this.selectYear(this.selectedYearEl);
         this.initialized = true;
+
+
+    }
+
+    generateEvent() {
+        let occurrenceDate = ""
+        let endDate = ""
+        return new CalendarEvent("", "", "", "", "õppimine", occurrenceDate, endDate, occurrenceDate - endDate, [occurrenceDate], false);
+    }
+
+    generateEvents() {
+        console.log("generating events")
+        //console.log(this.iCalObjects)
+
+        if(this.currentView === "monthView") {
+            console.log(this.findEvents(null, this.selectedDate.getMonth(), this.selectedDate.getFullYear()))
+            console.log(this.generateEvent())
+        } else if (this.currentView === "weekView") {
+            console.log("week")
+        }
+
+    }
+
+
+    addFragmentToDomEl(fragment, domEl) {
+        //console.log(fragment)
+        //console.log(domEl)
+        // console.log(fragment)
+        let currentEl = document.getElementById(domEl);
+        currentEl.innerHTML = "";
+        // currentEl.removeChild(currentEl.childNodes[0])
+        currentEl.appendChild(fragment);
     }
 
     createNewChidldEl(parent, i, outerTag, innerTag, outerClassListItems, innerClassListItems, text = null, nrToCheck = null, elToAddChildTo = null) {
@@ -478,6 +548,12 @@ class Calendar {
             }
 
         }
+        if (outerClassListItems.includes("day")) {
+            let newFrag = this.dayFragment.cloneNode(true);
+            outerEl.appendChild(newFrag);
+            //console.log(outerEl)
+            //console.log(this.dayFragment.cloneNode(true))
+        }
 
         parent.appendChild(outerEl);
         return outerEl;
@@ -500,6 +576,54 @@ class Calendar {
         return eventsInSelectedMonth;
     }
 
+    addLeftColEl(monthIndex, type, el) {
+
+
+        let dateElement = document.getElementById('leftColDateEl');
+
+        let onetimeEvents = document.getElementById('onetime-events');
+        let recurringEvents = document.getElementById('recurring-events');
+        let leftColOverview = document.getElementById('leftColOverview');
+        if (type === "monthView") {
+            dateElement.innerText = el.innerText;
+            let eventsInMonth = this.findEvents(null, monthIndex, this.selectedDate.getFullYear());
+            leftColOverview.classList.remove("hidden")
+            onetimeEvents.innerHTML = "";
+            recurringEvents.innerHTML = "";
+
+            let onetimeEventFragment = document.createDocumentFragment();
+            let recurringEventFragment = document.createDocumentFragment();
+
+            for (let eventKVPair of eventsInMonth) {
+                let occurrencesInMonth = eventKVPair.occurrencesInMonth;
+                ((occurrencesInMonth.length > 1) ? recurringEventFragment: onetimeEventFragment).appendChild(createNewDropdownDiv(eventKVPair.event,));
+            }
+
+            onetimeEvents.appendChild(onetimeEventFragment);
+            recurringEvents.appendChild(recurringEventFragment);
+        } else if (type === "dayView") {
+            let dateEl = new Date(el.dataset.date);
+//console.log(el)
+            // console.log(dateEl)
+            dateElement.innerText = dateEl.getDate() + ". " + this.months[dateEl.getMonth()]['name']
+
+            leftColOverview.classList.add("hidden")
+            let dayOverview = document.getElementById('dayOverview');
+            dayOverview.innerHTML = "";
+            dayOverview.appendChild(el);
+
+
+            Array.from(el.querySelectorAll('.dropbtn')).forEach(function(element) {
+                element.addEventListener('click', function() {
+                    element.parentElement.nextSibling.classList.toggle("hidden");
+                });
+            });
+            addDelBtnListeners(el.querySelectorAll('.cta'), "one")
+
+
+        }
+
+    }
 
     // muuda valitud kuud
     selectMonth(el) {
@@ -511,28 +635,17 @@ class Calendar {
 
         if (this.months[monthIndex] === undefined) {console.error(`Month index ${monthIndex} is undefined`);return;}
 
-        let eventsInMonth = this.findEvents(null, monthIndex, this.selectedDate.getFullYear());
-        let onetimeEvents = document.getElementById('onetime-events');
-        let recurringEvents = document.getElementById('recurring-events');
-        onetimeEvents.innerHTML = "";
-        recurringEvents.innerHTML = "";
-
-        let onetimeEventFragment = document.createDocumentFragment();
-        let recurringEventFragment = document.createDocumentFragment();
-
-        for (let eventKVPair of eventsInMonth) {
-            let occurrencesInMonth = eventKVPair.occurrencesInMonth;
-            ((occurrencesInMonth.length > 1) ? recurringEventFragment: onetimeEventFragment).appendChild(createNewDropdownDiv(eventKVPair.event, occurrencesInMonth));
+        if (this.currentView === "monthView") {
+            this.addLeftColEl(monthIndex, "monthView", el);
         }
-
-        onetimeEvents.appendChild(onetimeEventFragment);
-        recurringEvents.appendChild(recurringEventFragment);
 
         el.classList.add("selected");
         this.selectedMonthEl = el;
         this.selectedDate.setMonth(Number(el.dataset.value));
 
-        this.updateMonthDays(); // TODO Potential bug:
+        //console.log(Number(this.selectedDate.getMonth()), Number(this.selectedDate.getFullYear()))
+
+        this.addFragmentToDomEl(this.updateMonthDays(Number(this.selectedDate.getMonth()), Number(this.selectedDate.getFullYear()), ["monthViewEl"]), "daysContainer");
         /*
         Uncaught TypeError: Cannot read properties of undefined (reading 'days')
     at Calendar.addMonthDays (script.js?830510671:522:109)
@@ -540,8 +653,7 @@ class Calendar {
     at HTMLUListElement.<anonymous> (script.js?830510671:269:67)
          */
         // kui konkreetset kuupäeva pole valitud, siis kuvatakse kõik kuu sündmused
-        let dateElement = document.querySelector('.date');
-        dateElement.innerText = el.innerText;
+
     }
 
     selectDay(el) { // funktsioon muudab valitud päeva
@@ -554,6 +666,9 @@ class Calendar {
         el.classList.add("selected");
 
         this.selectedDate.setDate(Number(el.dataset.value));
+        this.addLeftColEl(Number(el.dataset.value), "dayView", el.cloneNode(true))
+        //el.classList.remove("selected");
+
     }
 
 
@@ -591,7 +706,8 @@ class Calendar {
 
         this.selectedYearEl = el;
         //this.selectedYear = selectedYearNr;
-        this.updateMonthDays();
+        // TODO Potential bug:
+        this.addFragmentToDomEl(this.updateMonthDays(Number(this.selectedDate.getMonth()), Number(this.selectedDate.getFullYear()), ["monthViewEl"]), "daysContainer");
     }
 
     addGroupOfEventsToDays(day, month, year, parentEl, classListItems) {
@@ -604,31 +720,61 @@ class Calendar {
 
         let arrayOfEvents = this.findEvents(day, month, year);
         if (arrayOfEvents.length > 0) {
+            if (classListItems.includes("yearViewEl")) {
+                parentEl.classList.add("hasEvents");
 
+            }
             for (let eventKVPair of arrayOfEvents) {
                 let event = eventKVPair.event;
 
                 for (let occurrence of eventKVPair.occurrencesOnDay) { // kõik toimumiskorrad päevas (juhuks, kui neid on rohkem kui üks) lisatakse kalendrisse
-                    this.addEvent(event.getSummary(), parentEl, classListItems, event.bgColor);
+
+                    let eventStartHour = occurrence.getHours();
+                    //if (eventStartHour < firstHour) {firstHour = eventStartHour}
+                    //if (eventStartHour > lastHour) {lastHour = eventStartHour}
+
+                    this.addEvent(event, parentEl.querySelectorAll('.dayHourDiv[data-value="' + eventStartHour + '"]')[0], classListItems, event.bgColor, occurrence);
                 }
             }
         }
+        if (this.currentView === "monthView") {
+            for (let el of parentEl.querySelectorAll('.dayHourDiv:not(.hasEvent)')) {
+                //let hourNr = Number(el.dataset.value);
+                //if ((hourNr > lastHour) || (hourNr < firstHour)) {
+                el.classList.add("hidden");
+                // }
+
+            }
+        }
+
     }
+
+    /*displayEvent(target) {
+        console.log("clicked on target to display el")
+    }*/
+
     // sündmuse kalendrisse lisamine
-    addEvent(text, parent, classListItems, bgColor) {
-        let childDiv2 = document.createElement("div"); // luuakse uus div container
-        //childDiv2.innerHTML = text;
+    addEvent(event, parent, classListItems, bgColor, occurrence) {
+
+        let childDiv2 = createNewDropdownDiv(event)
+
+
+        //let childDiv2 = document.createElement("div"); // luuakse uus div container
         childDiv2.style.backgroundColor = bgColor;
         for (let item of classListItems) {childDiv2.classList.add(item);}
+        parent.classList.add("hasEvent");
+
+        //childDiv2.addEventListener('click', (event) => {this.displayEvent(event.target);});
+
         parent.appendChild(childDiv2);
     }
 
     // kõigi alamelementide kustutamine
-    removeAllChildNodes(parent) {
+    /*removeAllChildNodes(parent) {
         while (parent.firstChild) {
             parent.removeChild(parent.firstChild);
         }
-    }
+    }*/
 
 
 
@@ -641,7 +787,7 @@ class Calendar {
             for (let iCal of this.iCalObjects) {
 
 
-                if (deleteType != "all") { // kui tahetakse kustutada ainult üks sündmus või sündmused ühel kuul, siis
+                if (deleteType !== "all") { // kui tahetakse kustutada ainult üks sündmus või sündmused ühel kuul, siis
                     /*console.log(iCal.findEventsOnDate(deleteType == "one" ? this.selectedDate.getDate() : null,
                                                       this.selectedDate.getMonth(),
                                                       this.selectedDate.getYear()))
@@ -649,10 +795,10 @@ class Calendar {
 
                */
                     let eventObj = iCal.getEventByUid(uid);
-                    let occurrenceList = iCal.findEventsOnDate(eventObj, (deleteType == "one" ?this.selectedDate.getDate() : null), (deleteType == "month" ?this.selectedDate.getMonth() : null), this.selectedDate.getFullYear())[0];
+                    let occurrenceList = iCal.findEventsOnDate(eventObj, (deleteType === "one" ?this.selectedDate.getDate() : null), (deleteType === "month" ?this.selectedDate.getMonth() : null), this.selectedDate.getFullYear())[0];
 
                     if (occurrenceList != null) {
-                        let occurrences = deleteType == "month" ? occurrenceList.occurrencesInMonth : occurrenceList.occurrencesOnDay;
+                        let occurrences = deleteType === "month" ? occurrenceList.occurrencesInMonth : occurrenceList.occurrencesOnDay;
 
                         occurrences.forEach((occurrence) => {
                             eventObj[0].removeOccurrence(occurrence);
@@ -666,12 +812,12 @@ class Calendar {
                 } else {iCal.removeEventWithUid(uid);}
 
                 // TODO kui on 1, aga ongi ainult 1 event
-                if (deleteType != "one") {document.querySelectorAll('div[data-uid="' + uid + '"]')[0].remove();}
+                if (deleteType !== "one") {document.querySelectorAll('div[data-uid="' + uid + '"]')[0].remove();}
             }
 
         }
 
-        this.updateMonthDays();
+        this.addFragmentToDomEl(this.updateMonthDays(Number(this.selectedDate.getMonth()), Number(this.selectedDate.getFullYear()), ["monthViewEl"]), "daysContainer");
     }
 
     addYears() {
@@ -697,38 +843,119 @@ class Calendar {
         this.dayList.appendChild(fragment);
     }
 
-    addMonthDays() {
+    createDayEl() {
 
-        let daysList = document.querySelectorAll('.days')[0];
+        let dayFragment = document.createDocumentFragment();
+        let dhl = document.createElement('ul');
+        dhl.classList.add("dayHourList");
+        dhl.classList.add("column-flex");
+
+
+
+        for (let i=0; i < 24; i++) {
+            this.createNewChidldEl(dhl, i, "li", "a", ["dayHourDiv"], ["dayHourDivA"], "")
+        }
+
+
+        //c//onsole.log(dayFragment)
+        dayFragment.appendChild(dhl);
+        return dayFragment;
+    }
+
+    addMonthDays(additionalClasses) {
+
+
+        //let daysList = document.querySelectorAll('.days')[0];
+        let daysList = document.createElement('div');
+        daysList.classList.add("days");
+
+        additionalClasses.forEach(item => daysList.classList.add(item));
+
         let dayElsFragment = document.createDocumentFragment();
 
+
         for (let i=23; i <= 31; i++) {
-            let newDayEl = this.createNewChidldEl(dayElsFragment, i, "div", "a", ["day", "prevMonthDay", "hidden"], ["dayA"], "");
+            this.createNewChidldEl(dayElsFragment, i, "div", "a", ["day", "prevMonthDay"], ["dayA"], "");
+            //
+            //this.createDayEl();
         }
 
         for (let i=1; i <= 31; i++) {
-            let newDayEl = this.createNewChidldEl(dayElsFragment, i, "div", "a", ["day"], ["dayA"], "");
+            this.createNewChidldEl(dayElsFragment, i, "div", "a", ["day"], ["dayA"], "");
+            //        newDayEl.appendChild(this.dayFragment.cloneNode(true));
+
         }
 
         for (let i=1; i <= 6; i++) {
-            let newDayEl = this.createNewChidldEl(dayElsFragment, i, "div", "a", ["day", "nextMonthDay", "hidden"], ["dayA"], "");
+            this.createNewChidldEl(dayElsFragment, i, "div", "a", ["day", "nextMonthDay"], ["dayA"], "");
+            //       newDayEl.appendChild(this.dayFragment.cloneNode(true));
+
         }
+
+
 
         daysList.appendChild(dayElsFragment);
 
-        Array.from(document.getElementsByClassName('day')).forEach(function(element) {
-            element.addEventListener('click', function() {
-                console.log('clicked')
-            });
+        daysList.addEventListener('click', (event) => {
+            //console.log(event.target)
+            this.selectDay(event.target);
         });
 
         return daysList;
 
 
     }
+    addWeekGrid() {
+
+
+        let newFragment = document.createDocumentFragment();
+        let currentWeekday =  this.currentDate.getAdjustedDay();
+        let currentMonthDate =  this.currentDate.getDate();
+
+
+
+
+        let daysList = this.updateMonthDays(this.currentDate.getMonth(), this.currentDate.getFullYear() , ["weekGridEl"])
+
+
+        for (let day of daysList.querySelectorAll('.day:not(.prevMonthDay):not(.nextMonthDay)')) {
+            let dayNr = Number(day.dataset.value);
+            if ((dayNr >= currentMonthDate - currentWeekday) && (dayNr <= (currentMonthDate + (6 - currentWeekday)))) {
+
+
+                newFragment.appendChild(day);
+            }
+        }
+        this.addFragmentToDomEl(newFragment, "weekGrid");
+
+
+    }
+
+    addYearGrid() {
+
+        let monthGridElsFragment = document.createDocumentFragment();
+
+        for (let i=0; i <12; i++) {
+
+            monthGridElsFragment.appendChild(this.updateMonthDays(i, Number(this.selectedDate.getFullYear()), ["yearViewEl"]));
+
+
+
+        }
+
+
+        this.addFragmentToDomEl(monthGridElsFragment, "monthGrid");
+        //  return monthGridElsList;
+
+
+    }
+
+
 
 // kuu päeavde lisamine
-    updateMonthDays() {
+    updateMonthDays(monthNr, yearNr, additionalClassesList) {
+        //console.log(monthNr, yearNr)
+
 
         /* Meetod kuvab päevade arvu valitud kuus vastavalt valitud aastale.
 
@@ -738,81 +965,123 @@ class Calendar {
           - Käesoleva kuu päevad: kuvatakse kõik kuupäevad vastavalt valitud kuule.
           - Järgmise kuu päevad (juhul, kui kuu ei lõpe pühapäevaga): makismaalselt kuus päeva järgmisest kuust, seega on olemas päevad 1-6 ning iga kord kuvatakse neist sobivad.*/
 
-        let monthNr = Number(this.selectedDate.getMonth());
-        let yearNr = Number(this.selectedDate.getFullYear());
-
-        // let currentDaysList = document.querySelectorAll('.days')[0];
-
-        //console.log(this.monthDayEls);
-
-
-        /* for (let i = this.selectedDate.getFullYear() - 5; i < this.selectedDate.getFullYear() + 5; i++) { this.createNewChidldEl(fragment, i, "h2", null, ["hidden", "half-hidden", "yearNr"], null, "", this.selectedDate.getFullYear(), this.selectedYearEl);}
-         this.yearSelect.appendChild(fragment);*/
 
         // See jookseb kokku teatud juhtudel, nt kui valida uus aasta ja siis seal mingi kuu.
         // Siis ei ole millegipärast selectedDate objekti olemas.
+        let fragment = document.createDocumentFragment();
+
+
+        let dayEls = this.addMonthDays(additionalClassesList); //this.monthDayEls//s.map(element => element.cloneNode(true));
+
+        additionalClassesList.push("calendarEventDiv")
         let daysInMonth = (monthNr === 1 ? new Date(yearNr, monthNr + 1, 0).getDate() : this.months[monthNr]['days']);  // päevade arv kuus
         let weekdayOfFirst = new Date(yearNr, monthNr).getAdjustedDay();
         let weekdayOfLast =  new Date(yearNr, monthNr, daysInMonth).getAdjustedDay();
-        let thisMonthEls = this.monthDayEls.querySelectorAll('.day:not(.prevMonthDay):not(.nextMonthDay)');
+        let thisMonthEls = dayEls.querySelectorAll('.day:not(.prevMonthDay):not(.nextMonthDay)');
+
 
         for (let i = 1; i <= thisMonthEls.length; i++) {
             let thisMonthDayEl = thisMonthEls[i - 1];
 
-            thisMonthDayEl.classList.add('hidden'); // esmalt peidetakse kõik eelmise kuu elemendid
-
             // kuvatakse algava kuu esimese nädalapäeva numbri ja esmaspäeva vahe võrra eelmise kuu elemente
-            if (i < daysInMonth){
+            if (i <= daysInMonth){
                 thisMonthDayEl.classList.remove("hidden");
                 //console.log(new Date(yearNr, monthNr, i) + " " + monthNr)
                 thisMonthDayEl.dataset.date = new Date(yearNr, monthNr, i);
-                this.addGroupOfEventsToDays(i,monthNr,yearNr, thisMonthDayEl, ["calendarEventDiv"])
+                this.addGroupOfEventsToDays(i,monthNr,yearNr, thisMonthDayEl, additionalClassesList)
 
+            } else {
+                thisMonthDayEl.classList.add('hidden'); // esmalt peidetakse kõik eelmise kuu elemendid
             }
         }
 
 
         // kõik eelmise ja järgmise kuu päevad peidetakse
-        let prevMonthDayEls = this.monthDayEls.querySelectorAll('.prevMonthDay');
-        let nextMonthDayEls = this.monthDayEls.querySelectorAll('.nextMonthDay');
+        let prevMonthDayEls = dayEls.querySelectorAll('.prevMonthDay');
+        let nextMonthDayEls = dayEls.querySelectorAll('.nextMonthDay');
         let daysInPrevMonth = null;
 
         // eelmise kuu päevade lisamine, kui kuu ei alga esmaspäevaga: Jaanuaris on 31 päeva, muul juhul leitakse eelmise kuu päevade arv
-        if (weekdayOfFirst !== 0) {daysInPrevMonth = (monthNr === 0 ? 31 : (monthNr === 2 ? new Date(yearNr, monthNr, 0).getDate() : this.months[monthNr - 1]['days'])); }
+        if (weekdayOfFirst !== 0) {
+            daysInPrevMonth = (monthNr === 0 ? 31 : (monthNr === 2 ? new Date(yearNr, monthNr, 0).getDate() : this.months[monthNr - 1]['days'])); }
 
-        //console.log(new Date(yearNr, monthNr, 0).getDate());
+
         for (let i = 0; i < prevMonthDayEls.length; i++) {
             let prevMonthDayEl = prevMonthDayEls[i];
             let elDayVal = Number(prevMonthDayEls[i].dataset.value);
 
-            prevMonthDayEl.classList.add('hidden'); // esmalt peidetakse kõik eelmise kuu elemendid
 
-            // kuvatakse algava kuu esimese nädalapäeva numbri ja esmaspäeva vahe võrra eelmise kuu elemente
-            if ((daysInPrevMonth) && ((daysInPrevMonth - weekdayOfFirst + 1) <= elDayVal) && (elDayVal <= (daysInPrevMonth))){
+            if ((daysInPrevMonth) && (elDayVal > (daysInPrevMonth - weekdayOfFirst)) && (elDayVal <= daysInPrevMonth)) {
                 prevMonthDayEl.classList.remove("hidden");
                 prevMonthDayEl.classList.add("half-hidden");
                 let prevDate = (monthNr === 0 ? new Date(yearNr - 1, 11, elDayVal) : new Date(yearNr, monthNr - 1, elDayVal));
                 prevMonthDayEl.dataset.date = prevDate;
 
-                this.addGroupOfEventsToDays(elDayVal, prevDate.getMonth(), prevDate.getFullYear(), prevMonthDayEl, ["calendarEventDiv"])
+                this.addGroupOfEventsToDays(elDayVal, prevDate.getMonth(), prevDate.getFullYear(), prevMonthDayEl, additionalClassesList)
+            }
+            else {
+                delete prevMonthDayEl.dataset.date; // kuupäev eemaldatakse
+                prevMonthDayEl.classList.add('hidden'); // esmalt peidetakse kõik eelmise kuu elemendid
             }
 
         }
 
-        for (let i = 0; i < nextMonthDayEls.length; i++){
 
-            let nextMonthDayEl = nextMonthDayEls[i];
-            nextMonthDayEl.classList.add('hidden');
+        for (let i = 1; i <= nextMonthDayEls.length; i++){
+
+            let nextMonthDayEl = nextMonthDayEls[i - 1];
 
             // kuvatakse algava kuu viimasenädalapäeva numbri ja pühapäeva vahe võrra eelmise kuu elemente
-            if (i < 6 - weekdayOfLast) {
+            //console.log(monthNr + " " + weekdayOfLast)
+            if (i <= 6 - weekdayOfLast) {
                 nextMonthDayEl.classList.remove("hidden");
                 nextMonthDayEl.classList.add("half-hidden");
                 let nextDate = (monthNr === 11 ? new Date(yearNr + 1, 0, i) : new Date(yearNr, monthNr + 1, i));
                 nextMonthDayEl.dataset.date = nextDate;
 
-                this.addGroupOfEventsToDays(i, nextDate.getMonth(), nextDate.getFullYear(), nextMonthDayEl, ["calendarEventDiv"])
+                this.addGroupOfEventsToDays(i, nextDate.getMonth(), nextDate.getFullYear(), nextMonthDayEl, additionalClassesList)
+            } else {
+                delete nextMonthDayEl.dataset.date; // kuupäev eemaldatakse
+                nextMonthDayEl.classList.add('hidden');
             }
+        }
+
+
+        if (additionalClassesList.includes("yearViewEl")) {
+            let flexContainer = document.createElement('div');
+            flexContainer.classList.add("column-flex");
+
+            let monthNameText = document.createElement('h2');
+            monthNameText.classList.add("monthNameText");
+
+            monthNameText.innerText = this.months[monthNr]['name'];
+            flexContainer.appendChild(monthNameText)
+            flexContainer.appendChild(dayEls)
+            fragment.appendChild(flexContainer)
+        } else {
+            fragment.appendChild(dayEls)
+        }
+
+
+        return fragment;
+    }
+
+    selectView(viewId) {
+
+        //console.log(viewId);
+        this.currentView = viewId;
+        console.log(this.currentView);
+        let monthListEl = document.getElementById("monthList");
+        if (viewId === "yearView") {
+            monthListEl.classList.add("hidden");
+            document.getElementById("leftColEl").innerHTML = "";
+        } else {
+            monthListEl.classList.remove("hidden");
+        }
+        let viewEls = document.getElementsByClassName("calView");
+        for (let view of viewEls) {
+            if (view.id !== viewId) {view.classList.add("hidden");}
+            else {view.classList.remove("hidden");}
         }
     }
 }
@@ -959,27 +1228,8 @@ document.getElementById('course-input-form').addEventListener('submit', function
 });
 
 let delButtons = document.getElementsByClassName("cta");
+addDelBtnListeners(delButtons, "general");
 
-Array.from(delButtons).forEach(delButton => {
-    delButton.addEventListener('click', (event) => {
-
-        let mainEl = document.getElementsByTagName("main")[0];
-        let pElForEvent = document.getElementById("pElForEvent");
-        let fnCall = delButton.getAttribute('data-fn-call');
-
-        if (tl.reversed()) {
-            mainEl.style["z-index"] = 0;
-            pElForEvent.innerText = delButton.dataset.value;
-            pElForEvent.dataset.uid = delButton.getAttribute('data-uid');
-            tl.play()
-
-        } else {
-            if (fnCall !== null) {calendar.deleteEventObjs(pElForEvent.getAttribute('data-uid'), fnCall);}
-            mainEl.style["z-index"] = 1;
-            tl.reverse();
-        }
-    });
-})
 
 //document.getElementById("downloadBtn").addEventListener('click', (event) => {submitForm({"mod-cal": JSON.stringify(calendar.iCalObjects[0])});});
 document.getElementById("downloadBtn").addEventListener('click', (event) => {
@@ -987,21 +1237,12 @@ document.getElementById("downloadBtn").addEventListener('click', (event) => {
         .then(responseObj => {
             // Start the download here
             window.location.href = "calendar.ics";
-
-          /*  let downloadLink = document.querySelector('#downloadBtn').parentElement;
-            console.log(downloadLink); // Log the download link element
-
-            //downloadLink.href = "ical.ics"; // Set the href attribute of the download link
-            downloadLink.href = "calendar.ics" //responseObj['cal-save']; // Set the href attribute of the download link
-
-            downloadLink.download = 'calendar.ics'; // Set the download attribute of the download link
-            downloadLink.click(); // Simulate a click on the download link
-*/
         })
         .catch(error => console.error(error));
 });
 
-document.getElementById("generateBtn").addEventListener('click', (event) => {
+
+document.getElementById("getLinkBtn").addEventListener('click', (event) => {
     submitForm({"generate": JSON.stringify(calendar.iCalObjects[0])})
         .then(responseObj => {
             // Start the download here
@@ -1012,4 +1253,22 @@ document.getElementById("generateBtn").addEventListener('click', (event) => {
 
         })
         .catch(error => console.error(error));
+});
+
+document.getElementById("generateBtn").addEventListener('click', (event) => {
+    submitForm({"generate": JSON.stringify(calendar.iCalObjects[0])})
+        .then(responseObj => {
+            // Start the download here
+            //window.location.href = "calendar.ics";
+            console.log(responseObj);
+        })
+        .catch(error => console.error(error));
+});
+
+
+Array.from(document.getElementsByClassName('viewSelectorEl')).forEach(function(element) {
+
+    element.addEventListener('click', function(event) {
+        calendar.selectView(event.target.getAttribute('data-view-el-id'));
+    });
 });

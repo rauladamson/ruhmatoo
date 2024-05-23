@@ -54,7 +54,7 @@ nav {
 main {
     position: relative;
     z-index: 1;
-    margin-top: 100px;
+    /*margin-top: 100px;*/
 }
 /* design */
 
@@ -86,8 +86,9 @@ body, .customButton1, #monthList{
     border-radius: 10px;
 }
 
+
 /* grid */
-.grid-container, #yearMonthContainer, #monthList, .days {
+.grid-container, #monthList,  .days {
     display: grid;
 }
 
@@ -102,6 +103,7 @@ body, .customButton1, #monthList{
 flex-container, .form-item, .button-container  {
     display: flex;
 }
+
 
 #userInput {
     flex-direction: column;
@@ -407,7 +409,7 @@ header, footer, main {
 }
 
 .hidden{
-    display: none;
+    display: none !important;
 }
 
 
@@ -420,22 +422,90 @@ header, footer, main {
 
 
 
+#viewSelector {
+    justify-content: space-evenly;
+    background-color: #EDE4C2;
+    padding: 20px;
+    border-radius: 20px;
+    border: 1px red;
+    height: 100%;
+    margin: 20px;
+    margin-bottom: -5px;
+}
+
+#viewSelector > h1 {
+    padding: 5px;
+}
+
+#views {
+    padding: 20px;
+
+}
+
+#monthGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 0.5fr);
+    grid-template-rows: repeat(3, 0.5fr);
+
+}
+
+#weekGrid {
+    grid-template-columns: repeat(7, auto);
+}
+
+#weekGrid > .day {
+    width: 100%;
+    /*height: 100%;*/
+    height: -webkit-fill-available;
+    margin-left: 20px;
+
+}
+
+.dayHourList {
+    justify-self: start;
+    overflow:hidden !important;
+    padding-inline-start: 1px;
+}
+
+#weekGrid > * .dayHourDiv {
+    display: block !important;
+    padding: 5px;
+    margin: 5px;
+
+
+}
+
+#monthView > * .dayHourDiv.hasEvent > * .dropdown-content-container {
+    display:none;
+}
+
+#monthGrid > * .dayHourDiv {
+    display: none !important;
+}
+
+.day > a {
+    font-size: 15px;
+    font-weight: bold;
+
+}
 
 #monthList {
     text-transform: uppercase;
     color: #236E66;
-    margin-left: 0;
-    grid-column: 1/4;
+    margin-left: 20px;
     grid-row-gap: 10px;
     grid-column-gap: 30px;
     grid-template-columns: repeat(6, 0.5fr);
     background-color: #E8EDED;
     padding: 20px;
     border-radius: 20px;
+    width: 75%
 }
 
 #yearEls {
-    grid-column: 4;
+    align-self: center;
+    padding:10px;
+    margin-left: 85px;
 }
 
 .event-dropdown-container {
@@ -451,9 +521,17 @@ header, footer, main {
     border-radius: 10px;
 }
 
+#dayOverview > * a.dayA{
+    display: none;
+}
 
-.date {
+#leftColDateEl {
     text-align: center;
+}
+
+#mwContainer {
+    width: 80%;
+    margin-left: 20px !important;
 }
 
 
@@ -472,7 +550,29 @@ header, footer, main {
     color: black;
     position: relative;
     z-index: 1;
+    border-radius: 10px;
+    margin: 5px;
+    ovrerflow:hidden;
+}
 
+.days.yearViewEl {
+    border: solid 2px teal;
+    border-radius: 10px;
+    grid-template-rows: auto;
+    padding:10px;
+    margin: 10px;
+}
+
+.yearViewEl > * .calendarEventDiv {
+    display: none;
+}
+
+.monthNameText {
+    text-align: center !important;
+}
+
+.day.hasEvents {
+    background-color: lightgreen;
 }
 
 .days:hover {
