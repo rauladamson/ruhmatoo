@@ -86,6 +86,7 @@ public class InputServlet extends HttpServlet {
                      iCalObj = CalendarDataServlet.convertUrl(paramValues[0]);
                     UserCache.getUser().addCalendar(iCalObj); // kasutaja kalendri lisamine
 
+                    System.out.println(iCalObj.toJson().toString());
                     if (!userCourses.isEmpty()) {addJsonArrayToJsonObject(jsonObject, "course-input", userCourses.values());} // kui sisendist leiti kursusi, siis lisatakse need vastusesse
 
                     addJsonArrayToJsonObject(jsonObject, "ect-total", user.getTotalECTs());

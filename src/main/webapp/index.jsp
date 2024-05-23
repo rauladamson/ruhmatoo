@@ -252,58 +252,105 @@
 
 
 
-            <div class="" id="calendar-grid">
-                <!--Copyright (c) 2024 by Alex Oliver (https://codepen.io/alexoliverwd/pen/kKQgwo)-->
-                <div class="calendar">
+        <div class="" id="calendar-grid">
+            <!--Copyright (c) 2024 by Alex Oliver (https://codepen.io/alexoliverwd/pen/kKQgwo)-->
+            <div class="calendar column-flex">
 
-                    <div class="col leftCol">
+                <div id="viewSelector" class="row-flex">
+
+                    <h1 class="viewSelectorEl" data-view-el-id="weekView">NÄDAL</h1>
+                    <h1 class="viewSelectorEl" data-view-el-id="monthView">KUU</h1>
+                    <h1 class="viewSelectorEl" data-view-el-id="yearView">AASTA</h1>
+
+
+                </div>
+
+                <div id="views" class="row-flex">
+
+                    <div id="leftColEl" class="col leftCol">
                         <div class="content">
-                            <h1 class="date"><span id="dateMonth" class="inline-element"></span>
+                            <h1 id="leftColDateEl"><span id="dateMonth" class="inline-element"></span>
                                 <span id="dateDay"></span>
                             </h1>
-                            <div class="overview">
+                            <div id="dayOverview"></div>
+                            <div class="overview" id="leftColOverview">
                                 <div class="event-dropdown-container" ><h4>KORDUV</h4><div class="event-dropdown" id="recurring-events"></div></div>
                                 <div class="event-dropdown-container"><h4>ÜHEKORDNE</h4><div class="event-dropdown"  id="onetime-events"></div></div>
-                                <!--<p>
-                                    <input type="text" value="" placeholder="new note"/>
-                                    <a href="#" title="Add note" class="addNote animate">+</a>
-                                </p>
-                                <ul class="noteList">
-                                    <li>Headbutt a lion<a href="#" title="Remove note" class="removeNote animate">x</a></li>
-                                </ul>-->
+
                             </div>
                         </div>
                     </div>
 
-                    <div class="col rightCol">
-                        <div class="content">
 
-                            <div id = "yearMonthContainer">
+
+                    <div class="col rightCol">
+
+                        <!--<div id = "calymdContainer" class="row-flex">
+
+                          <div class="column-flex" id="mwContainer">
+                            <ul id="monthList" class="months"></ul>
+                            <ul class="weekday"></ul>
+
+                          </div>
+                        <div id ="yearEls" class="yearSelect "></div>
+                       </div>-->
+
+                        <div id = "calymdContainer">
+                            <div id = "yearMonthContainer" class="row-flex">
                                 <ul id="monthList" class="months"></ul>
                                 <div id ="yearEls" class="yearSelect"></div>
                             </div>
                             <ul class="weekday"></ul>
-                            <div class="days"></div>
                         </div>
+
+
+
+                        <div id="weekView" class="calView hidden">
+                            <div id="weekGrid" class="row-flex"></div>
+                        </div>
+
+                        <div id="monthView" class="calView">
+                            <div class="content" id="calContent">
+
+
+
+
+                                <div id="daysContainer"></div>
+                            </div>
+
+                        </div>
+
+                        <div id="yearView" class="calView hidden">
+                            <div id="monthGrid"></div>
+
+                        </div>
+
+
                     </div>
 
 
+
+
+
                 </div>
+
             </div>
-
         </div>
 
-    </main>
-    <!--   Copyright (c) 2024 by Ivan Valentinov / jFog (https://codepen.io/jFog/pen/qBNZVyz)-->
-    <div class="ml-wrapper">
-        <div class="ml-content">
-            <h5 class="">kustuta sündmus?</h5>
-            <p id="pElForEvent" class=""></p>
-            <button class="event-del-btn cta" data-fn-call="month">kustuta sündmused käesolevas kuus</button>
-            <button class="event-del-btn cta" data-fn-call="all">kustuta kõik sündmused</button>
-            <button class="cta">tühista</button>
-        </div>
     </div>
+
+</main>
+<!--   Copyright (c) 2024 by Ivan Valentinov / jFog (https://codepen.io/jFog/pen/qBNZVyz)-->
+<div class="ml-wrapper">
+    <div class="ml-content">
+        <h5 class="">kustuta sündmus?</h5>
+        <p id="pElForEvent" class=""></p>
+        <button class="event-del-btn cta" data-fn-call="one" id="optionalDelBtn">kustuta üks sündmus</button>
+        <button class="event-del-btn cta" data-fn-call="month">kustuta sündmused käesolevas kuus</button>
+        <button class="event-del-btn cta" data-fn-call="all">kustuta kõik sündmused</button>
+        <button class="cta">tühista</button>
+    </div>
+</div>
 
     <footer>
         <p>&copy; Marielin Kepp 2024</p>
