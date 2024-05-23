@@ -6,14 +6,18 @@ import ical.CalendarEventSerializer;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.NoSuchElementException;
+
 
 public class Oppeaine {
     protected final JSONObject internalJsonData; // TODO mis osa sellest vajalik on?
 
     // TODO: Cache'imiseks peaks olema veel võimalik optimiseerida lastUpdated ja structCode'i, kuna nende
     // TODO: Stringidel on vastavad teadaolevad piirangud (esimene on kuupäev, teine teatud pikkuse ja struktuuriga).
-    private final String lastUpdated, structCode; // Kõige tähtsamad parameetrid cache'imiseks teeme otse memberiteks
+    private final String structCode; // Kõige tähtsamad parameetrid cache'imiseks teeme otse memberiteks
+    private final LocalDateTime lastUpdated;
 
     // Hetkel on klass mõeldud olema immutable - s.t. kui õppeainet uuendada, siis vahetada see uue objektiga välja.
     // Kas oleks parem teha niimodi, et objektide uuendamisel otsitakse erinevusi ja siis hoopis muudetakse ainult see, mida vaja?
@@ -39,7 +43,8 @@ public class Oppeaine {
             } else {
                 this.structCode = internalJsonData.getString("code");
             }
-            this.lastUpdated = internalJsonData.getString("last_update");
+//            this.lastUpdated = internalJsonData.getString("last_update");
+            this.lastUpdated = LocalDateTime.now();
         } catch (JSONException e) {
             throw e;
         }
@@ -59,8 +64,12 @@ public class Oppeaine {
         } else {
             this.structCode = inputJson.getString("code");
         }
-        this.lastUpdated = inputJson.getString("last_update");
+//       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+//        this.lastUpdated = LocalDateTime.parse(inputJson.getString("last_update"));
+//        võiks implementeerida et see võtaks failist uuendamisel
+        this.lastUpdated = LocalDateTime.now();
     }
+
 
     public Oppeaine(JsonObject jsonText) throws JSONException {
         try {
@@ -71,17 +80,22 @@ public class Oppeaine {
             } else {
                 this.structCode = internalJsonData.getString("code");
             }
-            this.lastUpdated = internalJsonData.getString("last_update");
+//            this.lastUpdated = internalJsonData.getString("last_update");
+            this.lastUpdated = LocalDateTime.now();
         } catch (JSONException e) {
             throw e;
         }
 
     }
 
+    /**
+     * Häkk hetkeseks et saaks luua efektiivselt DummyOppeaine objekti
+     * iseenesest võiks selle parandamiseks teha mingi StructCode klass eraldi, või siis eemaldada jsonText konstructor
+     */
     public Oppeaine() {
         this.internalJsonData = new JSONObject();
         this.structCode = "";
-        this.lastUpdated = "";
+        this.lastUpdated = LocalDateTime.MIN;
     }
 
     /**
@@ -144,7 +158,7 @@ public class Oppeaine {
 
     public String getCode() {return structCode;}
 
-    public String getLastUpdated() {
+    public LocalDateTime getLastUpdated() {
         return lastUpdated;
     }
 
@@ -161,21 +175,7 @@ public class Oppeaine {
     }
 
     public boolean equals(Oppeaine aine) {
-        // EKSPERIMENTAALNE:
-        // Iseenesest peaks olema võimalik võrrelda aineid ainult nende koodi ja viimase uuenduse järgi, mis peaks
-        // olema kiirem kui terve objekti võrdlemine (aine on päris suur!)
-        // ning see peaks olema parem kui default equals meetod, kuna siis ei pea looma iga kord uut ainet. (nt kui
-        // cache'i laadimisel leitakse sama aine)
-
-        // TODO: Enne implementatsiooni sättida ainele mingid minimaalsed vajalikud parameetrid - nt pealkiri, kood, UUID, EAPd jne
-        // TODO: Muidu oleks võimalik lisada väga ,,õhukesi" aineid (hetkel ainsad vajalikud parameetrid kood ja lastUpdated)
-        // TODO: Seda peaks ilmselt kontrollima konstruktoris
-
-        /*
-            return (this.lastUpdated).equals(aine.lastUpdated) structCode
-        */
-
-        return super.equals(aine);
+        return (lastUpdated.equals(aine.lastUpdated) && structCode.equals(aine.structCode));
     }
 
     // Peaksime seda planeerija all tegema ma arvan, see on liiga spetsiifiline
@@ -214,10 +214,12 @@ public class Oppeaine {
     }
     */
 
-
+    /**
+     * Õppeaine HashCode.
+     * @return aine räsi
+     */
     @Override
     public int hashCode() {
-        // TODO: Sarnaselt equals(Oppeaine)-le peaks olema võimalik optimiseerida hashCode-i unikaalsust garanteerivate parameetrite järgi
-        return super.hashCode();
+        return (structCode + lastUpdated.toString()).hashCode();
     }
 }

@@ -12,21 +12,24 @@ import ical.iCalObj;
 import org.json.JSONObject;
 import pdfsave.JsonFileReader;
 
+import java.lang.reflect.Field;
 import java.sql.ResultSet;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 public class AineCache {
-    private static final HashMap<String, Oppeaine> ained = new HashMap<>();
-    private static final ArrayList<Oppeaine> ainedArrayList = new ArrayList<>();
+    private static final HashMap<String, Oppeaine> ained = new HashMap<>(); // Mattias: siin oleks hea kasutada mingit kas custom HashSeti sarnast laadset objekti, mis lubaks koodi põhjal otsida, või siis peaks Oppeaine klassi ümber kirjutama
+    //    private static final HashSet<Oppeaine> aineteHashSet = new HashSet<>();
     private static final String cacheFile = "salvestatudOppeained.json";
 
 
     public static void updateCacheFromFile() {
-
-        for (Oppeaine aine: JsonFileReader.readOppeained("salvestatudOppeained.json")) {
+        for (Oppeaine aine : JsonFileReader.readOppeained("salvestatudOppeained.json")) {
             ained.put(aine.getCode(), aine);
-            ainedArrayList.add(aine);
         }
         System.out.println("Cache'i loeti failist " + cacheFile + " " + ained.size() + " õppeainet.");
     }
@@ -38,8 +41,11 @@ public class AineCache {
         try {
             while (rs.next()) {
                 ained.put(rs.getString("course_name"), new Oppeaine()); // TODO see inner json tuleb korda teha
+                // Mattias: see tuleks kindlasti eemaldada ning asendada meetodiga mis konstrueeerib õige Õppeaine objekti
             }
-        } catch (Exception e) {e.printStackTrace();}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         System.out.println("Cache'i loeti andmebaasist " + ained.size() + " õppeainet.");
     }
@@ -48,24 +54,56 @@ public class AineCache {
         ained.clear();
     }
 
-    public static void writeCacheToFile() {JsonFileReader.writeOppeained(cacheFile, ainedArrayList);}
+    public static void writeCacheToFile() {
+        JsonFileReader.writeOppeained(cacheFile, new ArrayList<>(ained.values()));
+    }
 
-    public static void writeCacheToDatabase() {DBConnector.instance.updateOppeained(ained);}
+    public static void writeCacheToDatabase() {
+        DBConnector.instance.updateOppeained(ained);
+    }
 
     public static void printCache() {
         System.out.println("\n===============");
         System.out.println("Cache sisaldab:");
-        for (Oppeaine aine: ainedArrayList) {
+        for (Oppeaine aine : ained.values()) {
             System.out.println(aine.toString());
         }
         System.out.println("===============");
     }
 
+    /**
+     * hetkel deprecated kuna AIneCache ei kasuta enam HashSeti
+     * giga omega reflection häkk hetkel HashSeti piirangutest mööda hiilimiseks
+     * https://stackoverflow.com/questions/26986587/accessing-a-hashset-using-the-hashcode-directly-java
+     */
+    private static <Oppeaine> Oppeaine getFromHashCode(final int hashcode, HashSet<Oppeaine> set) {
+        // reflection stuff
+        Field field;
+        try {
+            field = set.getClass().getDeclaredField("map");
+        } catch (NoSuchFieldException e) {
+            return null; // omega halb kood
+        }
+        field.setAccessible(true);
+
+        // get the internal map
+        @SuppressWarnings("unchecked")
+        Map<Oppeaine, Object> interalMap = (Map<Oppeaine, Object>) (field.get(set));
+
+        // attempt to find a key with an identical hashcode
+        for (Oppeaine elem : interalMap.keySet()) {
+            if (elem.hashCode() == hashcode) return elem;
+        }
+        return null;
+    }
+
     public static Oppeaine getAine(String kood) {
-        if (ained.isEmpty()) {updateCacheFromFile();}
+        if (ained.isEmpty()) {
+            updateCacheFromFile();
+        }
 
         System.out.println("Otsitakse ainet koodiga " + kood);
-        Oppeaine aine;
+        Oppeaine aine = new Oppeaine();
         try {
             aine = ained.get(kood);
             //System.out.println("Aine leiti vahemälust: " + aine);
@@ -74,23 +112,31 @@ public class AineCache {
                 Oppeaine uusAine = CoursesApi.getAineFromCode(aine.getCode());
 
                 ained.put(uusAine.getCode(), uusAine);*/
-       } catch (Exception e) {
-           System.err.println("Aine pole vahemälus, otsime ainet:");
-           aine = CoursesApi.getAineFromCode(kood);
+        } catch (Exception e) {
+            System.err.println("Aine pole vahemälus, otsime ainet:");
+            aine = CoursesApi.getAineFromCode(kood);
             ained.put(aine.getCode(), aine);
-       }
+        }
+
+        if (ained.containsKey(kood)) {
+            if (ChronoUnit.MINUTES.between(aine.getLastUpdated(), LocalDateTime.now()) < 5) {
+
+            }
+        }
 
         return aine;
     }
 
     // Mattias: Märkisin praegu selle private-iks, et keelata selle kasutamist. Kui tekib tunne, et seda
     //          on ikka vaja kasutada, paluks teavitada mind enne.
+
     /**
      * Lisab õppeaine objekti puhvrisse. NB! Ained lisatakse automaatselt getAine() meetodi korral.
      * Hetkel pole see meetod kasutuses. Ilmselt pole sellel enam tulevikus kasutust, kuna see vajab
      * lisamiseks Oppeaine objekti, aga (algseid) Oppeaine objekte peaksime me saama ainult AineCache.getAine()
      * meetodilt, mis ise juba tegeleb vajadusel aine lisamisega.
      * Praegu ikkagi jätab igaksjuhuks alles.
+     *
      * @param oa Õppeaine objekt
      * @return True, kui ainet polnud varem olemas. False, kui oli.
      */
