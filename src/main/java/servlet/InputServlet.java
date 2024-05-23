@@ -1,6 +1,9 @@
 package servlet;
 
 import java.io.*;
+
+import OIS_API.CoursesApi;
+import custom_debug_help.CustomDebugPrinter;
 import oppeaine.AineCache;
 import oppeaine.KasutajaOppeaine;
 import oppeaine.Oppeaine;

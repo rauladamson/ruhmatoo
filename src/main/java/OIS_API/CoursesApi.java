@@ -1,23 +1,44 @@
 package OIS_API;
 
+import oppeaine.AineCache;
 import oppeaine.Oppeaine;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CoursesApi {
     //TODO: Teha valmis meetod ainete muutuste saamiseks - hetkel kasutavad kõik meetodit ,,heavy" api kutset.
     private static final String baseUrl = "https://ois2.ut.ee/api/";
+    private static final Pattern leiaAinekoodStringist = Pattern.compile("[A-Z]{4}\\.[0-9]{2}\\.[0-9]{3}");
+
+    /**
+     * generic meetod Regex-iga ainekoodi leidmiseks igaks tekstist
+     * @param input Süne, kus sees on ainekod.
+     * @return Ainekood.
+     */
+    private static String extractAinekoodFromString(String input) {
+        Matcher matcher = leiaAinekoodStringist.matcher(input);
+
+        if(!matcher.find()) {
+            System.out.println(input);
+            throw new RuntimeException("EI leidnud koodi argumendist");
+        }
+
+        return matcher.group();
+    }
 
     /**
      * Meetod, mis teeb API-le GET-calli.
-     *
      * @param url Täispikkuses URL, millele request teha ( nt http://ois2.ut.ee/api/coures/LTAT.03.003 )
      * @return Otsene output.
-     * @throws IOException
+     * @throws IOException kui midagi läheb valesti.
      */
     public static String callApiDirectlyGET(URL url) throws IOException {
         StringBuilder result = new StringBuilder();
@@ -41,34 +62,14 @@ public class CoursesApi {
         return result.toString();
     }
 
-    // TODO: panna kõik get* meetodit kokku ühte getAine() meetodisse (?)
     /**
-     * Funktsioon kasutaja poolt antud Httpst JSON textiks tegemiseks, et seda hiljem töödelda.
-     * DEPRECATED: kasutada AineCache-i sellle asemel, koodi leidmiseks vt InputServlet-i regex-i loogikat
-     * @param urlString "link OIS API leheküljele"
-     * @return String kõik leheküljel olevaga.
-     */
-    public static Oppeaine getAineFromUserURL(String urlString) {
-        String result = null;
-        try {
-            URL url = new URL(generateAPILink(urlString));
-            result = callApiDirectlyGET(url);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (result == null || result.equals("")) {
-            throw new RuntimeException("Viga aine leidmises");
-        }
-
-        return new Oppeaine(result);
-    }
-
-    /**
+     * Otsib struktuurikoodi antud sõnest.
      * Leiab aine viimase versiooni struktuurikoodi põhjal.
-     * @param code Ainekood kujul AAAA.00.0000.
+     * @param stringWhichContainsCode Sõne, mis sisaldab ainekoodi kujul AAAA.00.0000 (ning ei sisalda muid samas vormis teksti, mis ei ole ainekood)
      * @return Uus Õppeaine objekt.
      */
-    public static Oppeaine getAineFromCode(String code) {
+    public static Oppeaine getAineFromCode(String stringWhichContainsCode) {
+        String code = extractAinekoodFromString(stringWhichContainsCode);
         String result = null;
         try {
             URL url = new URL (baseUrl + "courses/" + code);
@@ -83,33 +84,45 @@ public class CoursesApi {
     }
 
     /**
-     * Giga hakk, api lingi genereerimiseks :)
+     * Funktsioon, mis teeb "kergema" api calli, mida kasutada nt kontrollimiseks kas aine uus versioon on väljas,
+     * Kasutab mitmekordselt vähem andmemakhtu kui getAineFromCode().
+     * // Mattiss: Ei usu et see on lightweight? Võrdle objekte getAineFromCode(kood).convertToJson() vs lightweightOppeaineApiCall(kood).
+     * //          Näha on suurt erinevust tagastatavate objektide vahel.
+     * @param stringWhichContainsCode Sõne, mis sisaldab ainekoodi kujul AAAA.00.0000 (ning ei sisalda muid samas vormis teksti, mis ei ole ainekood)
+     * @return JSONObject, mis sisaldab aine koodi, uuid-sid ja viimase uuenduse kuupöeva.
      */
-    public static String generateAPILink(String courseUrl) {
-        // TODO: Deprecated? Vt inputServleti uuendatud loogikat
-        if (courseUrl.contains("details") || courseUrl.contains("#")) {
-            String newlink = courseUrl.replace("#", "api");
-            newlink = newlink.replace("/details", "");
-            if (newlink.contains("versions")) {
-                return newlink;
-            }
-            newlink = newlink.replace("version", "versions");
-            return newlink;
+    public static JSONObject lightweightOppeaineApiCall(String stringWhichContainsCode) {
+        String code = extractAinekoodFromString(stringWhichContainsCode);
+        String result = null;
+        try {
+            URL url = new URL (baseUrl + "courses/?code=" + code);
+            result = callApiDirectlyGET(url);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return courseUrl;
+        if (result == null || result.equals("")) {
+            throw new RuntimeException("Viga aine leidmises, kood: " + code);
+        }
+
+        JSONArray tagastatudArray = new JSONArray(result);
+        if (tagastatudArray.length() != 1) {
+            throw new RuntimeException("API tagastas vigase objekti koodi " + code + " jaoks: " + result);
+        }
+        return tagastatudArray.getJSONObject(0);
     }
 
+    /* Test lightweight ja tavalise koodi vahel.
+    System.out.println("-------------");
+    System.out.println(CoursesApi.lightweightOppeaineApiCall("LTAT.03.003").toString());
+    System.out.println("-------------");
+    System.out.println(AineCache.getAine("LTAT.03.003").convertToJson().toString());
+    System.out.println("-------------");
+    */
+
     public static String getLatestCourseChange(Oppeaine aine) {
-        // TODO: Implementeerida, hektel stub
-        // Peaks olema kõige kergem võimalik request - hetkel selleks mõeldud ÕIS API meetod tundub olevat katki
-
-        // Et panna tööle, võib uncommentida järgneva koodi
-        // See on lihtsalt hetkel mõttetu, kuna kasutab sama aeglast API call-i
-
-        /*
-            return getAineFromCode(aine.getCode()).getLastUpdated();
-        */
-
-        return "";
+        return lightweightOppeaineApiCall(aine.getCode()).getString("last_update");
+    }
+    public static String getLatestCourseChange(String ainekood) {
+        return lightweightOppeaineApiCall(ainekood).getString("last_update");
     }
 }

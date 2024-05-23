@@ -29,7 +29,6 @@ public class Oppeaine {
      * @param jsonText JSON andmed, String formaadis.
      * @throws JSONException Kui JSON-i objekti ei saa luua (ilmselt string ei ole õiges vormingus), visatakse edasi JSONException.
      */
-
     public Oppeaine(String jsonText) throws JSONException {
        // System.out.println(jsonText);
         try {

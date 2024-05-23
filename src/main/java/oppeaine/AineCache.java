@@ -1,6 +1,7 @@
 package oppeaine;
 
 import OIS_API.CoursesApi;
+import custom_debug_help.CustomDebugPrinter;
 import database.DBConnector;
 import pdfsave.JsonFileReader;
 
@@ -97,23 +98,28 @@ public class AineCache {
 
     public static Oppeaine getAine(String kood) {
         if (ained.isEmpty()) {
-            System.out.println("getAine triggers empty cache. Cache file doesn't exist or didn't get read upon launch of servlet?");
+            CustomDebugPrinter.dbgMsgLvl1("getAine triggers empty cache. Cache file doesn't exist or didn't get read upon launch of servlet?");
             updateCacheFromFile();
         }
 
         if (ained.containsKey(kood)) { // kui oleme ainet varem näinud
-            System.out.println("Aine " + kood + " leiti puhvrist");
+            CustomDebugPrinter.dbgMsgLvl1("Aine " + kood + " leiti puhvrist");
 
             // Leiame, millal viimati uuendasime ainet
             long vimmatiUuendatudMinutites = ChronoUnit.MINUTES.between(ained.get(kood).getLastUpdatedByCache(), LocalDateTime.now());
-            System.out.println("Viimasest uuendusest on möödunud " + ((vimmatiUuendatudMinutites < 100) ? vimmatiUuendatudMinutites : ">100") + " minutit");
+            CustomDebugPrinter.dbgMsgLvl1("Viimasest uuendusest on möödunud " + ((vimmatiUuendatudMinutites < 100) ? vimmatiUuendatudMinutites : ">100") + " minutit");
 
             //siin määratud mingi suht suvaline konstant, reaalsuses võiks olla palju suurem, aga demo jaoks hea kui väike
             if (vimmatiUuendatudMinutites > 5) {
-                System.out.println("..seega uuendatakse ainet API-st");
-                ained.put(kood, CoursesApi.getAineFromCode(kood));
+                CustomDebugPrinter.dbgMsgLvl1("..seega uuendatakse ainet API-st");
+                if (aineHasChanged(ained.get(kood))) {
+                    CustomDebugPrinter.dbgMsgLvl1("Ainet on muudetud, seega tagastame uue versiooni ÕIS-ist");
+                    ained.put(kood, CoursesApi.getAineFromCode(kood));
+                } else {
+                    CustomDebugPrinter.dbgMsgLvl1("Ainet pole vahepeal muudetud, seega tagastame ikkagi otse mälust");
+                }
             } else {
-                System.out.println("..seega tagastame aine otse mälust");
+                CustomDebugPrinter.dbgMsgLvl1("..seega tagastame aine otse mälust");
             }
         } else { // kui ei ole varem näinud
             ained.put(kood, CoursesApi.getAineFromCode(kood));
