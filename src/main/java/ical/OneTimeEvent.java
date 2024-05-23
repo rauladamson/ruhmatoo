@@ -26,4 +26,12 @@ public class OneTimeEvent extends CalendarEvent { // Tegemist on CalendarEvent a
     @Override
     public void findEnd() {this.calculateEndFromDuration();} // lõppkuupäev määratakse kestvuse põhjal
 
+    public void markAsDone() {
+        this.setDone(true);
+    }
+
+    public void markAsNotDone() {
+        this.setDone(false);
+    }
+
 }

@@ -47,4 +47,12 @@ public class RecurringEvent extends CalendarEvent  { // Tegemist on CalendarEven
     @Override
     public boolean isRecurring() {return true;}
 
+    public void markAsDone() {
+        this.setDone(true);
+    }
+
+    public void markAsNotDone() {
+        this.setDone(false);
+    }
+
 }

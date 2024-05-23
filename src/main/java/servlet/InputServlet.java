@@ -4,6 +4,7 @@ import java.io.*;
 import oppeaine.AineCache;
 import oppeaine.KasutajaOppeaine;
 import oppeaine.Oppeaine;
+import oppeaine.Planeerija;
 import user.User;
 import user.UserCache;
 
@@ -85,6 +86,11 @@ public class InputServlet extends HttpServlet {
                 if (paramName.contains("cal-input")) {
                      iCalObj = CalendarDataServlet.convertUrl(paramValues[0]);
                     UserCache.getUser().addCalendar(iCalObj); // kasutaja kalendri lisamine
+
+                    Planeerija planner = new Planeerija();
+                    if (iCalObj != null) {
+                        planner.processEvents(iCalObj.getEvents());
+                    }
 
                     if (!userCourses.isEmpty()) {addJsonArrayToJsonObject(jsonObject, "course-input", userCourses.values());} // kui sisendist leiti kursusi, siis lisatakse need vastusesse
 

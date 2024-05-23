@@ -1013,3 +1013,46 @@ document.getElementById("generateBtn").addEventListener('click', (event) => {
         })
         .catch(error => console.error(error));
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    const calendar = document.getElementById('calendar');
+
+    calendar.addEventListener('click', function(event) {
+        if (event.target.classList.contains('calendar-event')) {
+            const eventId = event.target.dataset.eventId;
+            const done = event.target.classList.toggle('done');
+            updateEventStatus(eventId, done);
+        }
+    });
+
+    function updateEventStatus(eventId, done) {
+        fetch('/calendarData', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `action=updateStatus&eventId=${eventId}&done=${done}`
+        })
+            .then(response => response.text())
+            .then(data => {
+                console.log(data);
+                updateDaySummary();
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function updateDaySummary() {
+        const events = document.querySelectorAll('.calendar-event');
+        let total = 0;
+        let completed = 0;
+
+        events.forEach(event => {
+            total++;
+            if (event.classList.contains('done')) {
+                completed++;
+            }
+        });
+
+        document.getElementById('day-summary').innerText = `Total: ${total}, Completed: ${completed}`;
+    }
+});

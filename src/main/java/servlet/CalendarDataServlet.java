@@ -3,6 +3,7 @@
     import biweekly.ICalendar;
     import biweekly.io.text.ICalReader;
     import com.google.gson.*;
+    import ical.CalendarEvent;
     import ical.iCalObj;
     import ical.iCalObjSerializer;
     import org.json.JSONArray;
@@ -76,5 +77,23 @@
 
             File file = new File("calendar1.json");
             response.getWriter().write(jsonArray.toString());
+        }
+
+        private void updateEventStatus(HttpServletRequest request, HttpServletResponse response) throws IOException {
+            String eventId = request.getParameter("eventId");
+            boolean done = Boolean.parseBoolean(request.getParameter("done"));
+
+            CalendarEvent event = findEventById(eventId);
+            if (event != null) {
+                event.setDone(done);
+                response.setStatus(HttpServletResponse.SC_OK);
+                response.getWriter().write("Status updated successfully");
+            } else {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Event not found");
+            }
+        }
+
+        private CalendarEvent findEventById(String eventId) {
+            return null;
         }
     }

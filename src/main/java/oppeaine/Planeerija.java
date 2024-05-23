@@ -6,16 +6,30 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+
+import user.User;
+
+import ical.CalendarEvent;
+import ical.CalendarEventSerializer;
+import ical.iCalObj;
+import oppeaine.KasutajaOppeaine;
+
 public class Planeerija {
     private List<KasutajaOppeaine> planeeritavOppeainelist;
     private int nadalateArvSemestris;
+
+    private ArrayList<iCalObj> allCalendars;
+    private List<CalendarEvent> events;
 
     // Peab oppeaine lisama planeerijasse via lisaOppeaine meetod, loogika plaan selline: saame oppeaine objekti, teeme sellest KasutajaOppeaine objekti ja lisame selle planeerijasse
     // Aga saame ka anda KasutajaOppeainele kasutaja poolt määratud töötunnid, või nende coefficient (kui on olemas)
     // TODO Pole veel constructorit teinud, kus saaks määrata argumendid manuaalselt
 
+
     public Planeerija() {
         this.planeeritavOppeainelist = new ArrayList<>();
+        this.events = new ArrayList<>();
+        this.allCalendars = new ArrayList<>();
     }
 
     public void lisaOppeaine(Oppeaine oppeaine) {
@@ -80,7 +94,22 @@ public class Planeerija {
         return 0;
     }
 
-    public  void main(String[] args) {
+    public  void printWorkload() {
+        System.out.println("Kokku töötunde nädalas: " + arvutaTootundeNadalas());
+        System.out.println("Tehtud töötunde nädalas: " + arvutaTootundetehtud());
+        System.out.println("Tegemata töötunde nädalas: " + arvutaTegemata());
+    }
 
+    public void processEvents(List<CalendarEvent> events) {
+        // Logic to process the events and plan accordingly
+        for (CalendarEvent event : events) {
+            // Example: Print event details
+            System.out.println("Event: " + event.toJson());
+        }
+    }
+
+    public void main(String[] args) {
+        System.out.println("Planeerija initiated.");
+        printWorkload();
     }
 }
