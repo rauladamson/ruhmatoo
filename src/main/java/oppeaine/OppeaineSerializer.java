@@ -11,7 +11,7 @@ public class OppeaineSerializer  implements JsonSerializer<Oppeaine>{
         Gson gson = new Gson();
 
        jsonObject.add("internalJsonData", gson.toJsonTree(oa.getInternalJsonData().toMap()));
-       jsonObject.addProperty("lastUpdated", oa.getLastUpdated().toString());
+       jsonObject.addProperty("lastUpdated", oa.getLastUpdatedByCache().toString());
        jsonObject.addProperty("structCode", oa.getCode());
 
         return jsonObject;

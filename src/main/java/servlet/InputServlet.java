@@ -122,6 +122,7 @@ public class InputServlet extends HttpServlet {
     public void destroy() {
         // Enne kui server läheb kinni, salvestada puhvris olevad ained.
         AineCache.writeCacheToDatabase();
+        AineCache.writeCacheToFile(); // MAttias: muidu ei uuendu cache kunagi
         //UserCache.writeCacheToFile();
         super.destroy();
     }

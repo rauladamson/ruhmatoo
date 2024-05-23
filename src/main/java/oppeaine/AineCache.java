@@ -2,14 +2,6 @@ package oppeaine;
 
 import OIS_API.CoursesApi;
 import database.DBConnector;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import ical.CalendarEvent;
-import ical.CalendarEventSerializer;
-import ical.iCalObj;
-import org.json.JSONObject;
 import pdfsave.JsonFileReader;
 
 import java.lang.reflect.Field;
@@ -55,6 +47,7 @@ public class AineCache {
     }
 
     public static void writeCacheToFile() {
+        System.out.println("Writing cache with " + ained.size() + " elements to file.");
         JsonFileReader.writeOppeained(cacheFile, new ArrayList<>(ained.values()));
     }
 
@@ -86,9 +79,14 @@ public class AineCache {
         }
         field.setAccessible(true);
 
-        // get the internal map
         @SuppressWarnings("unchecked")
-        Map<Oppeaine, Object> interalMap = (Map<Oppeaine, Object>) (field.get(set));
+        Map<Oppeaine, Object> interalMap;
+        // get the internal map
+        try {
+            interalMap = (Map<Oppeaine, Object>) (field.get(set));
+        } catch (IllegalAccessException e) {
+            return null;
+        }
 
         // attempt to find a key with an identical hashcode
         for (Oppeaine elem : interalMap.keySet()) {
@@ -102,6 +100,7 @@ public class AineCache {
             updateCacheFromFile();
         }
 
+        /*
         System.out.println("Otsitakse ainet koodiga " + kood);
         Oppeaine aine = new Oppeaine();
         try {
@@ -111,20 +110,28 @@ public class AineCache {
           /*  if (aineHasChanged(aine)) { // TODO: Api päring ning seotud meetod parandada. aineHasChanged ja getAineFromCode loogikat võiks ka kuidagi paremini kokku panna.
                 Oppeaine uusAine = CoursesApi.getAineFromCode(aine.getCode());
 
-                ained.put(uusAine.getCode(), uusAine);*/
+                ained.put(uusAine.getCode(), uusAine); *|
         } catch (Exception e) {
             System.err.println("Aine pole vahemälus, otsime ainet:");
             aine = CoursesApi.getAineFromCode(kood);
             ained.put(aine.getCode(), aine);
         }
+        */
 
         if (ained.containsKey(kood)) {
-            if (ChronoUnit.MINUTES.between(aine.getLastUpdated(), LocalDateTime.now()) < 5) {
-
+            System.out.println("Aine " + kood + " leiti puhvrist");
+            long vimmatiUuendatudMinutites = ChronoUnit.MINUTES.between(ained.get(kood).getLastUpdatedByCache(), LocalDateTime.now());
+            System.out.println("Viimasest uuendusest on möödunud " + ((vimmatiUuendatudMinutites < 100) ? vimmatiUuendatudMinutites : ">100") + " minutit");
+            if (vimmatiUuendatudMinutites > 5) {
+                System.out.println("..seega uuendatakse ainet API-st");
+                ained.put(kood, CoursesApi.getAineFromCode(kood));
+            } else {
+                System.out.println("..seega tagastame aine otse mälust");
             }
+        } else {
+            ained.put(kood, CoursesApi.getAineFromCode(kood));
         }
-
-        return aine;
+        return ained.get(kood);
     }
 
     // Mattias: Märkisin praegu selle private-iks, et keelata selle kasutamist. Kui tekib tunne, et seda
@@ -157,6 +164,6 @@ public class AineCache {
     }
 
     private static boolean aineHasChanged(Oppeaine aine) {
-        return !(CoursesApi.getLatestCourseChange(aine).equals(aine.getLastUpdated()));
+        return !(CoursesApi.getLatestCourseChange(aine).equals(aine.getLastUpdatedByCache()));
     }
 }

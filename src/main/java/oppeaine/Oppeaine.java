@@ -1,13 +1,10 @@
 package oppeaine;
 
 import com.google.gson.*;
-import ical.CalendarEvent;
-import ical.CalendarEventSerializer;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.NoSuchElementException;
 
 
@@ -17,7 +14,7 @@ public class Oppeaine {
     // TODO: Cache'imiseks peaks olema veel võimalik optimiseerida lastUpdated ja structCode'i, kuna nende
     // TODO: Stringidel on vastavad teadaolevad piirangud (esimene on kuupäev, teine teatud pikkuse ja struktuuriga).
     private final String structCode; // Kõige tähtsamad parameetrid cache'imiseks teeme otse memberiteks
-    private final LocalDateTime lastUpdated;
+    private final LocalDateTime lastUpdatedByCache;
 
     // Hetkel on klass mõeldud olema immutable - s.t. kui õppeainet uuendada, siis vahetada see uue objektiga välja.
     // Kas oleks parem teha niimodi, et objektide uuendamisel otsitakse erinevusi ja siis hoopis muudetakse ainult see, mida vaja?
@@ -44,7 +41,12 @@ public class Oppeaine {
                 this.structCode = internalJsonData.getString("code");
             }
 //            this.lastUpdated = internalJsonData.getString("last_update");
-            this.lastUpdated = LocalDateTime.now();
+            if (internalJsonData.has("lastUpdatedByCache")) {
+                this.lastUpdatedByCache = LocalDateTime.parse(internalJsonData.getString("lastUpdatedByCache"));
+            } else {
+                this.lastUpdatedByCache = LocalDateTime.now();
+            }
+            this.internalJsonData.put("lastUpdatedByCache", lastUpdatedByCache.toString());
         } catch (JSONException e) {
             throw e;
         }
@@ -67,7 +69,12 @@ public class Oppeaine {
 //       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 //        this.lastUpdated = LocalDateTime.parse(inputJson.getString("last_update"));
 //        võiks implementeerida et see võtaks failist uuendamisel
-        this.lastUpdated = LocalDateTime.now();
+        if (internalJsonData.has("lastUpdatedByCache")) {
+            this.lastUpdatedByCache = LocalDateTime.parse(internalJsonData.getString("lastUpdatedByCache"));
+        } else {
+            this.lastUpdatedByCache = LocalDateTime.now();
+        }
+        this.internalJsonData.put("lastUpdatedByCache", lastUpdatedByCache.toString());
     }
 
 
@@ -81,7 +88,12 @@ public class Oppeaine {
                 this.structCode = internalJsonData.getString("code");
             }
 //            this.lastUpdated = internalJsonData.getString("last_update");
-            this.lastUpdated = LocalDateTime.now();
+            if (internalJsonData.has("lastUpdatedByCache")) {
+                this.lastUpdatedByCache = LocalDateTime.parse(internalJsonData.getString("lastUpdatedByCache"));
+            } else {
+                this.lastUpdatedByCache = LocalDateTime.now();
+            }
+            this.internalJsonData.put("lastUpdatedByCache", lastUpdatedByCache.toString());
         } catch (JSONException e) {
             throw e;
         }
@@ -95,7 +107,7 @@ public class Oppeaine {
     public Oppeaine() {
         this.internalJsonData = new JSONObject();
         this.structCode = "";
-        this.lastUpdated = LocalDateTime.MIN;
+        this.lastUpdatedByCache = LocalDateTime.MIN;
     }
 
     /**
@@ -158,8 +170,8 @@ public class Oppeaine {
 
     public String getCode() {return structCode;}
 
-    public LocalDateTime getLastUpdated() {
-        return lastUpdated;
+    public LocalDateTime getLastUpdatedByCache() {
+        return lastUpdatedByCache;
     }
 
     protected JSONObject getInternalJsonData() {return this.internalJsonData;}
@@ -175,7 +187,7 @@ public class Oppeaine {
     }
 
     public boolean equals(Oppeaine aine) {
-        return (lastUpdated.equals(aine.lastUpdated) && structCode.equals(aine.structCode));
+        return (lastUpdatedByCache.equals(aine.lastUpdatedByCache) && structCode.equals(aine.structCode));
     }
 
     // Peaksime seda planeerija all tegema ma arvan, see on liiga spetsiifiline
@@ -220,6 +232,6 @@ public class Oppeaine {
      */
     @Override
     public int hashCode() {
-        return (structCode + lastUpdated.toString()).hashCode();
+        return (structCode + lastUpdatedByCache.toString()).hashCode();
     }
 }
