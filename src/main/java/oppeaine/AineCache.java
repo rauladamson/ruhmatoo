@@ -95,11 +95,13 @@ public class AineCache {
     }
 
     public static Oppeaine getAine(String kood) {
+        long algus = System.nanoTime();
         if (ained.isEmpty()) {
             CustomDebugPrinter.dbgMsgLvl1("getAine triggers empty cache. Cache file doesn't exist or didn't get read upon launch of servlet?");
             updateCacheFromFile();
         }
 
+        boolean cacheUpdated = false;
         if (ained.containsKey(kood)) { // kui oleme ainet varem näinud
             CustomDebugPrinter.dbgMsgLvl1("Aine " + kood + " leiti puhvrist");
 
@@ -113,9 +115,12 @@ public class AineCache {
                 if (aineHasChanged(ained.get(kood))) {
                     CustomDebugPrinter.dbgMsgLvl1("Ainet on muudetud, seega tagastame uue versiooni ÕIS-ist");
                     Oppeaine oa = CoursesApi.getAineFromCode(kood);
+                    oa.markCacheHasUpdatedOppeaine();
+                    cacheUpdated = true;
                     ained.put(kood, oa);
                     uuidKoodiMap.put(UUID.fromString(oa.getProperty("uuid")), kood);
                 } else {
+                    ained.get(kood).markCacheHasUpdatedOppeaine();
                     CustomDebugPrinter.dbgMsgLvl1("Ainet pole vahepeal muudetud, seega tagastame ikkagi otse mälust");
                 }
             } else {
@@ -123,9 +128,17 @@ public class AineCache {
             }
         } else { // kui ei ole varem näinud
             Oppeaine oa = CoursesApi.getAineFromCode(kood);
+            oa.markCacheHasUpdatedOppeaine();
+            cacheUpdated = true;
             ained.put(kood, oa);
             uuidKoodiMap.put(UUID.fromString(oa.getProperty("uuid")), kood);
         }
+
+        if (cacheUpdated) {
+            writeCacheToFile();
+        }
+        long lopp = System.nanoTime();
+        CustomDebugPrinter.dbgMsgLvl1("Ühe elemendi kättesaamine võttis " + (lopp - algus)/1000 + " us");
         return ained.get(kood);
     }
 

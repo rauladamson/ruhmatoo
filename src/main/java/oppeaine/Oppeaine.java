@@ -14,7 +14,7 @@ public class Oppeaine {
     // TODO: Cache'imiseks peaks olema veel võimalik optimiseerida lastUpdated ja structCode'i, kuna nende
     // TODO: Stringidel on vastavad teadaolevad piirangud (esimene on kuupäev, teine teatud pikkuse ja struktuuriga).
     private final String structCode; // Kõige tähtsamad parameetrid cache'imiseks teeme otse memberiteks
-    private final LocalDateTime lastUpdatedByCache;
+    private LocalDateTime lastUpdatedByCache;
 
     // Hetkel on klass mõeldud olema immutable - s.t. kui õppeainet uuendada, siis vahetada see uue objektiga välja.
     // Kas oleks parem teha niimodi, et objektide uuendamisel otsitakse erinevusi ja siis hoopis muudetakse ainult see, mida vaja?
@@ -171,6 +171,11 @@ public class Oppeaine {
 
     public LocalDateTime getLastUpdatedByCache() {
         return lastUpdatedByCache;
+    }
+
+    public void markCacheHasUpdatedOppeaine() {
+        this.lastUpdatedByCache = LocalDateTime.now();
+        this.internalJsonData.put("lastUpdatedByCache", lastUpdatedByCache.toString());
     }
 
     protected JSONObject getInternalJsonData() {return this.internalJsonData;}

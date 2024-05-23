@@ -86,7 +86,6 @@ public class InputServlet extends HttpServlet {
                 if(!userCourses.containsKey(oa.getCode())) {user.addCourse(new KasutajaOppeaine(UUID.fromString(oa.getProperty("uuid")), oa.getECTs()), oa.getECTs());}
 
             } else {
-
                 iCalObj iCalObj;
                 if (paramName.contains("cal-input")) {
                      iCalObj = CalendarDataServlet.convertUrl(paramValues[0]);
