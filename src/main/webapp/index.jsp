@@ -285,16 +285,6 @@
 
                     <div class="col rightCol">
 
-                        <!--<div id = "calymdContainer" class="row-flex">
-
-                          <div class="column-flex" id="mwContainer">
-                            <ul id="monthList" class="months"></ul>
-                            <ul class="weekday"></ul>
-
-                          </div>
-                        <div id ="yearEls" class="yearSelect "></div>
-                       </div>-->
-
                         <div id = "calymdContainer">
                             <div id = "yearMonthContainer" class="row-flex">
                                 <ul id="monthList" class="months"></ul>
