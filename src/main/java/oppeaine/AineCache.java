@@ -9,13 +9,11 @@ import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
 public class AineCache {
     private static final HashMap<String, Oppeaine> ained = new HashMap<>(); // Mattias: siin oleks hea kasutada mingit kas custom HashSeti sarnast laadset objekti, mis lubaks koodi põhjal otsida, või siis peaks Oppeaine klassi ümber kirjutama
+    private static final HashMap<UUID, String> uuidKoodiMap = new HashMap<>();
     //    private static final HashSet<Oppeaine> aineteHashSet = new HashSet<>();
     private static final String cacheFile = "salvestatudOppeained.json";
 
@@ -114,7 +112,9 @@ public class AineCache {
                 CustomDebugPrinter.dbgMsgLvl1("..seega uuendatakse ainet API-st");
                 if (aineHasChanged(ained.get(kood))) {
                     CustomDebugPrinter.dbgMsgLvl1("Ainet on muudetud, seega tagastame uue versiooni ÕIS-ist");
-                    ained.put(kood, CoursesApi.getAineFromCode(kood));
+                    Oppeaine oa = CoursesApi.getAineFromCode(kood);
+                    ained.put(kood, oa);
+                    uuidKoodiMap.put(UUID.fromString(oa.getProperty("uuid")), kood);
                 } else {
                     CustomDebugPrinter.dbgMsgLvl1("Ainet pole vahepeal muudetud, seega tagastame ikkagi otse mälust");
                 }
@@ -122,12 +122,28 @@ public class AineCache {
                 CustomDebugPrinter.dbgMsgLvl1("..seega tagastame aine otse mälust");
             }
         } else { // kui ei ole varem näinud
-            ained.put(kood, CoursesApi.getAineFromCode(kood));
+            Oppeaine oa = CoursesApi.getAineFromCode(kood);
+            ained.put(kood, oa);
+            uuidKoodiMap.put(UUID.fromString(oa.getProperty("uuid")), kood);
         }
         return ained.get(kood);
     }
 
     /**
+     * Leiab aine UUID (mitte versiooni UUID) järgi.
+     * @param aineUuid Aine UUID.
+     * @return Otsitav Oppeaine objekt.
+     */
+    public static Oppeaine getAine(UUID aineUuid) {
+        String kood = uuidKoodiMap.get(aineUuid);
+        if (kood == null) {
+            return null;
+        }
+        return getAine(kood);
+    }
+
+    /**
+     * DEPRCATED! Ei kasuta UUID cache funktsionaalsust. Mitte kasutada!
      * Lisab õppeaine objekti puhvrisse. NB! Ained lisatakse automaatselt getAine() meetodi korral.
      * Hetkel pole see meetod kasutuses. Ilmselt pole sellel enam tulevikus kasutust, kuna see vajab
      * lisamiseks Oppeaine objekti, aga (algseid) Oppeaine objekte peaksime me saama ainult AineCache.getAine()
