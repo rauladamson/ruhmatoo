@@ -97,45 +97,29 @@ public class AineCache {
 
     public static Oppeaine getAine(String kood) {
         if (ained.isEmpty()) {
+            System.out.println("getAine triggers empty cache. Cache file doesn't exist or didn't get read upon launch of servlet?");
             updateCacheFromFile();
         }
 
-        /*
-        System.out.println("Otsitakse ainet koodiga " + kood);
-        Oppeaine aine = new Oppeaine();
-        try {
-            aine = ained.get(kood);
-            //System.out.println("Aine leiti vahemälust: " + aine);
-            //System.out.println("Aine leiti vahemälust: " + aine);
-          /*  if (aineHasChanged(aine)) { // TODO: Api päring ning seotud meetod parandada. aineHasChanged ja getAineFromCode loogikat võiks ka kuidagi paremini kokku panna.
-                Oppeaine uusAine = CoursesApi.getAineFromCode(aine.getCode());
-
-                ained.put(uusAine.getCode(), uusAine); *|
-        } catch (Exception e) {
-            System.err.println("Aine pole vahemälus, otsime ainet:");
-            aine = CoursesApi.getAineFromCode(kood);
-            ained.put(aine.getCode(), aine);
-        }
-        */
-
-        if (ained.containsKey(kood)) {
+        if (ained.containsKey(kood)) { // kui oleme ainet varem näinud
             System.out.println("Aine " + kood + " leiti puhvrist");
+
+            // Leiame, millal viimati uuendasime ainet
             long vimmatiUuendatudMinutites = ChronoUnit.MINUTES.between(ained.get(kood).getLastUpdatedByCache(), LocalDateTime.now());
             System.out.println("Viimasest uuendusest on möödunud " + ((vimmatiUuendatudMinutites < 100) ? vimmatiUuendatudMinutites : ">100") + " minutit");
+
+            //siin määratud mingi suht suvaline konstant, reaalsuses võiks olla palju suurem, aga demo jaoks hea kui väike
             if (vimmatiUuendatudMinutites > 5) {
                 System.out.println("..seega uuendatakse ainet API-st");
                 ained.put(kood, CoursesApi.getAineFromCode(kood));
             } else {
                 System.out.println("..seega tagastame aine otse mälust");
             }
-        } else {
+        } else { // kui ei ole varem näinud
             ained.put(kood, CoursesApi.getAineFromCode(kood));
         }
         return ained.get(kood);
     }
-
-    // Mattias: Märkisin praegu selle private-iks, et keelata selle kasutamist. Kui tekib tunne, et seda
-    //          on ikka vaja kasutada, paluks teavitada mind enne.
 
     /**
      * Lisab õppeaine objekti puhvrisse. NB! Ained lisatakse automaatselt getAine() meetodi korral.
@@ -164,6 +148,6 @@ public class AineCache {
     }
 
     private static boolean aineHasChanged(Oppeaine aine) {
-        return !(CoursesApi.getLatestCourseChange(aine).equals(aine.getLastUpdatedByCache()));
+        return !(CoursesApi.getLatestCourseChange(aine).equals(aine.getProperty("last_update")));
     }
 }

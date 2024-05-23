@@ -29,8 +29,11 @@ public class InputServlet extends HttpServlet {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    public InputServlet() {
-        super();
+    /**
+     * soovitatud meetod enne servleti käimapanemist asju teha
+     */
+    @Override
+    public void init() {
         AineCache.updateCacheFromFile();
         //UserCache.updateCacheFromFile();
     }
