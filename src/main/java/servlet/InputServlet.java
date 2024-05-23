@@ -88,9 +88,13 @@ public class InputServlet extends HttpServlet {
                     UserCache.getUser().addCalendar(iCalObj); // kasutaja kalendri lisamine
 
                     Planeerija planner = new Planeerija();
+                    planner.addCourses(user.getUserCourses());
+                    planner.calculateWorkload();
                     if (iCalObj != null) {
                         planner.processEvents(iCalObj.getEvents());
                     }
+
+                    planner.printWorkload();
 
                     if (!userCourses.isEmpty()) {addJsonArrayToJsonObject(jsonObject, "course-input", userCourses.values());} // kui sisendist leiti kursusi, siis lisatakse need vastusesse
 

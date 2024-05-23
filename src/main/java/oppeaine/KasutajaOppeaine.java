@@ -77,6 +77,16 @@ public class KasutajaOppeaine {
 
     public void addEvent(CalendarEvent newEvent) {
         courseEvents.put(newEvent.getCategories(), newEvent);
+        eeldatavTooaeg += newEvent.getWorkAmount();
+        if (newEvent.isDone()) {
+            tehtudTooaeg += newEvent.getWorkAmount();
+        } else {
+            veelTooaeg += newEvent.getWorkAmount();
+        }
+        System.out.println("Added event: " + newEvent.getCategories() + ", Work amount: " + newEvent.getWorkAmount());
+        System.out.println("Updated eeldatavTooaeg: " + eeldatavTooaeg);
+        System.out.println("Updated tehtudTooaeg: " + tehtudTooaeg);
+        System.out.println("Updated veelTooaeg: " + veelTooaeg);
     }
 
     public UUID getUuid() {
